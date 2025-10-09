@@ -1,0 +1,292 @@
+/* Quitar borde del fieldset */
+.modal fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Ajuste de etiquetas */
+.modal label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Inputs */
+.modal input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+}
+
+.modal input:focus {
+  border-color: #4caf50; /* Verde al enfocar */
+  box-shadow: 0 0 4px #4caf50;
+}
+
+/* Encabezado del modal */
+.modal h2 {
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  color: #222;
+}
+
+/* Botones */
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.btn-cancel,
+.btn-save {
+  flex: 1;
+  padding: 10px;
+  font-size: 15px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.btn-cancel {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.btn-cancel:hover {
+  background-color: #d6d6d6;
+}
+
+.btn-save {
+  background-color: #4caf50; /* Verde */
+  color: white;
+}
+
+.btn-save:hover {
+  background-color: #43a047; /* Verde más oscuro */
+}
+/* Fondo semitransparente */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6); /* Oscurece el fondo */
+  display: none; /* Oculto por defecto */
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Mostrar modal */
+.modal-overlay.active {
+  display: flex;
+}
+
+/* Caja del modal */
+.modal {
+  background: #fff;
+  padding: 20px 30px;
+  border-radius: 10px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s ease;
+  position: relative; /* 🔹 Para que el botón se posicione dentro */
+}
+
+/* Animación */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Botón cerrar */
+.close-modal {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  font-weight: bold;
+  color: #666;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.close-modal:hover {
+  color: #000;
+}
+/* ===== ESTILOS PARA TABLE-CARD ===== */
+.table-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin: 20px 0;
+  overflow-x: auto; /* scroll horizontal si es necesario */
+}
+
+.table-card .card-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.table-card .card-title h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2c7a7b;
+  display: flex;
+  align-items: center;
+}
+
+.table-card .card-title h3 i {
+  margin-right: 8px;
+}
+
+/* ===== ESTILOS TABLA ===== */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  min-width: 700px; /* fuerza un ancho mínimo */
+}
+
+.data-table thead {
+  background-color: #2c7a7b;
+  color: #fff;
+}
+
+.data-table thead th {
+  padding: 12px 15px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.data-table tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.data-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.data-table tbody tr:hover {
+  background-color: #e2f0f0;
+  transition: background-color 0.2s ease;
+}
+
+.data-table td,
+.data-table th {
+  white-space: nowrap; /* evita quiebre de texto */
+}
+
+/* ===== BOTONES ===== */
+.data-table .btn {
+  padding: 5px 10px;
+  font-size: 13px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.data-table .btn:hover {
+  transform: scale(1.05);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .data-table {
+    font-size: 13px;
+    min-width: 600px;
+  }
+}
+
+@media (max-width: 768px) {
+  .table-card {
+    padding: 15px;
+  }
+
+  .data-table {
+    font-size: 12px;
+    min-width: 500px;
+  }
+
+  .data-table .btn {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+}
+.pagination-container {
+  display: flex;
+  justify-content: flex-end; /* alineado a la derecha */
+  margin-top: 15px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pagination-btn {
+  background-color: #28a745; /* verde brillante */
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.pagination-btn:hover {
+  background-color: #218838; /* verde más oscuro al pasar el mouse */
+}
+
+.pagination-btn.active {
+  background-color: #1e7e34; /* verde más intenso para activo */
+  font-weight: bold;
+}
+/* Centrar texto en toda la tabla */
+#tablaAdmins th,
+#tablaAdmins td {
+  text-align: center;
+  vertical-align: middle; /* centra también verticalmente */
+}
+/* Centrar texto en toda la tabla */
+#tablaAdmins th,
+#tablaAdmins td {
+  text-align: center;
+  vertical-align: middle; /* centra también verticalmente */
+  border-left: 1px solid #e0e0e0; /* línea a la izquierda */
+  border-right: 1px solid #e0e0e0; /* línea a la derecha */
+}
+
+/* Evitar doble línea en los bordes externos */
+#tablaAdmins th:first-child,
+#tablaAdmins td:first-child {
+  border-left: none;
+}
+
+#tablaAdmins th:last-child,
+#tablaAdmins td:last-child {
+  border-right: none;
+}
