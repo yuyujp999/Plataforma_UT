@@ -1,0 +1,13 @@
+Array
+(
+    [rol] => docente
+    [usuario] => Array
+        (
+            [matricula] => DOC539
+            [nombre] => Angel Antonio
+            [apellido_paterno] => Loza
+            [apellido_materno] => Flores
+        )
+
+    [id_docente] => 15
+)

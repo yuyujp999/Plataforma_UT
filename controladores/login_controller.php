@@ -28,12 +28,12 @@ switch ($rol) {
         break;
     case 'secretaria':
         $tabla = 'secretarias';
-        $campo = 'correo_institucional'; // <- corregido
+        $campo = 'correo_institucional';
         $usuario = trim($_POST['correo'] ?? '');
         break;
     case 'admin':
         $tabla = 'administradores';
-        $campo = 'correo'; // Ajusta si tu tabla usa otro nombre
+        $campo = 'correo';
         $usuario = trim($_POST['correo'] ?? '');
         break;
     default:
@@ -114,6 +114,13 @@ if ($login_ok) {
         ];
     }
 
+    // === Guardar ID específico según rol (para tareas y vínculos directos)
+    if ($rol === 'docente' && isset($row['id_docente'])) {
+        $_SESSION['id_docente'] = $row['id_docente'];
+    } elseif ($rol === 'alumno' && isset($row['id_alumno'])) {
+        $_SESSION['id_alumno'] = $row['id_alumno'];
+    }
+
     // Redirigir según rol
     switch ($rol) {
         case 'admin':
@@ -132,6 +139,7 @@ if ($login_ok) {
             $destino = '/Plataforma_UT/inicio.php';
             break;
     }
+
     header("Location: $destino");
     exit;
 } else {
