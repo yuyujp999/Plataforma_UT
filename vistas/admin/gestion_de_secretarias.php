@@ -52,6 +52,7 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
     <link rel="stylesheet" href="../../css/admin/secretarias.css" />
     <link rel="stylesheet" href="../../css/admin/secretariasModales1.css" />
     <link rel="stylesheet" href="/Plataforma_UT/css/styleD.css" />
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="icon" href="../../img/ut_logo.png" sizes="32x32" type="image/png">
 </head>
@@ -197,20 +198,19 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
                         <fieldset>
                             <!-- Datos Personales -->
                             <label for="nombre">Nombre <span class="required">*</span></label>
-                            <input type="text" name="nombre" id="nombre" placeholder="Ej. María" required>
+                            <input type="text" name="nombre" id="nombre" placeholder="" required>
 
                             <label for="apellido_paterno">Apellido Paterno <span class="required">*</span></label>
-                            <input type="text" name="apellido_paterno" id="apellido_paterno" placeholder="Ej. Pérez"
-                                required>
+                            <input type="text" name="apellido_paterno" id="apellido_paterno" placeholder="" required>
 
                             <label for="apellido_materno">Apellido Materno</label>
-                            <input type="text" name="apellido_materno" id="apellido_materno" placeholder="Ej. López">
+                            <input type="text" name="apellido_materno" id="apellido_materno" placeholder="">
 
                             <label for="curp">CURP <span class="required">*</span></label>
-                            <input type="text" name="curp" id="curp" placeholder="Ej. PEJL800101HDFXXX00" required>
+                            <input type="text" name="curp" id="curp" placeholder="" required>
 
                             <label for="rfc">RFC <span class="required">*</span></label>
-                            <input type="text" name="rfc" id="rfc" placeholder="Ej. PEJL800101XXX" required>
+                            <input type="text" name="rfc" id="rfc" placeholder="" required>
 
                             <label for="fecha_nacimiento">Fecha Nacimiento <span class="required">*</span></label>
                             <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" required>
@@ -224,11 +224,10 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
                             </select>
 
                             <label for="telefono">Teléfono</label>
-                            <input type="text" name="telefono" id="telefono" placeholder="Ej. 55-1234-5678">
+                            <input type="text" name="telefono" id="telefono" placeholder="">
 
                             <label for="direccion">Dirección</label>
-                            <input type="text" name="direccion" id="direccion"
-                                placeholder="Ej. Calle 123, Colonia, Ciudad">
+                            <input type="text" name="direccion" id="direccion" placeholder="">
 
                             <!-- Bloqueados -->
                             <label for="correo_institucional">Correo Institucional</label>
@@ -240,24 +239,20 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
 
                             <!-- Laborales -->
                             <label for="departamento">Departamento <span class="required">*</span></label>
-                            <input type="text" name="departamento" id="departamento" placeholder="Ej. Administración"
-                                required>
+                            <input type="text" name="departamento" id="departamento" placeholder="" required>
 
                             <label for="fecha_ingreso">Fecha Ingreso <span class="required">*</span></label>
                             <input type="date" name="fecha_ingreso" id="fecha_ingreso" required>
 
                             <!-- Emergencia -->
                             <label for="contacto_emergencia">Contacto Emergencia</label>
-                            <input type="text" name="contacto_emergencia" id="contacto_emergencia"
-                                placeholder="Ej. Juan Pérez">
+                            <input type="text" name="contacto_emergencia" id="contacto_emergencia" placeholder="">
 
                             <label for="parentesco_emergencia">Parentesco Emergencia</label>
-                            <input type="text" name="parentesco_emergencia" id="parentesco_emergencia"
-                                placeholder="Ej. Hermano">
+                            <input type="text" name="parentesco_emergencia" id="parentesco_emergencia" placeholder="">
 
                             <label for="telefono_emergencia">Teléfono Emergencia</label>
-                            <input type="text" name="telefono_emergencia" id="telefono_emergencia"
-                                placeholder="Ej. 55-1234-5678">
+                            <input type="text" name="telefono_emergencia" id="telefono_emergencia" placeholder="">
                         </fieldset>
 
                         <div class="actions">
@@ -278,20 +273,19 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
                         <fieldset>
                             <!-- Datos Personales -->
                             <label for="editNombre">Nombre <span class="required">*</span></label>
-                            <input type="text" name="nombre" id="editNombre" placeholder="Ej. María" required>
+                            <input type="text" name="nombre" id="editNombre" placeholder="" required>
 
                             <label for="editApellidoP">Apellido Paterno <span class="required">*</span></label>
-                            <input type="text" name="apellido_paterno" id="editApellidoP" placeholder="Ej. Pérez"
-                                required>
+                            <input type="text" name="apellido_paterno" id="editApellidoP" placeholder="" required>
 
                             <label for="editApellidoM">Apellido Materno</label>
-                            <input type="text" name="apellido_materno" id="editApellidoM" placeholder="Ej. López">
+                            <input type="text" name="apellido_materno" id="editApellidoM" placeholder="">
 
                             <label for="editCurp">CURP <span class="required">*</span></label>
-                            <input type="text" name="curp" id="editCurp" placeholder="Ej. PEJL800101HDFXXX00" required>
+                            <input type="text" name="curp" id="editCurp" placeholder="" required>
 
                             <label for="editRfc">RFC <span class="required">*</span></label>
-                            <input type="text" name="rfc" id="editRfc" placeholder="Ej. PEJL800101XXX" required>
+                            <input type="text" name="rfc" id="editRfc" placeholder="" required>
 
                             <label for="editFechaNac">Fecha Nacimiento <span class="required">*</span></label>
                             <input type="date" name="fecha_nacimiento" id="editFechaNac" required>
@@ -304,11 +298,10 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
                             </select>
 
                             <label for="editTelefono">Teléfono</label>
-                            <input type="text" name="telefono" id="editTelefono" placeholder="Ej. 55-1234-5678">
+                            <input type="text" name="telefono" id="editTelefono" placeholder="">
 
                             <label for="editDireccion">Dirección</label>
-                            <input type="text" name="direccion" id="editDireccion"
-                                placeholder="Ej. Calle 123, Colonia, Ciudad">
+                            <input type="text" name="direccion" id="editDireccion" placeholder="">
 
                             <!-- Bloqueados -->
                             <label for="editCorreo">Correo Institucional</label>
@@ -320,24 +313,21 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
 
                             <!-- Laborales -->
                             <label for="editDepartamento">Departamento <span class="required">*</span></label>
-                            <input type="text" name="departamento" id="editDepartamento"
-                                placeholder="Ej. Administración" required>
+                            <input type="text" name="departamento" id="editDepartamento" placeholder="" required>
 
                             <label for="editFechaIngreso">Fecha Ingreso <span class="required">*</span></label>
                             <input type="date" name="fecha_ingreso" id="editFechaIngreso" required>
 
                             <!-- Emergencia -->
                             <label for="editContactoEmergencia">Contacto Emergencia</label>
-                            <input type="text" name="contacto_emergencia" id="editContactoEmergencia"
-                                placeholder="Ej. Juan Pérez">
+                            <input type="text" name="contacto_emergencia" id="editContactoEmergencia" placeholder="">
 
                             <label for="editParentescoEmergencia">Parentesco Emergencia</label>
                             <input type="text" name="parentesco_emergencia" id="editParentescoEmergencia"
-                                placeholder="Ej. Hermano">
+                                placeholder="">
 
                             <label for="editTelefonoEmergencia">Teléfono Emergencia</label>
-                            <input type="text" name="telefono_emergencia" id="editTelefonoEmergencia"
-                                placeholder="Ej. 55-1234-5678">
+                            <input type="text" name="telefono_emergencia" id="editTelefonoEmergencia" placeholder="">
                         </fieldset>
 
                         <div class="actions">
@@ -362,7 +352,7 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
                     });
                 });
             </script>
-            <script src="/Plataforma_UT/js/Dashboard.js"></script>
+            <script src="/Plataforma_UT/js/DashboardY.js"></script>
             <script src="../../js/admin/Secretaria2.js"></script>
 </body>
 

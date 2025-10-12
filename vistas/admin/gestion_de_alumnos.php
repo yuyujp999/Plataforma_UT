@@ -44,6 +44,7 @@ $alumnos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="/Plataforma_UT/css/styleD.css" />
     <link rel="stylesheet" href="../../css/admin/profesoresModal.css" />
     <link rel="stylesheet" href="../../css/admin/secretariasModales1.css" />
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="icon" href="../../img/ut_logo.png" sizes="32x32" type="image/png">
 </head>
@@ -133,41 +134,41 @@ $alumnos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         </thead>
                         <tbody id="tablaBody">
                             <?php if (!empty($alumnos)): ?>
-                            <?php foreach ($alumnos as $row): ?>
-                            <tr data-id="<?= htmlspecialchars($row['id_alumno'] ?? '') ?>">
-                                <td><?= htmlspecialchars($row['id_alumno'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['nombre'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['apellido_paterno'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['apellido_materno'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['curp'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['fecha_nacimiento'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['sexo'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['telefono'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['direccion'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['correo_personal'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['matricula'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['password'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['carrera'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['semestre'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['grupo'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['contacto_emergencia'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['parentesco_emergencia'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['telefono_emergencia'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['fecha_registro'] ?? '') ?></td>
-                                <td>
-                                    <button class="btn btn-outline btn-sm btn-editar">
-                                        <i class="fas fa-edit"></i>Editar
-                                    </button>
-                                    <button class="btn btn-outline btn-sm btn-eliminar">
-                                        <i class="fas fa-trash"></i>Eliminar
-                                    </button>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
+                                <?php foreach ($alumnos as $row): ?>
+                                    <tr data-id="<?= htmlspecialchars($row['id_alumno'] ?? '') ?>">
+                                        <td><?= htmlspecialchars($row['id_alumno'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['nombre'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['apellido_paterno'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['apellido_materno'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['curp'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['fecha_nacimiento'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['sexo'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['telefono'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['direccion'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['correo_personal'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['matricula'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['password'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['carrera'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['semestre'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['grupo'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['contacto_emergencia'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['parentesco_emergencia'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['telefono_emergencia'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['fecha_registro'] ?? '') ?></td>
+                                        <td>
+                                            <button class="btn btn-outline btn-sm btn-editar">
+                                                <i class="fas fa-edit"></i>Editar
+                                            </button>
+                                            <button class="btn btn-outline btn-sm btn-eliminar">
+                                                <i class="fas fa-trash"></i>Eliminar
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
                             <?php else: ?>
-                            <tr>
-                                <td colspan="19">No hay alumnos registrados.</td>
-                            </tr>
+                                <tr>
+                                    <td colspan="19">No hay alumnos registrados.</td>
+                                </tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
@@ -320,19 +321,19 @@ $alumnos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
                 <script>
-                window.rolUsuarioPHP = "<?= $rolUsuario; ?>";
+                    window.rolUsuarioPHP = "<?= $rolUsuario; ?>";
 
-                document.getElementById('buscarAlumno').addEventListener('keyup', function() {
-                    const filtro = this.value.toLowerCase();
-                    const filas = document.querySelectorAll('#tablaAlumnos tbody tr');
-                    filas.forEach(fila => {
-                        fila.style.display = fila.innerText.toLowerCase().includes(filtro) ? '' :
-                            'none';
+                    document.getElementById('buscarAlumno').addEventListener('keyup', function () {
+                        const filtro = this.value.toLowerCase();
+                        const filas = document.querySelectorAll('#tablaAlumnos tbody tr');
+                        filas.forEach(fila => {
+                            fila.style.display = fila.innerText.toLowerCase().includes(filtro) ? '' :
+                                'none';
+                        });
                     });
-                });
                 </script>
-                <script src="/Plataforma_UT/js/Dashboard.js"></script>
-                <script src="../../js/admin/Alumno.js"></script>
+                <script src="/Plataforma_UT/js/DashboardY.js"></script>
+                <script src="../../js/admin/Alumno1.js"></script>
 </body>
 
 </html>

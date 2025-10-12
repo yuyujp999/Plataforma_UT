@@ -1,0 +1,47 @@
+/* ==== Selects bonitos ==== */
+.modal select {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  margin: 0.4rem 0 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  background-color: #fff;
+  appearance: none; /* Quita flecha predeterminada en algunos navegadores */
+  cursor: pointer;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.modal select:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 5px rgba(34, 255, 0, 0.3);
+  outline: none;
+}
+
+/* Flecha personalizada usando pseudo-elemento */
+.modal select::-ms-expand {
+  display: none; /* Quita flecha en IE */
+}
+
+/* ==== Tipografía ==== */
+.modal,
+.modal label,
+.modal input,
+.modal select,
+.modal button {
+  font-family: "Poppins", Arial, sans-serif;
+  color: #000000;
+}
+
+/* Opcional: estilo más moderno al hover */
+.modal select:hover {
+  border-color: #4caf50;
+}
+
+/* Ajuste responsive en móviles */
+@media (max-width: 480px) {
+  .modal select {
+    font-size: 0.9rem;
+  }
+}

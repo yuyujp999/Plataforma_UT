@@ -42,6 +42,7 @@ $docentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
         rel="stylesheet" />
     <link rel="stylesheet" href="../../css/admin/profesores.css" />
     <link rel="stylesheet" href="/Plataforma_UT/css/styleD.css" />
+
     <link rel="stylesheet" href="../../css/admin/profesoresModal.css" />
 
 
@@ -148,49 +149,49 @@ $docentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         </thead>
                         <tbody id="tablaBody">
                             <?php if (!empty($docentes)): ?>
-                            <?php foreach ($docentes as $row): ?>
-                            <tr data-id="<?= htmlspecialchars($row['id_docente'] ?? '') ?>">
-                                <td><?= htmlspecialchars($row['id_docente'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['nombre'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['apellido_paterno'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['apellido_materno'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['curp'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['rfc'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['fecha_nacimiento'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['sexo'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['telefono'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['direccion'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['correo_personal'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['matricula'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['password'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['nivel_estudios'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['area_especialidad'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['universidad_egreso'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['cedula_profesional'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['idiomas'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['departamento'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['puesto'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['tipo_contrato'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['fecha_ingreso'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['num_empleado'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['contacto_emergencia'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['parentesco_emergencia'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['telefono_emergencia'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['fecha_registro'] ?? '') ?></td>
-                                <td>
-                                    <button class="btn btn-outline btn-sm btn-editar">
-                                        <i class="fas fa-edit"></i>Editar
-                                    </button>
-                                    <button class="btn btn-outline btn-sm btn-eliminar">
-                                        <i class="fas fa-trash"></i>Eliminar
-                                    </button>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
+                                <?php foreach ($docentes as $row): ?>
+                                    <tr data-id="<?= htmlspecialchars($row['id_docente'] ?? '') ?>">
+                                        <td><?= htmlspecialchars($row['id_docente'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['nombre'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['apellido_paterno'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['apellido_materno'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['curp'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['rfc'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['fecha_nacimiento'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['sexo'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['telefono'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['direccion'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['correo_personal'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['matricula'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['password'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['nivel_estudios'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['area_especialidad'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['universidad_egreso'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['cedula_profesional'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['idiomas'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['departamento'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['puesto'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['tipo_contrato'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['fecha_ingreso'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['num_empleado'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['contacto_emergencia'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['parentesco_emergencia'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['telefono_emergencia'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['fecha_registro'] ?? '') ?></td>
+                                        <td>
+                                            <button class="btn btn-outline btn-sm btn-editar">
+                                                <i class="fas fa-edit"></i>Editar
+                                            </button>
+                                            <button class="btn btn-outline btn-sm btn-eliminar">
+                                                <i class="fas fa-trash"></i>Eliminar
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
                             <?php else: ?>
-                            <tr>
-                                <td colspan="28">No hay docentes registrados.</td>
-                            </tr>
+                                <tr>
+                                    <td colspan="28">No hay docentes registrados.</td>
+                                </tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
@@ -208,21 +209,20 @@ $docentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <fieldset>
                                 <!-- Datos personales -->
                                 <label for="nombre">Nombre <span class="required">*</span></label>
-                                <input type="text" name="nombre" id="nombre" placeholder="Ej. Juan" required>
+                                <input type="text" name="nombre" id="nombre" placeholder="" required>
 
                                 <label for="apellido_paterno">Apellido Paterno <span class="required">*</span></label>
-                                <input type="text" name="apellido_paterno" id="apellido_paterno" placeholder="Ej. Pérez"
+                                <input type="text" name="apellido_paterno" id="apellido_paterno" placeholder=""
                                     required>
 
                                 <label for="apellido_materno">Apellido Materno</label>
-                                <input type="text" name="apellido_materno" id="apellido_materno"
-                                    placeholder="Ej. López">
+                                <input type="text" name="apellido_materno" id="apellido_materno" placeholder="">
 
                                 <label for="curp">CURP <span class="required">*</span></label>
-                                <input type="text" name="curp" id="curp" placeholder="Ej. PEJL800101HDFXXX00" required>
+                                <input type="text" name="curp" id="curp" placeholder="" required>
 
                                 <label for="rfc">RFC <span class="required">*</span></label>
-                                <input type="text" name="rfc" id="rfc" placeholder="Ej. PEJL800101XXX" required>
+                                <input type="text" name="rfc" id="rfc" placeholder="" required>
 
                                 <label for="fecha_nacimiento">Fecha de Nacimiento <span
                                         class="required">*</span></label>
@@ -237,15 +237,13 @@ $docentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 </select>
 
                                 <label for="telefono">Teléfono</label>
-                                <input type="text" name="telefono" id="telefono" placeholder="Ej. 55-1234-5678">
+                                <input type="text" name="telefono" id="telefono" placeholder="">
 
                                 <label for="direccion">Dirección</label>
-                                <input type="text" name="direccion" id="direccion"
-                                    placeholder="Ej. Calle 123, Colonia, Ciudad">
+                                <input type="text" name="direccion" id="direccion" placeholder="">
 
                                 <label for="correo_personal">Correo Personal</label>
-                                <input type="email" name="correo_personal" id="correo_personal"
-                                    placeholder="ejemplo@mail.com">
+                                <input type="email" name="correo_personal" id="correo_personal" placeholder="">
 
                                 <!-- Bloqueados -->
                                 <label for="matricula">Matrícula</label>
@@ -265,27 +263,24 @@ $docentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 </select>
 
                                 <label for="area_especialidad">Área Especialidad</label>
-                                <input type="text" name="area_especialidad" id="area_especialidad"
-                                    placeholder="Ej. Matemáticas">
+                                <input type="text" name="area_especialidad" id="area_especialidad" placeholder="">
 
                                 <label for="universidad_egreso">Universidad Egreso</label>
-                                <input type="text" name="universidad_egreso" id="universidad_egreso"
-                                    placeholder="Ej. UNAM">
+                                <input type="text" name="universidad_egreso" id="universidad_egreso" placeholder="">
 
                                 <label for="cedula_profesional">Cédula Profesional</label>
                                 <input type="text" name="cedula_profesional" id="cedula_profesional"
                                     placeholder="Opcional">
 
                                 <label for="idiomas">Idiomas</label>
-                                <input type="text" name="idiomas" id="idiomas" placeholder="Ej. Inglés, Francés">
+                                <input type="text" name="idiomas" id="idiomas" placeholder="">
 
                                 <!-- Laborales -->
                                 <label for="departamento">Departamento <span class="required">*</span></label>
-                                <input type="text" name="departamento" id="departamento" placeholder="Ej. Ciencias"
-                                    required>
+                                <input type="text" name="departamento" id="departamento" placeholder="" required>
 
                                 <label for="puesto">Puesto <span class="required">*</span></label>
-                                <input type="text" name="puesto" id="puesto" placeholder="Ej. Profesor" required>
+                                <input type="text" name="puesto" id="puesto" placeholder="" required>
 
                                 <label for="tipo_contrato">Tipo Contrato <span class="required">*</span></label>
                                 <select name="tipo_contrato" id="tipo_contrato" required>
@@ -303,16 +298,14 @@ $docentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                                 <!-- Emergencia -->
                                 <label for="contacto_emergencia">Contacto Emergencia</label>
-                                <input type="text" name="contacto_emergencia" id="contacto_emergencia"
-                                    placeholder="Ej. Juan Pérez">
+                                <input type="text" name="contacto_emergencia" id="contacto_emergencia" placeholder="">
 
                                 <label for="parentesco_emergencia">Parentesco Emergencia</label>
                                 <input type="text" name="parentesco_emergencia" id="parentesco_emergencia"
-                                    placeholder="Ej. Hermano">
+                                    placeholder="">
 
                                 <label for="telefono_emergencia">Teléfono Emergencia</label>
-                                <input type="text" name="telefono_emergencia" id="telefono_emergencia"
-                                    placeholder="Ej. 55-1234-5678">
+                                <input type="text" name="telefono_emergencia" id="telefono_emergencia" placeholder="">
                             </fieldset>
 
                             <div class="actions">
@@ -331,23 +324,21 @@ $docentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <form id="formEditar">
                             <fieldset>
                                 <label for="edit_nombre">Nombre <span class="required">*</span></label>
-                                <input type="text" name="nombre" id="edit_nombre" placeholder="Ej. Juan" required>
+                                <input type="text" name="nombre" id="edit_nombre" placeholder="" required>
 
                                 <label for="edit_apellido_paterno">Apellido Paterno <span
                                         class="required">*</span></label>
-                                <input type="text" name="apellido_paterno" id="edit_apellido_paterno"
-                                    placeholder="Ej. Pérez" required>
-
-                                <label for="edit_apellido_materno">Apellido Materno</label>
-                                <input type="text" name="apellido_materno" id="edit_apellido_materno"
-                                    placeholder="Ej. López">
-
-                                <label for="edit_curp">CURP <span class="required">*</span></label>
-                                <input type="text" name="curp" id="edit_curp" placeholder="Ej. PEJL800101HDFXXX00"
+                                <input type="text" name="apellido_paterno" id="edit_apellido_paterno" placeholder=""
                                     required>
 
+                                <label for="edit_apellido_materno">Apellido Materno</label>
+                                <input type="text" name="apellido_materno" id="edit_apellido_materno" placeholder="">
+
+                                <label for="edit_curp">CURP <span class="required">*</span></label>
+                                <input type="text" name="curp" id="edit_curp" placeholder="" required>
+
                                 <label for="edit_rfc">RFC <span class="required">*</span></label>
-                                <input type="text" name="rfc" id="edit_rfc" placeholder="Ej. PEJL800101XXX" required>
+                                <input type="text" name="rfc" id="edit_rfc" placeholder="" required>
 
                                 <label for="edit_fecha_nacimiento">Fecha de Nacimiento <span
                                         class="required">*</span></label>
@@ -362,15 +353,13 @@ $docentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 </select>
 
                                 <label for="edit_telefono">Teléfono</label>
-                                <input type="text" name="telefono" id="edit_telefono" placeholder="Ej. 55-1234-5678">
+                                <input type="text" name="telefono" id="edit_telefono" placeholder="">
 
                                 <label for="edit_direccion">Dirección</label>
-                                <input type="text" name="direccion" id="edit_direccion"
-                                    placeholder="Ej. Calle 123, Colonia, Ciudad">
+                                <input type="text" name="direccion" id="edit_direccion" placeholder="">
 
                                 <label for="edit_correo_personal">Correo Personal</label>
-                                <input type="email" name="correo_personal" id="edit_correo_personal"
-                                    placeholder="ejemplo@mail.com">
+                                <input type="email" name="correo_personal" id="edit_correo_personal" placeholder="">
 
                                 <label for="edit_matricula">Matrícula</label>
                                 <input type="text" name="matricula" id="edit_matricula" placeholder="Autogenerada"
@@ -390,26 +379,24 @@ $docentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 </select>
 
                                 <label for="edit_area_especialidad">Área Especialidad</label>
-                                <input type="text" name="area_especialidad" id="edit_area_especialidad"
-                                    placeholder="Ej. Matemáticas">
+                                <input type="text" name="area_especialidad" id="edit_area_especialidad" placeholder="">
 
                                 <label for="edit_universidad_egreso">Universidad Egreso</label>
                                 <input type="text" name="universidad_egreso" id="edit_universidad_egreso"
-                                    placeholder="Ej. UNAM">
+                                    placeholder="">
 
                                 <label for="edit_cedula_profesional">Cédula Profesional</label>
                                 <input type="text" name="cedula_profesional" id="edit_cedula_profesional"
                                     placeholder="Opcional">
 
                                 <label for="edit_idiomas">Idiomas</label>
-                                <input type="text" name="idiomas" id="edit_idiomas" placeholder="Ej. Inglés, Francés">
+                                <input type="text" name="idiomas" id="edit_idiomas" placeholder="">
 
                                 <label for="edit_departamento">Departamento <span class="required">*</span></label>
-                                <input type="text" name="departamento" id="edit_departamento" placeholder="Ej. Ciencias"
-                                    required>
+                                <input type="text" name="departamento" id="edit_departamento" placeholder="" required>
 
                                 <label for="edit_puesto">Puesto <span class="required">*</span></label>
-                                <input type="text" name="puesto" id="edit_puesto" placeholder="Ej. Profesor" required>
+                                <input type="text" name="puesto" id="edit_puesto" placeholder="" required>
 
                                 <label for="edit_tipo_contrato">Tipo Contrato <span class="required">*</span></label>
                                 <select name="tipo_contrato" id="edit_tipo_contrato" required>
@@ -427,15 +414,15 @@ $docentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                                 <label for="edit_contacto_emergencia">Contacto Emergencia</label>
                                 <input type="text" name="contacto_emergencia" id="edit_contacto_emergencia"
-                                    placeholder="Ej. Juan Pérez">
+                                    placeholder="">
 
                                 <label for="edit_parentesco_emergencia">Parentesco Emergencia</label>
                                 <input type="text" name="parentesco_emergencia" id="edit_parentesco_emergencia"
-                                    placeholder="Ej. Hermano">
+                                    placeholder="">
 
                                 <label for="edit_telefono_emergencia">Teléfono Emergencia</label>
                                 <input type="text" name="telefono_emergencia" id="edit_telefono_emergencia"
-                                    placeholder="Ej. 55-1234-5678">
+                                    placeholder="">
                             </fieldset>
 
                             <div class="actions">
@@ -450,18 +437,18 @@ $docentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
                 <script>
-                window.rolUsuarioPHP = "<?= $rolUsuario; ?>";
+                    window.rolUsuarioPHP = "<?= $rolUsuario; ?>";
 
-                document.getElementById('buscarDocente').addEventListener('keyup', function() {
-                    const filtro = this.value.toLowerCase();
-                    const filas = document.querySelectorAll('#tablaDocentes tbody tr');
-                    filas.forEach(fila => {
-                        fila.style.display = fila.innerText.toLowerCase().includes(filtro) ? '' :
-                            'none';
+                    document.getElementById('buscarDocente').addEventListener('keyup', function () {
+                        const filtro = this.value.toLowerCase();
+                        const filas = document.querySelectorAll('#tablaDocentes tbody tr');
+                        filas.forEach(fila => {
+                            fila.style.display = fila.innerText.toLowerCase().includes(filtro) ? '' :
+                                'none';
+                        });
                     });
-                });
                 </script>
-                <script src="/Plataforma_UT/js/Dashboard.js"></script>
+                <script src="/Plataforma_UT/js/DashboardY.js"></script>
                 <script src="../../js/admin/Docentes2.js"></script>
 
 </body>

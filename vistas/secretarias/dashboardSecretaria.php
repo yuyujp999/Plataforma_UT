@@ -168,7 +168,7 @@ $iniciales = strtoupper(
         // Disponibilizar rol para JS
         window.rolUsuarioPHP = "<?= $rolUsuario ?>";
     </script>
-    <script src="../../js/Dashboard.js"></script>
+    <script src="../../js/DashboardY.js"></script>
 </body>
 
 </html>

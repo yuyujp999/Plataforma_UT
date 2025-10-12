@@ -1,0 +1,95 @@
+<?php
+require_once __DIR__ . '/../../conexion/conexion.php';
+
+// --- Validar tipo de exportación ---
+$tipo = strtolower($_GET['tipo'] ?? '');
+if (!in_array($tipo, ['pdf', 'excel'])) {
+    http_response_code(400);
+    exit('Tipo no válido (pdf|excel).');
+}
+
+// --- Obtener datos de asignaciones de docentes ---
+$sql = "SELECT 
+            a.id_asignacion_docente,
+            CONCAT(d.nombre, ' ', d.apellido_paterno, ' ', COALESCE(d.apellido_materno, '')) AS docente,
+            m.nombre_materia AS materia,
+            g.nombre_grado AS grado,
+            c.nombre_ciclo AS ciclo,
+            a.grupo
+        FROM asignaciones_docentes a
+        INNER JOIN docentes d ON a.id_docente = d.id_docente
+        INNER JOIN materias m ON a.id_materia = m.id_materia
+        INNER JOIN grados g ON a.id_grado = g.id_grado
+        INNER JOIN ciclos_escolares c ON a.id_ciclo = c.id_ciclo
+        ORDER BY a.id_asignacion_docente ASC";
+
+$result = $conn->query($sql);
+
+if (!$result) {
+    die("Error en la consulta: " . $conn->error);
+}
+
+$rows = [];
+while ($r = $result->fetch_assoc()) {
+    $rows[] = $r;
+}
+$conn->close();
+
+
+// ---------------------------------------------------------
+//  EXPORTAR A EXCEL (CSV simple)
+// ---------------------------------------------------------
+if ($tipo === 'excel') {
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename="Asignaciones_Docentes.csv"');
+
+    $output = fopen('php://output', 'w');
+    fputcsv($output, ['ID', 'Docente', 'Materia', 'Grado', 'Ciclo Escolar', 'Grupo']);
+    foreach ($rows as $r) {
+        fputcsv($output, [
+            $r['id_asignacion_docente'],
+            $r['docente'],
+            $r['materia'],
+            $r['grado'],
+            $r['ciclo'],
+            $r['grupo']
+        ]);
+    }
+    fclose($output);
+    exit;
+}
+
+
+// ---------------------------------------------------------
+//  EXPORTAR A PDF (sin librerías externas)
+// ---------------------------------------------------------
+if ($tipo === 'pdf') {
+    header('Content-Type: application/pdf');
+    header('Content-Disposition: attachment; filename="Asignaciones_Docentes.pdf"');
+
+    $pdf = "%PDF-1.3\n";
+    $pdf .= "1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj\n";
+    $pdf .= "2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj\n";
+    $contenido = "Lista de Asignaciones de Docentes\n\n";
+
+    foreach ($rows as $r) {
+        $contenido .= "ID: {$r['id_asignacion_docente']}  |  Docente: {$r['docente']}  |  Materia: {$r['materia']}  |  Grado: {$r['grado']}  |  Ciclo: {$r['ciclo']}  |  Grupo: {$r['grupo']}\n";
+    }
+
+    $contenido = str_replace("(", "\\(", $contenido);
+    $contenido = str_replace(")", "\\)", $contenido);
+
+    $stream = "BT /F1 10 Tf 50 750 Td ($contenido) Tj ET";
+    $len = strlen($stream);
+
+    $pdf .= "3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >> endobj\n";
+    $pdf .= "4 0 obj << /Length $len >> stream\n$stream\nendstream endobj\n";
+    $pdf .= "5 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj\n";
+    $pdf .= "xref\n0 6\n0000000000 65535 f \n";
+    $pdf .= "trailer << /Root 1 0 R /Size 6 >>\nstartxref\n";
+    $pdf .= (strlen($pdf) + 20) . "\n%%EOF";
+
+    echo $pdf;
+    exit;
+}
+?>

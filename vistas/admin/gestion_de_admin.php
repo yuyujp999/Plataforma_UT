@@ -43,9 +43,11 @@ $administradores = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="../../css/admin/admin.css" />
     <link rel="stylesheet" href="/Plataforma_UT/css/styleD.css" />
     <link rel="stylesheet" href="../../css/admin/adminModal.css" />
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="icon" href="../../img/ut_logo.png" sizes="32x32" type="image/png">
 </head>
+
 
 <body>
     <div class="container">
@@ -58,7 +60,6 @@ $administradores = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="menu-heading">Menú</div>
             </div>
         </div>
-
         <div class="header">
             <button class="hamburger" id="hamburger">
                 <i class="fas fa-bars"></i>
@@ -229,7 +230,7 @@ $administradores = $stmt->fetchAll(PDO::FETCH_ASSOC);
             });
         });
     </script>
-    <script src="/Plataforma_UT/js/Dashboard.js"></script>
+    <script src="/Plataforma_UT/js/DashboardY.js"></script>
     <script src="../../js/admin/AdminO.js"></script>
 
 </body>
