@@ -35,12 +35,12 @@ document.addEventListener("DOMContentLoaded", function () {
       {
         icon: "fas fa-chart-pie",
         text: "Dashboard",
-        path: "/docente/dashboard.php",
+        path: "/vistas/docentes/dashboardDocente.php",
       },
       {
         icon: "fas fa-box",
         text: "Virtual UTSC",
-        path: "/docente/virtual.php",
+        path: "/vistas/docentes/tareas.php",
       },
       {
         icon: "fas fa-upload",
