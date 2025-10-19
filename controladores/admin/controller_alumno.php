@@ -1,5 +1,5 @@
 <?php
-// --- Configuración de errores ---
+// --- Configuración ---
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 
@@ -8,7 +8,7 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
-require_once __DIR__ . '/../../conexion/conexion.php';
+require_once __DIR__ . '/../../conexion/conexion.php'; // Debe exponer $conn (mysqli)
 
 // --- Pre-flight para CORS ---
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-// --- Función para responder en JSON ---
+// --- Función para enviar respuesta JSON ---
 function respuestaJSON($status, $message, $extra = [])
 {
     echo json_encode(array_merge(["status" => $status, "message" => $message], $extra));
@@ -27,182 +27,267 @@ function respuestaJSON($status, $message, $extra = [])
 set_exception_handler(function ($e) {
     respuestaJSON("error", $e->getMessage());
 });
-set_error_handler(function ($severity, $message, $file, $line) {
-    respuestaJSON("error", "Error: $message en $file:$line");
+set_error_handler(function ($sev, $msg, $file, $line) {
+    respuestaJSON("error", "Error: $msg en $file:$line");
 });
+
+// --- Helpers ---
+function nullIfEmpty($v) { $v = isset($v) ? trim((string)$v) : ''; return ($v === '') ? null : $v; }
+function required($arr, $keys) {
+    foreach ($keys as $k) {
+        if (!isset($arr[$k]) || trim($arr[$k]) === '') {
+            throw new Exception("Faltan campos obligatorios: {$k}");
+        }
+    }
+}
+// Validaciones pedidas:
+function validarTelefono($v, $campo) {
+    if ($v === null) return; // opcional
+    if (!preg_match('/^\d{7,15}$/', $v)) {
+        throw new Exception("{$campo}: ingresa solo dígitos (7 a 15).");
+    }
+}
+function validarContactoNombre($v) {
+    if ($v === null) return; // opcional
+    // Solo letras (incluye acentos), espacios y . ' -
+    if (!preg_match("/^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s.'-]{2,60}$/u", $v)) {
+        throw new Exception("Contacto de emergencia: solo letras y espacios (2 a 60).");
+    }
+}
 
 $action = $_POST['action'] ?? '';
 
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    respuestaJSON("error", "Método no permitido.");
+}
+if (!$action) {
+    respuestaJSON("error", "No se recibió acción.");
+}
+
 try {
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        throw new Exception("Método no permitido.");
-    }
-
-    if (!$action) {
-        throw new Exception("No se recibió acción.");
-    }
-
-    // === Campos del alumno (coinciden con la tabla) ===
-    $fields = [
-        'nombre',
-        'apellido_paterno',
-        'apellido_materno',
-        'curp',
-        'fecha_nacimiento',
-        'sexo',
-        'telefono',
-        'direccion',
-        'correo_personal',
-        'carrera',
-        'semestre',
-        'grupo',
-        'contacto_emergencia',
-        'parentesco_emergencia',
-        'telefono_emergencia'
-    ];
-
-    // ===== CREAR ALUMNO =====
+    // ====== CREAR ======
     if ($action === 'create') {
-        $data = [];
-        foreach ($fields as $f) {
-            $data[$f] = trim($_POST[$f] ?? '');
-        }
+        // Campos esperados (id_nombre_semestre es CLAVE)
+        $payload = [
+            'nombre'                 => $_POST['nombre'] ?? '',
+            'apellido_paterno'       => $_POST['apellido_paterno'] ?? '',
+            'apellido_materno'       => $_POST['apellido_materno'] ?? '',
+            'curp'                   => $_POST['curp'] ?? '',
+            'fecha_nacimiento'       => $_POST['fecha_nacimiento'] ?? '',
+            'sexo'                   => $_POST['sexo'] ?? '',
+            'telefono'               => $_POST['telefono'] ?? '',
+            'direccion'              => $_POST['direccion'] ?? '',
+            'correo_personal'        => $_POST['correo_personal'] ?? '',
+            'id_nombre_semestre'     => $_POST['id_nombre_semestre'] ?? '',
+            'contacto_emergencia'    => $_POST['contacto_emergencia'] ?? '',
+            'parentesco_emergencia'  => $_POST['parentesco_emergencia'] ?? '',
+            'telefono_emergencia'    => $_POST['telefono_emergencia'] ?? '',
+        ];
 
-        // Validar campos obligatorios
-        foreach (['nombre', 'apellido_paterno', 'curp', 'correo_personal', 'carrera', 'semestre'] as $ob) {
-            if ($data[$ob] === '')
-                throw new Exception("Faltan campos obligatorios: $ob");
-        }
+        // Requeridos
+        required($payload, ['nombre', 'apellido_paterno', 'curp', 'fecha_nacimiento', 'sexo', 'id_nombre_semestre']);
+
+        // Normalizar opcionales a null si vienen vacíos
+        $apellido_materno      = nullIfEmpty($payload['apellido_materno']);
+        $telefono              = nullIfEmpty($payload['telefono']);
+        $direccion             = nullIfEmpty($payload['direccion']);
+        $correo_personal       = nullIfEmpty($payload['correo_personal']);
+        $id_nombre_semestre    = (int)$payload['id_nombre_semestre']; // value del <select>
+        $contacto_emergencia   = nullIfEmpty($payload['contacto_emergencia']);
+        $parentesco_emergencia = nullIfEmpty($payload['parentesco_emergencia']);
+        $telefono_emergencia   = nullIfEmpty($payload['telefono_emergencia']);
+
+        // --- Validaciones solicitadas ---
+        validarTelefono($telefono, 'Teléfono');
+        validarTelefono($telefono_emergencia, 'Teléfono de emergencia');
+        validarContactoNombre($contacto_emergencia);
 
         // Generar matrícula y contraseña
-        $matricula = 'AL' . str_pad(rand(0, 99999), 5, '0', STR_PAD_LEFT);
-        $password = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 8);
+        $matricula = 'AL' . str_pad((string)random_int(0, 99999), 5, '0', STR_PAD_LEFT);
+        $password_plain = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 10);
+        $password_hash  = password_hash($password_plain, PASSWORD_DEFAULT);
 
-        // Insertar en base de datos
-        $stmt = $conn->prepare("
-            INSERT INTO alumnos (
-                matricula, nombre, apellido_paterno, apellido_materno, curp,
-                fecha_nacimiento, sexo, telefono, direccion, correo_personal,
-                carrera, semestre, grupo,
-                contacto_emergencia, parentesco_emergencia, telefono_emergencia,
-                password
-            ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-        ");
+        // Insert
+        $sql = "INSERT INTO alumnos (
+                    nombre, apellido_paterno, apellido_materno, curp,
+                    fecha_nacimiento, sexo, telefono, direccion, correo_personal,
+                    matricula, password, id_nombre_semestre,
+                    contacto_emergencia, parentesco_emergencia, telefono_emergencia
+                ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) throw new Exception("Error de preparación: " . $conn->error);
 
         $stmt->bind_param(
-            "sssssssssssssssss",
+            "sssssssssssssss",
+            $payload['nombre'],
+            $payload['apellido_paterno'],
+            $apellido_materno,
+            $payload['curp'],
+            $payload['fecha_nacimiento'],
+            $payload['sexo'],
+            $telefono,
+            $direccion,
+            $correo_personal,
             $matricula,
-            $data['nombre'],
-            $data['apellido_paterno'],
-            $data['apellido_materno'],
-            $data['curp'],
-            $data['fecha_nacimiento'],
-            $data['sexo'],
-            $data['telefono'],
-            $data['direccion'],
-            $data['correo_personal'],
-            $data['carrera'],
-            $data['semestre'],
-            $data['grupo'],
-            $data['contacto_emergencia'],
-            $data['parentesco_emergencia'],
-            $data['telefono_emergencia'],
-            $password
+            $password_hash,
+            $id_nombre_semestre,
+            $contacto_emergencia,
+            $parentesco_emergencia,
+            $telefono_emergencia
         );
 
-        if (!$stmt->execute())
-            throw new Exception("Error al insertar alumno: " . $stmt->error);
+        if (!$stmt->execute()) {
+            throw new Exception("Error al agregar alumno: " . $stmt->error);
+        }
+        $nuevoId = $stmt->insert_id;
         $stmt->close();
 
+        // Devolver también el nombre legible del semestre
+        $rs = $conn->query("SELECT nombre FROM cat_nombres_semestre WHERE id_nombre_semestre = {$id_nombre_semestre} LIMIT 1");
+        $nombre_semestre = $rs && $rs->num_rows ? ($rs->fetch_assoc()['nombre'] ?? '') : '';
+
         respuestaJSON("success", "Alumno agregado correctamente.", [
-            "matricula" => $matricula,
-            "password" => $password
+            "id_alumno"       => $nuevoId,
+            "matricula"       => $matricula,
+            "password"        => $password_plain,
+            "nombre_semestre" => $nombre_semestre
         ]);
     }
 
-    // ===== EDITAR ALUMNO =====
+    // ====== EDITAR ======
     if ($action === 'edit') {
-        $id_alumno = intval($_POST['id_alumno'] ?? 0);
-        if ($id_alumno <= 0)
-            throw new Exception("ID de alumno inválido.");
+        $id_alumno = (int)($_POST['id_alumno'] ?? 0);
+        if ($id_alumno <= 0) throw new Exception("ID de alumno inválido.");
+
+        // Campos actualizables
+        $permitidos = [
+            'nombre','apellido_paterno','apellido_materno','curp',
+            'fecha_nacimiento','sexo','telefono','direccion','correo_personal',
+            'id_nombre_semestre','contacto_emergencia','parentesco_emergencia','telefono_emergencia'
+        ];
 
         $updates = [];
-        $params = [];
-        $types = '';
+        $types   = '';
+        $params  = [];
 
-        foreach ($fields as $f) {
-            if (isset($_POST[$f])) {
-                $updates[] = "$f=?";
-                $params[] = $_POST[$f];
-                $types .= 's';
+        // Antes de bind, validamos si vienen presentes:
+        if (array_key_exists('telefono', $_POST)) {
+            $tel = nullIfEmpty($_POST['telefono']);
+            validarTelefono($tel, 'Teléfono');
+        }
+        if (array_key_exists('telefono_emergencia', $_POST)) {
+            $telE = nullIfEmpty($_POST['telefono_emergencia']);
+            validarTelefono($telE, 'Teléfono de emergencia');
+        }
+        if (array_key_exists('contacto_emergencia', $_POST)) {
+            $cont = nullIfEmpty($_POST['contacto_emergencia']);
+            validarContactoNombre($cont);
+        }
+
+        foreach ($permitidos as $f) {
+            if (array_key_exists($f, $_POST)) {
+                if (in_array($f, ['telefono','contacto_emergencia','telefono_emergencia','apellido_materno','direccion','correo_personal'])) {
+                    $val = nullIfEmpty($_POST[$f]);
+                    $types .= 's';
+                    $params[] = $val;
+                } elseif ($f === 'id_nombre_semestre') {
+                    $types .= 'i';
+                    $params[] = (int)$_POST[$f];
+                } else {
+                    $types .= 's';
+                    $params[] = $_POST[$f];
+                }
+                $updates[] = "{$f} = ?";
             }
         }
 
-        if (empty($updates))
+        if (empty($updates)) {
             throw new Exception("No hay campos para actualizar.");
+        }
 
+        $sql = "UPDATE alumnos SET " . implode(', ', $updates) . " WHERE id_alumno = ?";
         $types .= 'i';
         $params[] = $id_alumno;
 
-        $stmt = $conn->prepare("UPDATE alumnos SET " . implode(',', $updates) . " WHERE id_alumno=?");
-        $stmt->bind_param($types, ...$params);
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) throw new Exception("Error de preparación: " . $conn->error);
 
-        if (!$stmt->execute())
+        $stmt->bind_param($types, ...$params);
+        if (!$stmt->execute()) {
             throw new Exception("Error al actualizar alumno: " . $stmt->error);
+        }
         $stmt->close();
 
-        // Obtener matrícula y contraseña actualizadas
-        $stmt2 = $conn->prepare("SELECT matricula, password FROM alumnos WHERE id_alumno=?");
-        $stmt2->bind_param("i", $id_alumno);
-        $stmt2->execute();
-        $result = $stmt2->get_result()->fetch_assoc();
-        $stmt2->close();
-
-        respuestaJSON("success", "Alumno actualizado correctamente.", [
-            "matricula" => $result['matricula'] ?? '',
-            "password" => $result['password'] ?? ''
-        ]);
+        respuestaJSON("success", "Alumno actualizado correctamente.");
     }
 
-    // ===== ELIMINAR ALUMNO =====
+    // ====== ELIMINAR ======
     if ($action === 'delete') {
-        $id_alumno = intval($_POST['id_alumno'] ?? 0);
-        if ($id_alumno <= 0)
-            throw new Exception("ID de alumno inválido.");
+        $id_alumno = (int)($_POST['id_alumno'] ?? 0);
+        if ($id_alumno <= 0) throw new Exception("ID de alumno inválido.");
 
-        $stmt = $conn->prepare("DELETE FROM alumnos WHERE id_alumno=?");
+        $stmt = $conn->prepare("DELETE FROM alumnos WHERE id_alumno = ?");
+        if (!$stmt) throw new Exception("Error de preparación: " . $conn->error);
+
         $stmt->bind_param('i', $id_alumno);
-
-        if (!$stmt->execute())
+        if (!$stmt->execute()) {
             throw new Exception("Error al eliminar alumno: " . $stmt->error);
+        }
         $stmt->close();
 
         respuestaJSON("success", "Alumno eliminado correctamente.");
     }
 
-    // ===== OBTENER DATOS DE UN ALUMNO =====
+    // ====== OBTENER (1) ======
     if ($action === 'get') {
-        $id_alumno = intval($_POST['id_alumno'] ?? 0);
-        if ($id_alumno <= 0)
-            throw new Exception("ID de alumno inválido.");
+        $id_alumno = (int)($_POST['id_alumno'] ?? 0);
+        if ($id_alumno <= 0) throw new Exception("ID de alumno inválido.");
 
-        $stmt = $conn->prepare("SELECT * FROM alumnos WHERE id_alumno=?");
+        $sql = "SELECT a.*,
+                       ns.nombre AS nombre_semestre
+                FROM alumnos a
+                LEFT JOIN cat_nombres_semestre ns
+                  ON ns.id_nombre_semestre = a.id_nombre_semestre
+                WHERE a.id_alumno = ?
+                LIMIT 1";
+
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) throw new Exception("Error de preparación: " . $conn->error);
+
         $stmt->bind_param("i", $id_alumno);
         $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
+        $res = $stmt->get_result()->fetch_assoc();
         $stmt->close();
 
-        if (!$result)
-            throw new Exception("Alumno no encontrado.");
+        if (!$res) throw new Exception("Alumno no encontrado.");
 
-        respuestaJSON("success", "Alumno encontrado", $result);
+        respuestaJSON("success", "Alumno encontrado.", ["alumno" => $res]);
     }
 
-    // Si la acción no coincide
+    // ====== LISTAR (opcional para tabla) ======
+    if ($action === 'list') {
+        $sql = "SELECT a.*,
+                       ns.nombre AS nombre_semestre
+                FROM alumnos a
+                LEFT JOIN cat_nombres_semestre ns
+                  ON ns.id_nombre_semestre = a.id_nombre_semestre
+                ORDER BY a.id_alumno DESC";
+
+        $rs = $conn->query($sql);
+        if (!$rs) throw new Exception("Error al listar: " . $conn->error);
+
+        $data = [];
+        while ($row = $rs->fetch_assoc()) { $data[] = $row; }
+
+        respuestaJSON("success", "OK", ["rows" => $data]);
+    }
+
+    // Si ninguna coincide
     throw new Exception("Acción no válida.");
+
 } catch (Exception $e) {
     respuestaJSON("error", $e->getMessage());
+} finally {
+    if (isset($conn) && $conn instanceof mysqli) { $conn->close(); }
 }
-
-$conn->close();
-?>

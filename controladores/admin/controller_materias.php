@@ -22,17 +22,14 @@ $accion = $_POST['accion'] ?? '';
 switch ($accion) {
     case 'agregar':
         $nombre = $_POST['nombre_materia'] ?? '';
-        $clave = $_POST['clave'] ?? null;
-        $horas = $_POST['horas_semana'] ?? 4;
-        $id_grado = $_POST['id_grado'] ?? null;
 
-        if (!$nombre || !$id_grado) {
+        if (!$nombre) {
             echo json_encode(['status' => 'error', 'message' => 'Faltan datos obligatorios']);
             exit;
         }
 
-        $stmt = $pdo->prepare("INSERT INTO materias (nombre_materia, clave, horas_semana, id_grado) VALUES (?, ?, ?, ?)");
-        if ($stmt->execute([$nombre, $clave, $horas, $id_grado])) {
+        $stmt = $pdo->prepare("INSERT INTO materias (nombre_materia) VALUES (?)");
+        if ($stmt->execute([$nombre])) {
             echo json_encode(['status' => 'success']);
         } else {
             echo json_encode(['status' => 'error', 'message' => 'No se pudo agregar la materia']);
@@ -42,17 +39,14 @@ switch ($accion) {
     case 'editar':
         $id = $_POST['id_materia'] ?? null;
         $nombre = $_POST['nombre_materia'] ?? '';
-        $clave = $_POST['clave'] ?? null;
-        $horas = $_POST['horas_semana'] ?? 4;
-        $id_grado = $_POST['id_grado'] ?? null;
 
-        if (!$id || !$nombre || !$id_grado) {
+        if (!$id || !$nombre) {
             echo json_encode(['status' => 'error', 'message' => 'Faltan datos obligatorios']);
             exit;
         }
 
-        $stmt = $pdo->prepare("UPDATE materias SET nombre_materia = ?, clave = ?, horas_semana = ?, id_grado = ? WHERE id_materia = ?");
-        if ($stmt->execute([$nombre, $clave, $horas, $id_grado, $id])) {
+        $stmt = $pdo->prepare("UPDATE materias SET nombre_materia = ? WHERE id_materia = ?");
+        if ($stmt->execute([$nombre, $id])) {
             echo json_encode(['status' => 'success']);
         } else {
             echo json_encode(['status' => 'error', 'message' => 'No se pudo actualizar la materia']);

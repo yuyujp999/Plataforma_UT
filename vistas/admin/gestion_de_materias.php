@@ -25,15 +25,9 @@ try {
     die("Error de conexión: " . $e->getMessage());
 }
 
-// Obtener materias
-$stmt = $pdo->query("SELECT m.id_materia, m.nombre_materia, m.clave, m.horas_semana, m.id_grado, g.nombre_grado 
-                     FROM materias m 
-                     LEFT JOIN grados g ON m.id_grado = g.id_grado");
+// Obtener materias (solo id y nombre)
+$stmt = $pdo->query("SELECT id_materia, nombre_materia FROM materias");
 $materias = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Obtener grados para el select
-$stmtGrados = $pdo->query("SELECT id_grado, nombre_grado FROM grados");
-$grados = $stmtGrados->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -55,6 +49,18 @@ $grados = $stmtGrados->fetchAll(PDO::FETCH_ASSOC);
     <link rel="icon" href="../../img/ut_logo.png" sizes="32x32" type="image/png">
 </head>
 
+<style>
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 280px;
+        overflow-y: auto;
+        z-index: 1000;
+    }
+</style>
+
 <body>
     <div class="container">
         <div class="sidebar" id="sidebar">
@@ -71,7 +77,7 @@ $grados = $stmtGrados->fetchAll(PDO::FETCH_ASSOC);
             <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
             <div class="search-bar">
                 <i class="fas fa-search"></i>
-                <input type="text" id="buscarMateria" placeholder="Buscar..." />
+                <input type="text" id="buscarMateria" placeholder="Buscar Materias..." />
             </div>
             <div class="header-actions">
                 <div class="notification"><i class="fas fa-bell"></i>
@@ -95,8 +101,8 @@ $grados = $stmtGrados->fetchAll(PDO::FETCH_ASSOC);
             <div class="page-title">
                 <div class="title">Gestión de Materias</div>
                 <div class="action-buttons">
-                    <button class="btn btn-outline" id="btnExportar"><i class="fas fa-download"></i> Exportar</button>
-                    <button class="btn btn-outline btn-sm" id="btnNuevo"><i class="fas fa-plus"></i> Nueva</button>
+                    <button class="btn btn-outline btn-sm" id="btnNuevo"><i class="fas fa-plus"></i> Nueva
+                        Materia</button>
                 </div>
             </div>
 
@@ -111,9 +117,6 @@ $grados = $stmtGrados->fetchAll(PDO::FETCH_ASSOC);
                             <tr>
                                 <th>ID</th>
                                 <th>Nombre</th>
-                                <th>Clave</th>
-                                <th>Horas/Semana</th>
-                                <th>Grado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -121,15 +124,9 @@ $grados = $stmtGrados->fetchAll(PDO::FETCH_ASSOC);
                             <?php if (!empty($materias)): ?>
                                 <?php foreach ($materias as $row): ?>
                                     <tr data-id="<?= htmlspecialchars($row['id_materia']) ?>"
-                                        data-nombre="<?= htmlspecialchars($row['nombre_materia']) ?>"
-                                        data-clave="<?= htmlspecialchars($row['clave']) ?>"
-                                        data-horas="<?= htmlspecialchars($row['horas_semana']) ?>"
-                                        data-grado="<?= htmlspecialchars($row['id_grado']) ?>">
+                                        data-nombre="<?= htmlspecialchars($row['nombre_materia']) ?>">
                                         <td><?= htmlspecialchars($row['id_materia']) ?></td>
                                         <td><?= htmlspecialchars($row['nombre_materia']) ?></td>
-                                        <td><?= htmlspecialchars($row['clave']) ?></td>
-                                        <td><?= htmlspecialchars($row['horas_semana']) ?></td>
-                                        <td><?= htmlspecialchars($row['nombre_grado']) ?></td>
                                         <td>
                                             <button class="btn btn-outline btn-sm btn-editar"><i class="fas fa-edit"></i>
                                                 Editar</button>
@@ -140,12 +137,13 @@ $grados = $stmtGrados->fetchAll(PDO::FETCH_ASSOC);
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="6">No hay materias registradas.</td>
+                                    <td colspan="3">No hay materias registradas.</td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
+                <div class="pagination-container" id="paginationMaterias"></div>
             </div>
         </div>
     </div>
@@ -159,20 +157,6 @@ $grados = $stmtGrados->fetchAll(PDO::FETCH_ASSOC);
                 <fieldset>
                     <label for="nombre_materia">Nombre de la Materia</label>
                     <input type="text" name="nombre_materia" id="nombre_materia" required>
-
-                    <label for="clave">Clave</label>
-                    <input type="text" name="clave" id="clave">
-
-                    <label for="horas_semana">Horas/Semana</label>
-                    <input type="number" name="horas_semana" id="horas_semana" min="1" value="4">
-
-                    <label for="id_grado">Grado</label>
-                    <select name="id_grado" id="id_grado" required>
-                        <option value="">Selecciona un grado</option>
-                        <?php foreach ($grados as $g): ?>
-                            <option value="<?= $g['id_grado'] ?>"><?= $g['nombre_grado'] ?></option>
-                        <?php endforeach; ?>
-                    </select>
                 </fieldset>
                 <div class="actions">
                     <button type="button" class="btn-cancel" id="cancelModal">Cancelar</button>
@@ -191,20 +175,6 @@ $grados = $stmtGrados->fetchAll(PDO::FETCH_ASSOC);
                 <fieldset>
                     <label for="editNombreMateria">Nombre de la Materia</label>
                     <input type="text" name="nombre_materia" id="editNombreMateria" required>
-
-                    <label for="editClave">Clave</label>
-                    <input type="text" name="clave" id="editClave">
-
-                    <label for="editHorasSemana">Horas/Semana</label>
-                    <input type="number" name="horas_semana" id="editHorasSemana" min="1" required>
-
-                    <label for="editIdGrado">Grado</label>
-                    <select name="id_grado" id="editIdGrado" required>
-                        <option value="">Selecciona un grado</option>
-                        <?php foreach ($grados as $g): ?>
-                            <option value="<?= $g['id_grado'] ?>"><?= $g['nombre_grado'] ?></option>
-                        <?php endforeach; ?>
-                    </select>
                 </fieldset>
                 <div class="actions">
                     <button type="button" class="btn-cancel" id="cancelModalEditar">Cancelar</button>
@@ -224,10 +194,103 @@ $grados = $stmtGrados->fetchAll(PDO::FETCH_ASSOC);
                 fila.style.display = fila.innerText.toLowerCase().includes(filtro) ? '' : 'none';
             });
         });
+        document.addEventListener("DOMContentLoaded", () => {
+            const table = document.getElementById("tablaMaterias");
+            if (!table) return;
+
+            const tbody = table.querySelector("tbody");
+            const pagination = document.getElementById("paginationMaterias");
+            const searchInput = document.getElementById("buscarMateria");
+
+            const ROWS_PER_PAGE = 5; // Número de filas por página
+            let currentPage = 1;
+            const allRows = Array.from(tbody.querySelectorAll("tr"));
+
+            // ===== Helpers =====
+            const getFilteredRows = () => {
+                const q = (searchInput?.value || "").trim().toLowerCase();
+                if (!q) return allRows;
+                return allRows.filter(tr => tr.innerText.toLowerCase().includes(q));
+            };
+
+            const paginate = (rows, page, perPage) => {
+                const total = rows.length;
+                const totalPages = Math.max(1, Math.ceil(total / perPage));
+                if (page > totalPages) page = totalPages;
+                if (page < 1) page = 1;
+
+                // Ocultar todas las filas
+                allRows.forEach(tr => {
+                    tr.style.display = "none";
+                });
+
+                // Mostrar solo las filas visibles de la página actual
+                const start = (page - 1) * perPage;
+                const end = start + perPage;
+                rows.slice(start, end).forEach(tr => {
+                    tr.style.display = "";
+                });
+
+                renderPagination(totalPages, page);
+                currentPage = page;
+            };
+
+            const renderPagination = (totalPages, page) => {
+                if (!pagination) return;
+                pagination.innerHTML = "";
+
+                const mkBtn = (num, label = null, disabled = false, active = false) => {
+                    const b = document.createElement("button");
+                    b.className = "pagination-btn";
+                    b.textContent = label ?? num;
+                    if (active) b.classList.add("active");
+                    b.disabled = disabled;
+                    b.addEventListener("click", () => goToPage(num));
+                    return b;
+                };
+
+                // Botón « (anterior)
+                pagination.appendChild(mkBtn(page - 1, "«", page === 1));
+
+                // Números con puntos suspensivos
+                const windowSize = 1;
+                const addDots = () => {
+                    const s = document.createElement("span");
+                    s.textContent = "…";
+                    s.style.padding = "6px";
+                    s.style.color = "#999";
+                    pagination.appendChild(s);
+                };
+
+                for (let i = 1; i <= totalPages; i++) {
+                    if (i === 1 || i === totalPages || Math.abs(i - page) <= windowSize) {
+                        pagination.appendChild(mkBtn(i, null, false, i === page));
+                    } else if (
+                        (i === 2 && page > windowSize + 2) ||
+                        (i === totalPages - 1 && page < totalPages - windowSize - 1)
+                    ) {
+                        addDots();
+                    }
+                }
+
+                // Botón » (siguiente)
+                pagination.appendChild(mkBtn(page + 1, "»", page === totalPages));
+            };
+
+            const goToPage = (p) => paginate(getFilteredRows(), p, ROWS_PER_PAGE);
+
+            // ===== Buscador =====
+            searchInput?.addEventListener("keyup", () => {
+                paginate(getFilteredRows(), 1, ROWS_PER_PAGE);
+            });
+
+            // ===== Inicializar =====
+            paginate(getFilteredRows(), 1, ROWS_PER_PAGE);
+        });
     </script>
 
-    <script src="/Plataforma_UT/js/DashboardY.js"></script>
-    <script src="../../js/admin/Materia.js"></script>
+    <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
+    <script src="../../js/admin/Materias8.js"></script>
 </body>
 
 </html>

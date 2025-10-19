@@ -31,61 +31,61 @@ function indicadorCambio($total)
         ? ['clase' => 'positive', 'icon' => 'fa-arrow-up', 'texto' => 'Muchos']
         : ['clase' => 'negative', 'icon' => 'fa-arrow-down', 'texto' => 'Pocos'];
 }
-
 $indAdmins = indicadorCambio($totalAdmins);
 $indSecretarias = indicadorCambio($totalSecretarias);
 $indAlumnos = indicadorCambio($totalAlumnos);
 $indDocentes = indicadorCambio($totalDocentes);
 
-// Datos de usuario de sesión
+// Datos de usuario
 $usuarioSesion = $_SESSION['usuario'] ?? [];
 $nombreCompleto = trim(($usuarioSesion['nombre'] ?? '') . ' ' . ($usuarioSesion['apellido_paterno'] ?? ''));
 $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($usuarioSesion['apellido_paterno'] ?? '', 0, 1));
 
-// --- Datos de calificaciones para la gráfica: Top 10 alumnos ---
+/* ============================
+   NUEVO: Alumnos por carrera
+   ============================ */
 try {
-    $stmt = $pdo->query("
-        SELECT AVG(calificacion_final) AS promedio
-        FROM calificaciones
-        GROUP BY id_alumno
-        ORDER BY promedio DESC
-        LIMIT 10
-    ");
-    $topPromedios = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    // ¿La tabla alumnos tiene id_carrera directo?
+    $hasIdCarrera = (bool) $pdo->query("
+        SELECT 1
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME='alumnos'
+          AND COLUMN_NAME='id_carrera'
+        LIMIT 1
+    ")->fetchColumn();
 
-    $nombresAlumnos = [];
-    foreach ($topPromedios as $index => $promedio) {
-        $nombresAlumnos[] = 'Top ' . ($index + 1);
+    if ($hasIdCarrera) {
+        $sql = "
+            SELECT c.nombre_carrera AS carrera, COUNT(a.id_alumno) AS total
+            FROM carreras c
+            LEFT JOIN alumnos a ON a.id_carrera = c.id_carrera
+            GROUP BY c.id_carrera, c.nombre_carrera
+            ORDER BY total DESC, c.nombre_carrera ASC
+            LIMIT 10
+        ";
+        $rows = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    } else {
+        // Fallback por semestres
+        $sql = "
+            SELECT c.nombre_carrera AS carrera, COUNT(a.id_alumno) AS total
+            FROM carreras c
+            LEFT JOIN semestres s  ON s.id_carrera = c.id_carrera
+            LEFT JOIN alumnos   a  ON a.id_nombre_semestre = s.id_nombre_semestre
+            GROUP BY c.id_carrera, c.nombre_carrera
+            ORDER BY total DESC, c.nombre_carrera ASC
+            LIMIT 10
+        ";
+        $rows = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    $promedios = array_map('floatval', $topPromedios);
-
-    // Promedio general
-    $promedioGeneral = $pdo->query("SELECT AVG(calificacion_final) FROM calificaciones")->fetchColumn();
+    $nombresCarreras = array_column($rows, 'carrera');
+    $totalesPorCarrera = array_map('intval', array_column($rows, 'total'));
 } catch (PDOException $e) {
-    $nombresAlumnos = [];
-    $promedios = [];
-    $promedioGeneral = 0;
-}
-
-// --- Datos de materias con más horas ---
-try {
-    $stmtMaterias = $pdo->query("
-        SELECT nombre_materia, horas_semana
-        FROM materias
-        ORDER BY horas_semana DESC
-        LIMIT 10
-    ");
-    $materiasData = $stmtMaterias->fetchAll(PDO::FETCH_ASSOC);
-
-    $nombresMaterias = array_column($materiasData, 'nombre_materia');
-    $horasPorMateria = array_map('intval', array_column($materiasData, 'horas_semana'));
-} catch (PDOException $e) {
-    $nombresMaterias = [];
-    $horasPorMateria = [];
+    $nombresCarreras = [];
+    $totalesPorCarrera = [];
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -102,23 +102,14 @@ try {
     <link rel="stylesheet" href="../../css/admin/adminModal.css" />
     <link rel="icon" href="../../img/ut_logo.png" sizes="32x32" type="image/png">
     <style>
-        .grafica-container {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .grafica-calificaciones,
-        .grafica-materias {
-            flex: 1;
-            max-width: 48%;
-        }
-
-        canvas {
-            width: 100% !important;
-            height: 250px !important;
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 280px;
+            overflow-y: auto;
+            z-index: 1000;
         }
     </style>
 </head>
@@ -136,12 +127,10 @@ try {
         </div>
 
         <div class="header">
-            <button class="hamburger" id="hamburger">
-                <i class="fas fa-bars"></i>
-            </button>
+            <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
             <div class="search-bar">
                 <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search..." />
+                <input type="text" placeholder="Buscar..." />
             </div>
             <div class="header-actions">
                 <div class="notification"><i class="fas fa-bell"></i>
@@ -163,17 +152,13 @@ try {
 
         <div class="main-content">
             <div class="page-title">
-                <div class="title">Dashboard Administrador</div>
+                <div class="title">Dashboard Para Administradores</div>
                 <div class="action-buttons">
-                    <button class="btn btn-outline">
-                        <i class="fas fa-download"></i>
-                        Exportar Dashboard
-                    </button>
+
                 </div>
             </div>
 
             <div class="stats-cards">
-                <!-- Tarjetas de estadísticas (igual que antes) -->
                 <div class="stat-card">
                     <div class="card-header">
                         <div>
@@ -228,115 +213,13 @@ try {
                 </div>
             </div>
 
-            <div class="grafica-container">
-                <!-- Gráfica de calificaciones -->
-                <div class="grafica-calificaciones">
-                    <h2>Top 10 Promedios de Calificaciones</h2>
-                    <canvas id="calificacionesChart"></canvas>
-                </div>
-
-                <!-- Gráfica de materias con más horas -->
-                <div class="grafica-materias">
-                    <h2>Materias con Más Horas/Semana</h2>
-                    <canvas id="materiasChart"></canvas>
-                </div>
-            </div>
-
-            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-            <script>
-                // --- Gráfica de calificaciones ---
-                const nombresAlumnos = <?php echo json_encode($nombresAlumnos); ?>;
-                const promedios = <?php echo json_encode($promedios); ?>;
-
-                const coloresBarras = promedios.map(promedio => {
-                    if (promedio >= 10) return 'rgba(0, 200, 0, 0.6)';
-                    if (promedio >= 7) return 'rgba(255, 165, 0, 0.6)';
-                    return 'rgba(255, 0, 0, 0.6)';
-                });
-
-                const borderColores = promedios.map(promedio => {
-                    if (promedio >= 10) return 'rgba(0, 200, 0, 1)';
-                    if (promedio >= 7) return 'rgba(255, 165, 0, 1)';
-                    return 'rgba(255, 0, 0, 1)';
-                });
-
-                const ctxCalificaciones = document.getElementById('calificacionesChart').getContext('2d');
-                new Chart(ctxCalificaciones, {
-                    type: 'bar',
-                    data: {
-                        labels: nombresAlumnos,
-                        datasets: [{
-                            label: 'Promedio de Calificaciones',
-                            data: promedios,
-                            backgroundColor: coloresBarras,
-                            borderColor: borderColores,
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                max: 10
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        }
-                    }
-                });
-
-                // --- Gráfica de materias con más horas ---
-                const nombresMaterias = <?php echo json_encode($nombresMaterias); ?>;
-                const horasPorMateria = <?php echo json_encode($horasPorMateria); ?>;
-
-                const coloresMaterias = horasPorMateria.map(h => {
-                    if (h >= 8) return 'rgba(0, 200, 0, 0.6)';
-                    if (h >= 4) return 'rgba(255, 165, 0, 0.6)';
-                    return 'rgba(255, 0, 0, 0.6)';
-                });
-
-                const borderColoresMaterias = horasPorMateria.map(h => {
-                    if (h >= 8) return 'rgba(0, 200, 0, 1)';
-                    if (h >= 4) return 'rgba(255, 165, 0, 1)';
-                    return 'rgba(255, 0, 0, 1)';
-                });
-
-                const ctxMaterias = document.getElementById('materiasChart').getContext('2d');
-                new Chart(ctxMaterias, {
-                    type: 'bar',
-                    data: {
-                        labels: nombresMaterias,
-                        datasets: [{
-                            label: 'Horas/Semana',
-                            data: horasPorMateria,
-                            backgroundColor: coloresMaterias,
-                            borderColor: borderColoresMaterias,
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        indexAxis: 'y',
-                        scales: {
-                            x: {
-                                beginAtZero: true
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        }
-                    }
-                });
-            </script>
 
             <script>
-                window.rolUsuarioPHP = "<?php echo $rolUsuario; ?>";
+                window.rolUsuarioPHP = "<?= $rolUsuario; ?>";
             </script>
-            <script src="/Plataforma_UT/js/DashboardY.js"></script>
+            <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
+        </div>
+    </div>
 </body>
 
 </html>

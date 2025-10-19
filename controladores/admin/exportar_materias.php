@@ -1,21 +1,12 @@
 <?php
-require_once __DIR__ . '/../../conexion/conexion.php'; // Asegúrate de que $conn exista
+require_once __DIR__ . '/../../conexion/conexion.php';
+require_once __DIR__ . '/../../fpdf/fpdf.php';
 
-// --- Validar tipo ---
-$tipo = strtolower($_GET['tipo'] ?? '');
-if (!in_array($tipo, ['pdf', 'excel'])) {
-    http_response_code(400);
-    exit('Tipo no válido (pdf|excel).');
-}
-
-// --- Obtener datos ---
-$sql = "SELECT m.id_materia, m.nombre_materia, m.clave, m.horas_semana, g.nombre_grado 
-        FROM materias m
-        LEFT JOIN grados g ON m.id_grado = g.id_grado";
+// --- Obtener datos de materias ---
+$sql = "SELECT id_materia, nombre_materia FROM materias";
 $result = $conn->query($sql);
-if (!$result) {
-    die("Error al consultar: " . $conn->error);
-}
+if (!$result)
+    die("Error en la consulta: " . $conn->error);
 
 $rows = [];
 while ($r = $result->fetch_assoc()) {
@@ -23,57 +14,41 @@ while ($r = $result->fetch_assoc()) {
 }
 $conn->close();
 
-// ---------------------------------------------------------
-//  EXCEL: generamos un CSV
-// ---------------------------------------------------------
-if ($tipo === 'excel') {
-    header('Content-Type: text/csv; charset=utf-8');
-    header('Content-Disposition: attachment; filename="Materias.csv"');
+// --- EXPORTAR A PDF ---
+$pdf = new FPDF();
+$pdf->AddPage();
 
-    $output = fopen('php://output', 'w');
-    // Encabezados
-    fputcsv($output, ['ID', 'Nombre Materia', 'Clave', 'Horas/Semana', 'Grado']);
-    // Datos
-    foreach ($rows as $r) {
-        fputcsv($output, [
-            $r['id_materia'],
-            $r['nombre_materia'],
-            $r['clave'],
-            $r['horas_semana'],
-            $r['nombre_grado'] ?? ''
-        ]);
-    }
-    fclose($output);
-    exit;
+// --- Fuente y título ---
+$pdf->SetFont('Arial', 'B', 14);
+$pdf->SetTextColor(0, 100, 0); // verde oscuro para título
+$pdf->Cell(0, 10, 'Lista de Materias', 0, 1, 'C');
+$pdf->Ln(3);
+
+// --- Encabezados de tabla ---
+$pdf->SetFont('Arial', 'B', 12);
+$pdf->SetFillColor(200, 255, 200); // verde clarito
+$pdf->SetTextColor(0, 60, 0);
+$pdf->SetDrawColor(0, 100, 0);
+$headers = ['ID', 'Nombre Materia'];
+$widths = [20, 100]; // ajusta ancho según tu diseño
+foreach ($headers as $i => $h) {
+    $pdf->Cell($widths[$i], 8, $h, 1, 0, 'C', true);
+}
+$pdf->Ln();
+
+// --- Filas de datos ---
+$pdf->SetFont('Arial', '', 12);
+$fill = false;
+foreach ($rows as $r) {
+    $pdf->SetFillColor($fill ? 230 : 255, 255, 230);
+
+    $pdf->Cell($widths[0], 8, $r['id_materia'], 1, 0, 'C', $fill);
+    $pdf->Cell($widths[1], 8, $r['nombre_materia'], 1, 0, 'L', $fill);
+    $pdf->Ln();
+
+    $fill = !$fill;
 }
 
-// ---------------------------------------------------------
-//  PDF: HTML simple (para navegadores modernos)
-// ---------------------------------------------------------
-if ($tipo === 'pdf') {
-    header('Content-Type: application/pdf');
-    header('Content-Disposition: attachment; filename="Materias.pdf"');
-
-    $html = "<h2 style='text-align:center;'>Lista de Materias</h2>";
-    $html .= "<table border='1' cellspacing='0' cellpadding='5' style='width:100%; font-family:Arial; font-size:12px;'>";
-    $html .= "<tr>
-                <th>ID</th>
-                <th>Nombre Materia</th>
-                <th>Clave</th>
-                <th>Horas/Semana</th>
-                <th>Grado</th>
-              </tr>";
-    foreach ($rows as $r) {
-        $html .= "<tr>
-                    <td>{$r['id_materia']}</td>
-                    <td>{$r['nombre_materia']}</td>
-                    <td>{$r['clave']}</td>
-                    <td>{$r['horas_semana']}</td>
-                    <td>" . ($r['nombre_grado'] ?? '') . "</td>
-                  </tr>";
-    }
-    $html .= "</table>";
-
-    echo $html;
-    exit;
-}
+// --- Descargar PDF ---
+$pdf->Output('D', 'Materias.pdf');
+exit;

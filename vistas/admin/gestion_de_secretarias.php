@@ -49,13 +49,26 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet" />
+    <link rel="stylesheet" href="../../css/styleD.css" />
+    <link rel="stylesheet" href="../../css/admin/admin.css" />
+    <link rel="stylesheet" href="../../css/admin/adminModal.css" />
     <link rel="stylesheet" href="../../css/admin/secretarias.css" />
-    <link rel="stylesheet" href="../../css/admin/secretariasModales1.css" />
-    <link rel="stylesheet" href="/Plataforma_UT/css/styleD.css" />
 
+    <link rel="stylesheet" href="../../css/admin/secretariasModales1.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="icon" href="../../img/ut_logo.png" sizes="32x32" type="image/png">
 </head>
+<style>
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 280px;
+        overflow-y: auto;
+        z-index: 1000;
+    }
+</style>
 
 <body>
     <div class="container">
@@ -75,7 +88,7 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
             </button>
             <div class="search-bar">
                 <i class="fas fa-search"></i>
-                <input type="text" id="buscarSecretaria" placeholder="Buscar..." />
+                <input type="text" id="buscarSecretaria" placeholder="Buscar Secretarias..." />
             </div>
             <div class="header-actions">
                 <div class="notification"><i class="fas fa-bell"></i>
@@ -103,7 +116,7 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
                         <i class="fas fa-download"></i> Exportar
                     </button>
                     <button class="btn btn-outline btn-sm" id="btnNuevo">
-                        <i class="fas fa-plus"></i> Nueva
+                        <i class="fas fa-plus"></i> Nuevo Secretaria/o
                     </button>
                 </div>
             </div>
@@ -183,9 +196,7 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
                     </table>
                 </div>
 
-                <!-- Paginación -->
                 <div class="pagination-container" id="paginationSecretarias">
-                    <!-- Los botones se generarán dinámicamente desde JS -->
                 </div>
             </div>
 
@@ -198,19 +209,19 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
                         <fieldset>
                             <!-- Datos Personales -->
                             <label for="nombre">Nombre <span class="required">*</span></label>
-                            <input type="text" name="nombre" id="nombre" placeholder="" required>
+                            <input type="text" name="nombre" id="nombre" required>
 
                             <label for="apellido_paterno">Apellido Paterno <span class="required">*</span></label>
-                            <input type="text" name="apellido_paterno" id="apellido_paterno" placeholder="" required>
+                            <input type="text" name="apellido_paterno" id="apellido_paterno" required>
 
                             <label for="apellido_materno">Apellido Materno</label>
-                            <input type="text" name="apellido_materno" id="apellido_materno" placeholder="">
+                            <input type="text" name="apellido_materno" id="apellido_materno">
 
                             <label for="curp">CURP <span class="required">*</span></label>
-                            <input type="text" name="curp" id="curp" placeholder="" required>
+                            <input type="text" name="curp" id="curp" required>
 
                             <label for="rfc">RFC <span class="required">*</span></label>
-                            <input type="text" name="rfc" id="rfc" placeholder="" required>
+                            <input type="text" name="rfc" id="rfc" required>
 
                             <label for="fecha_nacimiento">Fecha Nacimiento <span class="required">*</span></label>
                             <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" required>
@@ -224,10 +235,11 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
                             </select>
 
                             <label for="telefono">Teléfono</label>
-                            <input type="text" name="telefono" id="telefono" placeholder="">
+                            <input type="tel" name="telefono" id="telefono" inputmode="numeric" pattern="\d*"
+                                maxlength="15" oninput="this.value=this.value.replace(/\D/g,'')">
 
                             <label for="direccion">Dirección</label>
-                            <input type="text" name="direccion" id="direccion" placeholder="">
+                            <input type="text" name="direccion" id="direccion">
 
                             <!-- Bloqueados -->
                             <label for="correo_institucional">Correo Institucional</label>
@@ -239,20 +251,27 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
 
                             <!-- Laborales -->
                             <label for="departamento">Departamento <span class="required">*</span></label>
-                            <input type="text" name="departamento" id="departamento" placeholder="" required>
-
-                            <label for="fecha_ingreso">Fecha Ingreso <span class="required">*</span></label>
-                            <input type="date" name="fecha_ingreso" id="fecha_ingreso" required>
+                            <select name="departamento" id="departamento" required>
+                                <option value="" disabled selected>Selecciona el departamento</option>
+                                <option>Recursos Humanos</option>
+                                <option>Dirección Académica</option>
+                                <option>Servicios Escolares</option>
+                                <option>Contabilidad</option>
+                                <option>Vinculación</option>
+                                <option>Coordinación General</option>
+                                <option>Otro</option>
+                            </select>
 
                             <!-- Emergencia -->
                             <label for="contacto_emergencia">Contacto Emergencia</label>
-                            <input type="text" name="contacto_emergencia" id="contacto_emergencia" placeholder="">
+                            <input type="text" name="contacto_emergencia" id="contacto_emergencia">
 
                             <label for="parentesco_emergencia">Parentesco Emergencia</label>
-                            <input type="text" name="parentesco_emergencia" id="parentesco_emergencia" placeholder="">
+                            <input type="text" name="parentesco_emergencia" id="parentesco_emergencia">
 
                             <label for="telefono_emergencia">Teléfono Emergencia</label>
-                            <input type="text" name="telefono_emergencia" id="telefono_emergencia" placeholder="">
+                            <input type="tel" name="telefono_emergencia" id="telefono_emergencia" inputmode="numeric"
+                                pattern="\d*" maxlength="15" oninput="this.value=this.value.replace(/\D/g,'')">
                         </fieldset>
 
                         <div class="actions">
@@ -262,7 +281,6 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
                     </form>
                 </div>
             </div>
-
             <!-- Modal Editar Secretaria -->
             <div class="modal-overlay" id="modalEditar">
                 <div class="modal">
@@ -273,19 +291,19 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
                         <fieldset>
                             <!-- Datos Personales -->
                             <label for="editNombre">Nombre <span class="required">*</span></label>
-                            <input type="text" name="nombre" id="editNombre" placeholder="" required>
+                            <input type="text" name="nombre" id="editNombre" required>
 
                             <label for="editApellidoP">Apellido Paterno <span class="required">*</span></label>
-                            <input type="text" name="apellido_paterno" id="editApellidoP" placeholder="" required>
+                            <input type="text" name="apellido_paterno" id="editApellidoP" required>
 
                             <label for="editApellidoM">Apellido Materno</label>
-                            <input type="text" name="apellido_materno" id="editApellidoM" placeholder="">
+                            <input type="text" name="apellido_materno" id="editApellidoM">
 
                             <label for="editCurp">CURP <span class="required">*</span></label>
-                            <input type="text" name="curp" id="editCurp" placeholder="" required>
+                            <input type="text" name="curp" id="editCurp" required>
 
                             <label for="editRfc">RFC <span class="required">*</span></label>
-                            <input type="text" name="rfc" id="editRfc" placeholder="" required>
+                            <input type="text" name="rfc" id="editRfc" required>
 
                             <label for="editFechaNac">Fecha Nacimiento <span class="required">*</span></label>
                             <input type="date" name="fecha_nacimiento" id="editFechaNac" required>
@@ -298,10 +316,11 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
                             </select>
 
                             <label for="editTelefono">Teléfono</label>
-                            <input type="text" name="telefono" id="editTelefono" placeholder="">
+                            <input type="tel" name="telefono" id="editTelefono" inputmode="numeric" pattern="\d*"
+                                maxlength="15" oninput="this.value=this.value.replace(/\D/g,'')">
 
                             <label for="editDireccion">Dirección</label>
-                            <input type="text" name="direccion" id="editDireccion" placeholder="">
+                            <input type="text" name="direccion" id="editDireccion">
 
                             <!-- Bloqueados -->
                             <label for="editCorreo">Correo Institucional</label>
@@ -313,21 +332,27 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
 
                             <!-- Laborales -->
                             <label for="editDepartamento">Departamento <span class="required">*</span></label>
-                            <input type="text" name="departamento" id="editDepartamento" placeholder="" required>
-
-                            <label for="editFechaIngreso">Fecha Ingreso <span class="required">*</span></label>
-                            <input type="date" name="fecha_ingreso" id="editFechaIngreso" required>
+                            <select name="departamento" id="editDepartamento" required>
+                                <option value="" disabled>Selecciona el departamento</option>
+                                <option>Recursos Humanos</option>
+                                <option>Dirección Académica</option>
+                                <option>Servicios Escolares</option>
+                                <option>Contabilidad</option>
+                                <option>Vinculación</option>
+                                <option>Coordinación General</option>
+                                <option>Otro</option>
+                            </select>
 
                             <!-- Emergencia -->
                             <label for="editContactoEmergencia">Contacto Emergencia</label>
-                            <input type="text" name="contacto_emergencia" id="editContactoEmergencia" placeholder="">
+                            <input type="text" name="contacto_emergencia" id="editContactoEmergencia">
 
                             <label for="editParentescoEmergencia">Parentesco Emergencia</label>
-                            <input type="text" name="parentesco_emergencia" id="editParentescoEmergencia"
-                                placeholder="">
+                            <input type="text" name="parentesco_emergencia" id="editParentescoEmergencia">
 
                             <label for="editTelefonoEmergencia">Teléfono Emergencia</label>
-                            <input type="text" name="telefono_emergencia" id="editTelefonoEmergencia" placeholder="">
+                            <input type="tel" name="telefono_emergencia" id="editTelefonoEmergencia" inputmode="numeric"
+                                pattern="\d*" maxlength="15" oninput="this.value=this.value.replace(/\D/g,'')">
                         </fieldset>
 
                         <div class="actions">
@@ -337,6 +362,7 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
                     </form>
                 </div>
             </div>
+
 
             <script>
                 // Rol del usuario en JS
@@ -351,9 +377,105 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
                         fila.style.display = textoFila.includes(filtro) ? '' : 'none';
                     });
                 });
+                document.addEventListener("DOMContentLoaded", () => {
+                    const table = document.getElementById("tablaSecretarias");
+                    if (!table) return;
+
+                    const tbody = table.querySelector("tbody");
+                    const pagination = document.getElementById("paginationSecretarias");
+                    const searchInput = document.getElementById("buscarSecretaria");
+
+                    const ROWS_PER_PAGE = 5;
+                    let currentPage = 1;
+                    const allRows = Array.from(tbody.querySelectorAll("tr"));
+
+                    // ===== Helpers =====
+                    const getFilteredRows = () => {
+                        const q = (searchInput?.value || "").trim().toLowerCase();
+                        if (!q) return allRows;
+                        return allRows.filter(tr => tr.innerText.toLowerCase().includes(q));
+                    };
+
+                    const paginate = (rows, page, perPage) => {
+                        const total = rows.length;
+                        const totalPages = Math.max(1, Math.ceil(total / perPage));
+                        if (page > totalPages) page = totalPages;
+                        if (page < 1) page = 1;
+
+                        // Ocultar todo
+                        allRows.forEach(tr => {
+                            tr.style.display = "none";
+                        });
+
+                        // Mostrar solo las filas correspondientes
+                        const start = (page - 1) * perPage;
+                        const end = start + perPage;
+                        rows.slice(start, end).forEach(tr => {
+                            tr.style.display = "";
+                        });
+
+                        renderPagination(totalPages, page);
+                        currentPage = page;
+                    };
+
+                    const renderPagination = (totalPages, page) => {
+                        pagination.innerHTML = "";
+
+                        const mkBtn = (num, label = null, disabled = false, active = false) => {
+                            const b = document.createElement("button");
+                            b.className = "pagination-btn";
+                            b.textContent = label ?? num;
+                            if (active) b.classList.add("active");
+                            b.disabled = disabled;
+                            b.addEventListener("click", () => goToPage(num));
+                            return b;
+                        };
+
+                        // Botón «
+                        pagination.appendChild(mkBtn(page - 1, "«", page === 1));
+
+                        // Números
+                        const windowSize = 1;
+                        const addDots = () => {
+                            const s = document.createElement("span");
+                            s.textContent = "…";
+                            s.style.padding = "6px";
+                            s.style.color = "#999";
+                            pagination.appendChild(s);
+                        };
+
+                        for (let i = 1; i <= totalPages; i++) {
+                            if (i === 1 || i === totalPages || Math.abs(i - page) <= windowSize) {
+                                pagination.appendChild(mkBtn(i, null, false, i === page));
+                            } else if (
+                                (i === 2 && page > windowSize + 2) ||
+                                (i === totalPages - 1 && page < totalPages - windowSize - 1)
+                            ) {
+                                addDots();
+                            }
+                        }
+
+                        // Botón »
+                        pagination.appendChild(mkBtn(page + 1, "»", page === totalPages));
+                    };
+
+                    const goToPage = (p) => {
+                        paginate(getFilteredRows(), p, ROWS_PER_PAGE);
+                    };
+
+                    // ===== Buscador =====
+                    if (searchInput) {
+                        searchInput.addEventListener("keyup", () => {
+                            paginate(getFilteredRows(), 1, ROWS_PER_PAGE);
+                        });
+                    }
+
+                    // ===== Inicializar =====
+                    paginate(getFilteredRows(), 1, ROWS_PER_PAGE);
+                });
             </script>
-            <script src="/Plataforma_UT/js/DashboardY.js"></script>
-            <script src="../../js/admin/Secretaria2.js"></script>
+            <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
+            <script src="../../js/admin/SecretariasJ.js"></script>
 </body>
 
 </html>

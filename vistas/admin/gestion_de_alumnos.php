@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// Mostrar errores para debug
+// Mostrar errores para debug (desactiva en prod)
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -25,9 +25,48 @@ try {
     die("Error de conexión: " . $e->getMessage());
 }
 
-// Obtener alumnos
-$stmt = $pdo->query("SELECT * FROM alumnos");
-$alumnos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+/**
+ * Enlaces clave:
+ * alumnos.id_nombre_semestre (FK nullable) --> semestres.id_nombre_semestre
+ * Mostraremos el nombre del semestre desde cat_nombres_semestre.
+ */
+
+// === CONSULTA ALUMNOS ===
+$sqlAlumnos = "
+    SELECT
+        a.id_alumno,
+        a.nombre,
+        a.apellido_paterno,
+        a.apellido_materno,
+        a.curp,
+        a.fecha_nacimiento,
+        a.sexo,
+        a.telefono,
+        a.direccion,
+        a.correo_personal,
+        a.matricula,
+        a.password,
+        a.id_nombre_semestre,
+        ns.nombre AS nombre_semestre,
+        a.contacto_emergencia,
+        a.parentesco_emergencia,
+        a.telefono_emergencia,
+        a.fecha_registro
+    FROM alumnos a
+    LEFT JOIN cat_nombres_semestre ns
+        ON a.id_nombre_semestre = ns.id_nombre_semestre
+    ORDER BY a.id_alumno ASC
+";
+$alumnos = $pdo->query($sqlAlumnos)->fetchAll(PDO::FETCH_ASSOC);
+
+// === CONSULTA SEMESTRES PARA SELECT ===
+$sqlSemestres = "
+    SELECT DISTINCT ns.id_nombre_semestre, ns.nombre
+    FROM cat_nombres_semestre ns
+    JOIN semestres s ON s.id_nombre_semestre = ns.id_nombre_semestre
+    ORDER BY ns.nombre ASC
+";
+$semestres = $pdo->query($sqlSemestres)->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -36,17 +75,66 @@ $alumnos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Alumnos Dashboard</title>
+
+    <!-- Estilos existentes del proyecto -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet" />
+
     <link rel="stylesheet" href="../../css/admin/profesores.css" />
-    <link rel="stylesheet" href="/Plataforma_UT/css/styleD.css" />
+    <link rel="stylesheet" href="../../css/styleD.css" />
+    <link rel="stylesheet" href="../../css/admin/admin.css" />
+
     <link rel="stylesheet" href="../../css/admin/profesoresModal.css" />
     <link rel="stylesheet" href="../../css/admin/secretariasModales1.css" />
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="icon" href="../../img/ut_logo.png" sizes="32x32" type="image/png">
+
+    <style>
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .data-table td,
+        .data-table th {
+            white-space: nowrap;
+        }
+
+        .modal fieldset {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .modal fieldset label {
+            font-weight: 600;
+        }
+
+        .modal fieldset input,
+        .modal fieldset select {
+            width: 100%;
+        }
+
+        @media (max-width: 1024px) {
+            .modal fieldset {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .is-hidden {
+            display: none !important;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 280px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+    </style>
 </head>
 
 <body>
@@ -60,14 +148,13 @@ $alumnos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="menu-heading">Menú</div>
             </div>
         </div>
-
         <div class="header">
             <button class="hamburger" id="hamburger">
                 <i class="fas fa-bars"></i>
             </button>
             <div class="search-bar">
                 <i class="fas fa-search"></i>
-                <input type="text" id="buscarAlumno" placeholder="Buscar..." />
+                <input type="text" id="buscarAdmin" placeholder="Buscar Alumnos..." />
             </div>
             <div class="header-actions">
                 <div class="notification"><i class="fas fa-bell"></i>
@@ -87,16 +174,14 @@ $alumnos = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </div>
 
+
         <div class="main-content">
             <div class="page-title">
                 <div class="title">Gestión de Alumnos</div>
                 <div class="action-buttons">
-                    <button class="btn btn-outline" id="btnExportar">
-                        <i class="fas fa-download"></i> Exportar
-                    </button>
-                    <button class="btn btn-outline btn-sm" id="btnNuevoAlumno">
-                        <i class="fas fa-plus"></i> Nuevo
-                    </button>
+                    <button class="btn btn-outline" id="btnExportar"><i class="fas fa-download"></i> Exportar</button>
+                    <button class="btn btn-outline btn-sm" id="btnNuevoAlumno"><i class="fas fa-plus"></i>
+                        Nuevo Alumno</button>
                 </div>
             </div>
 
@@ -105,8 +190,7 @@ $alumnos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <h3><i class="fas fa-user-graduate"></i> Alumnos</h3>
                 </div>
 
-                <!-- Tabla de alumnos -->
-                <div class="table-container" style="overflow-x:auto;">
+                <div class="table-container">
                     <table class="data-table" id="tablaAlumnos">
                         <thead>
                             <tr>
@@ -122,9 +206,7 @@ $alumnos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <th>Correo</th>
                                 <th>Matrícula</th>
                                 <th>Contraseña</th>
-                                <th>Carrera</th>
                                 <th>Semestre</th>
-                                <th>Grupo</th>
                                 <th>Contacto Emergencia</th>
                                 <th>Parentesco Emergencia</th>
                                 <th>Teléfono Emergencia</th>
@@ -135,8 +217,8 @@ $alumnos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <tbody id="tablaBody">
                             <?php if (!empty($alumnos)): ?>
                                 <?php foreach ($alumnos as $row): ?>
-                                    <tr data-id="<?= htmlspecialchars($row['id_alumno'] ?? '') ?>">
-                                        <td><?= htmlspecialchars($row['id_alumno'] ?? '') ?></td>
+                                    <tr data-id="<?= htmlspecialchars($row['id_alumno']) ?>">
+                                        <td><?= htmlspecialchars($row['id_alumno']) ?></td>
                                         <td><?= htmlspecialchars($row['nombre'] ?? '') ?></td>
                                         <td><?= htmlspecialchars($row['apellido_paterno'] ?? '') ?></td>
                                         <td><?= htmlspecialchars($row['apellido_materno'] ?? '') ?></td>
@@ -148,26 +230,24 @@ $alumnos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         <td><?= htmlspecialchars($row['correo_personal'] ?? '') ?></td>
                                         <td><?= htmlspecialchars($row['matricula'] ?? '') ?></td>
                                         <td><?= htmlspecialchars($row['password'] ?? '') ?></td>
-                                        <td><?= htmlspecialchars($row['carrera'] ?? '') ?></td>
-                                        <td><?= htmlspecialchars($row['semestre'] ?? '') ?></td>
-                                        <td><?= htmlspecialchars($row['grupo'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['nombre_semestre'] ?? '—') ?></td>
                                         <td><?= htmlspecialchars($row['contacto_emergencia'] ?? '') ?></td>
                                         <td><?= htmlspecialchars($row['parentesco_emergencia'] ?? '') ?></td>
                                         <td><?= htmlspecialchars($row['telefono_emergencia'] ?? '') ?></td>
                                         <td><?= htmlspecialchars($row['fecha_registro'] ?? '') ?></td>
                                         <td>
                                             <button class="btn btn-outline btn-sm btn-editar">
-                                                <i class="fas fa-edit"></i>Editar
+                                                <i class="fas fa-edit"></i> Editar
                                             </button>
                                             <button class="btn btn-outline btn-sm btn-eliminar">
-                                                <i class="fas fa-trash"></i>Eliminar
+                                                <i class="fas fa-trash"></i> Eliminar
                                             </button>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="19">No hay alumnos registrados.</td>
+                                    <td colspan="18">No hay alumnos registrados.</td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>
@@ -181,7 +261,7 @@ $alumnos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="modal">
                         <button type="button" class="close-modal" id="closeModal">&times;</button>
                         <h2>Nuevo Alumno</h2>
-                        <form id="formNuevo">
+                        <form id="formNuevo" autocomplete="off">
                             <fieldset>
                                 <label for="nombre">Nombre *</label>
                                 <input type="text" name="nombre" id="nombre" required>
@@ -193,7 +273,8 @@ $alumnos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <input type="text" name="apellido_materno" id="apellido_materno">
 
                                 <label for="curp">CURP *</label>
-                                <input type="text" name="curp" id="curp" required>
+                                <input type="text" name="curp" id="curp" maxlength="18" required
+                                    oninput="this.value=this.value.toUpperCase()">
 
                                 <label for="fecha_nacimiento">Fecha de Nacimiento *</label>
                                 <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" required>
@@ -207,13 +288,15 @@ $alumnos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 </select>
 
                                 <label for="telefono">Teléfono</label>
-                                <input type="text" name="telefono" id="telefono">
+                                <input type="tel" name="telefono" id="telefono" inputmode="numeric"
+                                    pattern="[0-9]{7,15}" title="Ingresa solo números (7 a 15 dígitos)"
+                                    oninput="this.value=this.value.replace(/[^0-9]/g,'')">
 
                                 <label for="direccion">Dirección</label>
                                 <input type="text" name="direccion" id="direccion">
 
                                 <label for="correo_personal">Correo</label>
-                                <input type="email" name="correo" id="correo_personal">
+                                <input type="email" name="correo_personal" id="correo_personal">
 
                                 <label for="matricula">Matrícula</label>
                                 <input type="text" name="matricula" id="matricula" placeholder="Autogenerada" readonly>
@@ -221,23 +304,30 @@ $alumnos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <label for="password">Contraseña</label>
                                 <input type="text" name="password" id="password" placeholder="Autogenerada" readonly>
 
-                                <label for="carrera">Carrera *</label>
-                                <input type="text" name="carrera" id="carrera" required>
-
-                                <label for="semestre">Semestre *</label>
-                                <input type="number" name="semestre" id="semestre" min="1" required>
-
-                                <label for="grupo">Grupo *</label>
-                                <input type="text" name="grupo" id="grupo" required>
+                                <label for="id_nombre_semestre">Semestre *</label>
+                                <select name="id_nombre_semestre" id="id_nombre_semestre" required>
+                                    <option value="" disabled selected>Selecciona un semestre</option>
+                                    <?php foreach ($semestres as $s): ?>
+                                        <option value="<?= htmlspecialchars($s['id_nombre_semestre']) ?>">
+                                            <?= htmlspecialchars($s['nombre']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
 
                                 <label for="contacto_emergencia">Contacto Emergencia</label>
-                                <input type="text" name="contacto_emergencia" id="contacto_emergencia">
+                                <input type="text" name="contacto_emergencia" id="contacto_emergencia"
+                                    pattern="[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s.'-]{2,60}"
+                                    title="Solo letras y espacios (2 a 60 caracteres)"
+                                    oninput="this.value=this.value.replace(/[0-9]/g,'')">
 
                                 <label for="parentesco_emergencia">Parentesco Emergencia</label>
                                 <input type="text" name="parentesco_emergencia" id="parentesco_emergencia">
 
                                 <label for="telefono_emergencia">Teléfono Emergencia</label>
-                                <input type="text" name="telefono_emergencia" id="telefono_emergencia">
+                                <input type="tel" name="telefono_emergencia" id="telefono_emergencia"
+                                    inputmode="numeric" pattern="[0-9]{7,15}"
+                                    title="Ingresa solo números (7 a 15 dígitos)"
+                                    oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                             </fieldset>
 
                             <div class="actions">
@@ -248,67 +338,79 @@ $alumnos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                 </div>
 
-                <!-- MODAL EDITAR ALUMNO -->
+
                 <div class="modal-overlay" id="modalEditar">
                     <div class="modal">
                         <button type="button" class="close-modal" id="closeEditar">&times;</button>
                         <h2>Editar Alumno</h2>
-                        <form id="formEditar">
+                        <form id="formEditar" autocomplete="off">
+                            <input type="hidden" id="edit_id_alumno" name="id_alumno">
                             <fieldset>
                                 <label for="edit_nombre">Nombre *</label>
-                                <input type="text" id="edit_nombre" name="nombre" required>
+                                <input type="text" name="nombre" id="edit_nombre" required>
 
                                 <label for="edit_apellido_paterno">Apellido Paterno *</label>
-                                <input type="text" id="edit_apellido_paterno" name="apellido_paterno" required>
+                                <input type="text" name="apellido_paterno" id="edit_apellido_paterno" required>
 
                                 <label for="edit_apellido_materno">Apellido Materno</label>
-                                <input type="text" id="edit_apellido_materno" name="apellido_materno">
+                                <input type="text" name="apellido_materno" id="edit_apellido_materno">
 
                                 <label for="edit_curp">CURP *</label>
-                                <input type="text" id="edit_curp" name="curp" required>
+                                <input type="text" name="curp" id="edit_curp" maxlength="18" required
+                                    oninput="this.value=this.value.toUpperCase()">
 
                                 <label for="edit_fecha_nacimiento">Fecha de Nacimiento *</label>
-                                <input type="date" id="edit_fecha_nacimiento" name="fecha_nacimiento" required>
+                                <input type="date" name="fecha_nacimiento" id="edit_fecha_nacimiento" required>
 
                                 <label for="edit_sexo">Sexo *</label>
-                                <select id="edit_sexo" name="sexo" required>
+                                <select name="sexo" id="edit_sexo" required>
+                                    <option value="" disabled selected>Selecciona</option>
                                     <option value="Masculino">Masculino</option>
                                     <option value="Femenino">Femenino</option>
                                     <option value="Otro">Otro</option>
                                 </select>
 
                                 <label for="edit_telefono">Teléfono</label>
-                                <input type="text" id="edit_telefono" name="telefono">
+                                <input type="tel" name="telefono" id="edit_telefono" inputmode="numeric"
+                                    pattern="[0-9]{7,15}" title="Ingresa solo números (7 a 15 dígitos)"
+                                    oninput="this.value=this.value.replace(/[^0-9]/g,'')">
 
                                 <label for="edit_direccion">Dirección</label>
-                                <input type="text" id="edit_direccion" name="direccion">
+                                <input type="text" name="direccion" id="edit_direccion">
 
                                 <label for="edit_correo_personal">Correo</label>
-                                <input type="email" id="edit_correo_personal" name="correo_personal">
+                                <input type="email" name="correo_personal" id="edit_correo_personal">
 
                                 <label for="edit_matricula">Matrícula</label>
-                                <input type="text" id="edit_matricula" name="matricula" readonly>
+                                <input type="text" name="matricula" id="edit_matricula" readonly>
 
                                 <label for="edit_password">Contraseña</label>
-                                <input type="text" id="edit_password" name="password" readonly>
+                                <input type="text" name="password" id="edit_password" readonly>
 
-                                <label for="edit_carrera">Carrera *</label>
-                                <input type="text" id="edit_carrera" name="carrera" required>
-
-                                <label for="edit_semestre">Semestre *</label>
-                                <input type="number" id="edit_semestre" name="semestre" min="1" required>
-
-                                <label for="edit_grupo">Grupo *</label>
-                                <input type="text" id="edit_grupo" name="grupo" required>
+                                <label for="edit_id_nombre_semestre">Semestre *</label>
+                                <select name="id_nombre_semestre" id="edit_id_nombre_semestre" required>
+                                    <option value="" disabled selected>Selecciona un semestre</option>
+                                    <?php foreach ($semestres as $s): ?>
+                                        <option value="<?= htmlspecialchars($s['id_nombre_semestre']) ?>">
+                                            <?= htmlspecialchars($s['nombre']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
 
                                 <label for="edit_contacto_emergencia">Contacto Emergencia</label>
-                                <input type="text" id="edit_contacto_emergencia" name="contacto_emergencia">
+                                <input type="text" name="contacto_emergencia" id="edit_contacto_emergencia"
+                                    pattern="[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s.'-]{2,60}"
+                                    title="Solo letras y espacios (2 a 60 caracteres)"
+                                    oninput="this.value=this.value.replace(/[0-9]/g,'')">
 
                                 <label for="edit_parentesco_emergencia">Parentesco Emergencia</label>
-                                <input type="text" id="edit_parentesco_emergencia" name="parentesco_emergencia">
+                                <input type="text" name="parentesco_emergencia" id="edit_parentesco_emergencia">
 
                                 <label for="edit_telefono_emergencia">Teléfono Emergencia</label>
-                                <input type="text" id="edit_telefono_emergencia" name="telefono_emergencia">
+                                <input type="tel" name="telefono_emergencia" id="edit_telefono_emergencia"
+                                    inputmode="numeric" pattern="[0-9]{7,15}"
+                                    title="Ingresa solo números (7 a 15 dígitos)"
+                                    oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                             </fieldset>
 
                             <div class="actions">
@@ -319,21 +421,21 @@ $alumnos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                 </div>
 
-
                 <script>
                     window.rolUsuarioPHP = "<?= $rolUsuario; ?>";
 
-                    document.getElementById('buscarAlumno').addEventListener('keyup', function () {
+                    document.getElementById('buscarAdmin').addEventListener('keyup', function () {
                         const filtro = this.value.toLowerCase();
-                        const filas = document.querySelectorAll('#tablaAlumnos tbody tr');
+                        const filas = document.querySelectorAll('#tablaAdmins tbody tr');
                         filas.forEach(fila => {
                             fila.style.display = fila.innerText.toLowerCase().includes(filtro) ? '' :
                                 'none';
                         });
                     });
                 </script>
-                <script src="/Plataforma_UT/js/DashboardY.js"></script>
-                <script src="../../js/admin/Alumno1.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
+                <script src="../../js/admin/Alumnos4.js"></script>
 </body>
 
 </html>

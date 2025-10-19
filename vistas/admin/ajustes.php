@@ -48,6 +48,17 @@ try {
 
 
 </head>
+<style>
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 280px;
+        overflow-y: auto;
+        z-index: 1000;
+    }
+</style>
 
 <body>
     <div class="container">
@@ -180,9 +191,9 @@ try {
         window.rolUsuarioPHP = "<?= $rolUsuario; ?>";
     </script>
 
-    <script src="/Plataforma_UT/js/DashboardY.js"></script>
+    <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
     <script src="../../js/admin/AsignacionesAlumnos.js"></script>
-    <script src="../../js/admin/Ajustes.js"></script>
+    <script src="../../js/admin/Ajustes1.js"></script>
 
 
 </body>

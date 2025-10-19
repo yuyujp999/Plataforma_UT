@@ -1,23 +1,38 @@
 <?php
-require_once __DIR__ . '/../../conexion/conexion.php'; // Asegúrate de que $conn exista
+require_once __DIR__ . '/../../conexion/conexion.php'; // Debe definir $conn (mysqli)
+require_once __DIR__ . '/../../fpdf/fpdf.php';
 
-// --- Validar tipo ---
-$tipo = strtolower($_GET['tipo'] ?? '');
-if (!in_array($tipo, ['pdf', 'excel'])) {
-    http_response_code(400);
-    exit('Tipo no válido (pdf|excel).');
-}
-
-// --- Obtener datos ---
-$sql = "SELECT id_docente, nombre, apellido_paterno, apellido_materno, curp, rfc,
-        fecha_nacimiento, sexo, telefono, direccion, correo_personal, matricula, password,
-        nivel_estudios, area_especialidad, universidad_egreso, cedula_profesional, idiomas,
-        departamento, puesto, tipo_contrato, fecha_ingreso, num_empleado,
-        contacto_emergencia, parentesco_emergencia, telefono_emergencia, fecha_registro
-        FROM docentes";
+// =================== CONSULTA DOCENTES (TODOS LOS CAMPOS VIGENTES, SIN PASSWORD) ===================
+$sql = "SELECT
+            id_docente,
+            matricula,
+            nombre,
+            apellido_paterno,
+            apellido_materno,
+            curp,
+            rfc,
+            fecha_nacimiento,
+            sexo,
+            telefono,
+            direccion,
+            correo_personal,
+            nivel_estudios,
+            area_especialidad,
+            universidad_egreso,
+            cedula_profesional,
+            idiomas,
+            puesto,
+            tipo_contrato,
+            fecha_ingreso,
+            contacto_emergencia,
+            parentesco_emergencia,
+            telefono_emergencia,
+            fecha_registro
+        FROM docentes
+        ORDER BY id_docente ASC";
 $result = $conn->query($sql);
 if (!$result) {
-    die("Error al consultar: " . $conn->error);
+    die("Error en la consulta: " . $conn->error);
 }
 
 $rows = [];
@@ -26,113 +41,286 @@ while ($r = $result->fetch_assoc()) {
 }
 $conn->close();
 
-// =================== EXCEL ===================
-if ($tipo === 'excel') {
-    header('Content-Type: text/csv; charset=utf-8');
-    header('Content-Disposition: attachment; filename="Docentes.csv"');
-
-    $output = fopen('php://output', 'w');
-
-    // Encabezados
-    fputcsv($output, [
-        'ID',
-        'Nombre',
-        'Apellido Paterno',
-        'Apellido Materno',
-        'CURP',
-        'RFC',
-        'Fecha Nacimiento',
-        'Sexo',
-        'Teléfono',
-        'Dirección',
-        'Correo',
-        'Matrícula',
-        'Contraseña',
-        'Nivel Estudios',
-        'Área Especialidad',
-        'Universidad Egreso',
-        'Cédula Profesional',
-        'Idiomas',
-        'Departamento',
-        'Puesto',
-        'Tipo Contrato',
-        'Fecha Ingreso',
-        'Num. Empleado',
-        'Contacto Emergencia',
-        'Parentesco Emergencia',
-        'Teléfono Emergencia',
-        'Fecha Registro'
-    ]);
-
-    // Datos
-    foreach ($rows as $r) {
-        fputcsv($output, [
-            $r['id_docente'],
-            $r['nombre'],
-            $r['apellido_paterno'],
-            $r['apellido_materno'],
-            $r['curp'],
-            $r['rfc'],
-            $r['fecha_nacimiento'],
-            $r['sexo'],
-            $r['telefono'],
-            $r['direccion'],
-            $r['correo_personal'],
-            $r['matricula'],
-            $r['password'],
-            $r['nivel_estudios'],
-            $r['area_especialidad'],
-            $r['universidad_egreso'],
-            $r['cedula_profesional'],
-            $r['idiomas'],
-            $r['departamento'],
-            $r['puesto'],
-            $r['tipo_contrato'],
-            $r['fecha_ingreso'],
-            $r['num_empleado'],
-            $r['contacto_emergencia'],
-            $r['parentesco_emergencia'],
-            $r['telefono_emergencia'],
-            $r['fecha_registro']
-        ]);
-    }
-    fclose($output);
-    exit;
+// =================== HELPERS ===================
+function iso($s)
+{
+    return utf8_decode((string) $s);
 }
 
-// =================== PDF ===================
-if ($tipo === 'pdf') {
-    header('Content-Type: application/pdf');
-    header('Content-Disposition: attachment; filename="Docentes.pdf"');
+// =================== CLASE PDF ===================
+class DocentesPDF extends FPDF
+{
+    public $title = 'Lista de Docentes';
+    public $colW = [];  // anchos de columnas
+    public $colA = [];  // alineaciones
 
-    $html = "<h2 style='text-align:center;'>Lista de Docentes</h2>";
-    $html .= "<table border='1' cellspacing='0' cellpadding='5' style='width:100%; font-family:Arial; font-size:10px;'>";
+    function Header()
+    {
+        // Título
+        $this->SetFont('Arial', 'B', 16);
+        $this->SetTextColor(0, 100, 0);
+        $this->Cell(0, 10, iso($this->title), 0, 1, 'C');
 
-    // Encabezados
-    $html .= "<tr style='background-color:#28a745; color:white; text-align:center;'>";
-    $html .= "<th>ID</th><th>Nombre</th><th>Apellido Paterno</th><th>Apellido Materno</th>";
-    $html .= "<th>CURP</th><th>RFC</th><th>Fecha Nacimiento</th><th>Sexo</th>";
-    $html .= "<th>Teléfono</th><th>Dirección</th><th>Correo</th><th>Matrícula</th>";
-    $html .= "<th>Contraseña</th><th>Nivel Estudios</th><th>Área Especialidad</th><th>Universidad Egreso</th>";
-    $html .= "<th>Cédula Profesional</th><th>Idiomas</th><th>Departamento</th><th>Puesto</th>";
-    $html .= "<th>Tipo Contrato</th><th>Fecha Ingreso</th><th>Num. Empleado</th><th>Contacto Emergencia</th>";
-    $html .= "<th>Parentesco Emergencia</th><th>Teléfono Emergencia</th><th>Fecha Registro</th>";
-    $html .= "</tr>";
+        // Fecha de generación
+        $this->SetFont('Arial', '', 10);
+        $this->SetTextColor(80, 80, 80);
+        $this->Cell(0, 6, iso('Generado: ' . date('Y-m-d H:i')), 0, 1, 'C');
+        $this->Ln(2);
 
-    // Filas de datos
-    foreach ($rows as $r) {
-        $html .= "<tr style='text-align:center;'>";
-        $html .= "<td>{$r['id_docente']}</td><td>{$r['nombre']}</td><td>{$r['apellido_paterno']}</td><td>{$r['apellido_materno']}</td>";
-        $html .= "<td>{$r['curp']}</td><td>{$r['rfc']}</td><td>{$r['fecha_nacimiento']}</td><td>{$r['sexo']}</td>";
-        $html .= "<td>{$r['telefono']}</td><td>{$r['direccion']}</td><td>{$r['correo_personal']}</td><td>{$r['matricula']}</td>";
-        $html .= "<td>{$r['password']}</td><td>{$r['nivel_estudios']}</td><td>{$r['area_especialidad']}</td><td>{$r['universidad_egreso']}</td>";
-        $html .= "<td>{$r['cedula_profesional']}</td><td>{$r['idiomas']}</td><td>{$r['departamento']}</td><td>{$r['puesto']}</td>";
-        $html .= "<td>{$r['tipo_contrato']}</td><td>{$r['fecha_ingreso']}</td><td>{$r['num_empleado']}</td><td>{$r['contacto_emergencia']}</td>";
-        $html .= "<td>{$r['parentesco_emergencia']}</td><td>{$r['telefono_emergencia']}</td><td>{$r['fecha_registro']}</td>";
-        $html .= "</tr>";
+        // Encabezados
+        if (!empty($this->colW) && count($this->colW) >= 24) {
+            $this->printHeaderRow();
+        }
     }
 
-    $html .= "</table>";
-    echo $html;
-    exit;
+    function Footer()
+    {
+        $this->SetY(-12);
+        $this->SetFont('Arial', 'I', 8);
+        $this->SetTextColor(90, 90, 90);
+        $this->Cell(0, 10, iso('Página ' . $this->PageNo() . '/{nb}'), 0, 0, 'C');
+    }
+
+    function setTableStyle($widths, $aligns)
+    {
+        $this->colW = $widths;
+        $this->colA = $aligns;
+    }
+
+    function printHeaderRow()
+    {
+        $this->SetFont('Arial', 'B', 9); // chico para 24 columnas
+        $this->SetDrawColor(0, 100, 0);
+        $this->SetTextColor(0, 60, 0);
+        $this->SetFillColor(200, 255, 200);
+
+        $headers = [
+            'ID',
+            'Matrícula',
+            'Nombre',
+            'Ap. Paterno',
+            'Ap. Materno',
+            'CURP',
+            'RFC',
+            'F. Nac.',
+            'Sexo',
+            'Teléfono',
+            'Dirección',
+            'Correo',
+            'Nivel',
+            'Área',
+            'Universidad',
+            'Cédula',
+            'Idiomas',
+            'Puesto',
+            'Tipo Contrato',
+            'F. Ingreso',
+            'Contacto Emerg.',
+            'Parentesco',
+            'Tel. Emerg.',
+            'F. Registro'
+        ];
+
+        foreach ($headers as $i => $h) {
+            $this->Cell($this->colW[$i], 7, iso($h), 1, 0, 'C', true);
+        }
+        $this->Ln();
+    }
+
+    // === Helpers para filas con MultiCell (auto-ajuste y salto de página) ===
+    function CheckPageBreak($h)
+    {
+        if ($this->GetY() + $h > $this->PageBreakTrigger) {
+            $this->AddPage($this->CurOrientation);
+            if (!empty($this->colW) && count($this->colW) >= 24) {
+                $this->printHeaderRow();
+            }
+        }
+    }
+
+    function NbLines($w, $txt)
+    {
+        $cw = &$this->CurrentFont['cw'];
+        if ($w == 0)
+            $w = $this->w - $this->rMargin - $this->x;
+        $wmax = ($w - 2 * $this->cMargin) * 1000 / $this->FontSize;
+        $s = str_replace("\r", '', $txt);
+        $nb = strlen($s);
+        if ($nb > 0 && $s[$nb - 1] == "\n")
+            $nb--;
+        $sep = -1;
+        $i = 0;
+        $j = 0;
+        $l = 0;
+        $nl = 1;
+        while ($i < $nb) {
+            $c = $s[$i];
+            if ($c == "\n") {
+                $i++;
+                $sep = -1;
+                $j = $i;
+                $l = 0;
+                $nl++;
+                continue;
+            }
+            if ($c == ' ')
+                $sep = $i;
+            $l += $cw[$c] ?? 0;
+            if ($l > $wmax) {
+                if ($sep == -1) {
+                    if ($i == $j)
+                        $i++;
+                } else {
+                    $i = $sep + 1;
+                }
+                $sep = -1;
+                $j = $i;
+                $l = 0;
+                $nl++;
+            } else {
+                $i++;
+            }
+        }
+        return $nl;
+    }
+
+    function Row($data, $fill = false)
+    {
+        // Altura según el mayor número de líneas
+        $nb = 0;
+        for ($i = 0; $i < count($data); $i++) {
+            $nb = max($nb, $this->NbLines($this->colW[$i], iso($data[$i])));
+        }
+        $h = 5.2 * max(1, $nb); // compacto para 24 columnas
+        $this->CheckPageBreak($h);
+
+        // Estilos por fila (zebra)
+        $this->SetFillColor($fill ? 240 : 255, 255, $fill ? 240 : 255);
+        $this->SetDrawColor(0, 100, 0);
+        $this->SetTextColor(0, 0, 0);
+        $this->SetFont('Arial', '', 8.5);
+
+        // Celdas
+        for ($i = 0; $i < count($data); $i++) {
+            $x = $this->GetX();
+            $y = $this->GetY();
+            $w = $this->colW[$i];
+            $a = $this->colA[$i] ?? 'L';
+
+            $this->Rect($x, $y, $w, $h);         // borde
+            $this->SetXY($x + 1.2, $y + 1.2);    // padding
+            $this->MultiCell($w - 2.4, 5.2, iso($data[$i]), 0, $a, true);
+            $this->SetXY($x + $w, $y);           // mover a la siguiente celda
+        }
+        $this->Ln($h);
+    }
 }
+
+// =================== CREAR PDF (A4 apaisado) ===================
+$pdf = new DocentesPDF('L', 'mm', 'A4');
+$pdf->SetMargins(12, 15, 12);
+$pdf->SetAutoPageBreak(true, 15);
+$pdf->AliasNbPages();
+
+/*
+  24 columnas -> anchos muy ajustados para ~273mm útiles en A4 horizontal.
+  Puedes afinar valores si lo deseas.
+*/
+$widths = [
+    7,  // ID
+    12, // Matrícula
+    13, // Nombre
+    11, // Ap. Paterno
+    11, // Ap. Materno
+    14, // CURP
+    11, // RFC
+    11, // F. Nac.
+    8,  // Sexo
+    11, // Teléfono
+    14, // Dirección
+    16, // Correo
+    10, // Nivel
+    11, // Área
+    13, // Universidad
+    10, // Cédula
+    11, // Idiomas
+    11, // Puesto
+    11, // Tipo Contrato
+    11, // F. Ingreso
+    11, // Contacto Emerg.
+    10, // Parentesco
+    10, // Tel. Emerg.
+    11  // F. Registro
+];
+$aligns = [
+    'C',
+    'L',
+    'L',
+    'L',
+    'L',
+    'L',
+    'L',
+    'C',
+    'C',
+    'L',
+    'L',
+    'L',
+    'L',
+    'L',
+    'L',
+    'L',
+    'L',
+    'L',
+    'L',
+    'C',
+    'L',
+    'L',
+    'C',
+    'C'
+];
+
+$pdf->setTableStyle($widths, $aligns);
+
+// Agregar página
+$pdf->AddPage();
+
+// Pintar filas
+$fill = false;
+foreach ($rows as $r) {
+    $pdf->Row([
+        $r['id_docente'],
+        $r['matricula'],
+        $r['nombre'],
+        $r['apellido_paterno'],
+        $r['apellido_materno'],
+        $r['curp'],
+        $r['rfc'],
+        $r['fecha_nacimiento'],
+        $r['sexo'],
+        $r['telefono'],
+        $r['direccion'],
+        $r['correo_personal'],
+        $r['nivel_estudios'],
+        $r['area_especialidad'],
+        $r['universidad_egreso'],
+        $r['cedula_profesional'],
+        $r['idiomas'],
+        $r['puesto'],
+        $r['tipo_contrato'],
+        $r['fecha_ingreso'],
+        $r['contacto_emergencia'],
+        $r['parentesco_emergencia'],
+        $r['telefono_emergencia'],
+        $r['fecha_registro']
+    ], $fill);
+    $fill = !$fill;
+}
+
+// Limpieza del buffer (por si algo imprimió antes)
+if (function_exists('ob_get_length') && ob_get_length()) {
+    @ob_end_clean();
+}
+
+// Descargar
+$pdf->Output('D', 'Docentes.pdf');
+exit;

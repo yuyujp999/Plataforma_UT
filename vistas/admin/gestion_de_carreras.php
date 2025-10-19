@@ -48,6 +48,21 @@ $carreras = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="icon" href="../../img/ut_logo.png" sizes="32x32" type="image/png">
 </head>
+<style>
+    .is-hidden {
+        display: none !important;
+    }
+
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 280px;
+        overflow-y: auto;
+        z-index: 1000;
+    }
+</style>
 
 <body>
     <div class="container">
@@ -65,7 +80,7 @@ $carreras = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
             <div class="search-bar">
                 <i class="fas fa-search"></i>
-                <input type="text" id="buscarCarrera" placeholder="Buscar..." />
+                <input type="text" id="buscarCarrera" placeholder="Buscar Carreras..." />
             </div>
             <div class="header-actions">
                 <div class="notification"><i class="fas fa-bell"></i>
@@ -89,11 +104,9 @@ $carreras = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="page-title">
                 <div class="title">Gestión de Carreras</div>
                 <div class="action-buttons">
-                    <button class="btn btn-outline" id="btnExportar">
-                        <i class="fas fa-download"></i> Exportar
-                    </button>
+
                     <button class="btn btn-outline btn-sm" id="btnNuevo">
-                        <i class="fas fa-plus"></i> Nueva
+                        <i class="fas fa-plus"></i> Nueva Carrera
                     </button>
                 </div>
             </div>
@@ -142,8 +155,8 @@ $carreras = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <?php endif; ?>
                         </tbody>
                     </table>
-
                 </div>
+                <div class="pagination-container" id="paginationCarreras"></div>
             </div>
         </div>
     </div>
@@ -162,7 +175,7 @@ $carreras = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <textarea name="descripcion" id="descripcion" rows="3"></textarea>
 
                     <label for="duracion_anios">Duración (Años)</label>
-                    <input type="number" name="duracion_anios" id="duracion_anios" min="1" value="3">
+                    <input type="number" name="duracion_anios" id="duracion_anios" min="1" value="">
                 </fieldset>
 
                 <div class="actions">
@@ -210,8 +223,11 @@ $carreras = $stmt->fetchAll(PDO::FETCH_ASSOC);
         });
     </script>
 
-    <script src="/Plataforma_UT/js/DashboardY.js"></script>
-    <script src="../../js/admin/Carrera.js"></script>
+    </script>
+
+
+    <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
+    <script src="../../js/admin/Carreras3.js"></script>
 </body>
 
 </html>

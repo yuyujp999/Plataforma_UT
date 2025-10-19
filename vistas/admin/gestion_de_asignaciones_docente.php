@@ -1,12 +1,12 @@
 <?php
 session_start();
 
-// Mostrar errores para debug
+// Mostrar errores
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Redirigir si no hay sesión
+// Verificar sesión
 if (!isset($_SESSION['rol'])) {
     header('Location: /Plataforma_UT/inicio.php');
     exit;
@@ -25,27 +25,39 @@ try {
     die("Error de conexión: " . $e->getMessage());
 }
 
-// Obtener asignaciones
-$stmt = $pdo->query("
-    SELECT a.id_asignacion_docente, a.id_docente, a.id_materia, a.id_grado, a.id_ciclo, a.grupo,
-           CONCAT(d.nombre,' ',d.apellido_paterno,' ',d.apellido_materno) AS docente,
-           m.nombre_materia AS materia,
-           g.nombre_grado AS grado,
-           c.nombre_ciclo AS ciclo
-    FROM asignaciones_docentes a
-    INNER JOIN docentes d ON a.id_docente = d.id_docente
-    INNER JOIN materias m ON a.id_materia = m.id_materia
-    INNER JOIN grados g ON a.id_grado = g.id_grado
-    INNER JOIN ciclos_escolares c ON a.id_ciclo = c.id_ciclo
-    ORDER BY a.id_asignacion_docente ASC
-");
-$asignaciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
+/* =========================
+   LISTADO (JOIN con catálogos)
+   ========================= */
+$sql = "
+SELECT
+  a.id_asignacion_docente,
+  a.id_docente,
+  a.id_nombre_materia,
+  a.id_nombre_profesor_materia_grupo,
+  CONCAT(d.nombre,' ',d.apellido_paterno,' ',COALESCE(d.apellido_materno,'')) AS docente,
+  cm.nombre AS clave_materia,
+  cpmg.nombre AS profesor_materia_grupo
+FROM asignaciones_docentes a
+JOIN docentes d ON d.id_docente = a.id_docente
+LEFT JOIN cat_nombres_materias cm ON cm.id_nombre_materia = a.id_nombre_materia
+LEFT JOIN cat_nombre_profesor_materia_grupo cpmg ON cpmg.id_nombre_profesor_materia_grupo = a.id_nombre_profesor_materia_grupo
+ORDER BY a.id_asignacion_docente ASC";
+$asignaciones = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 
-// Listas para selects
-$docentes = $pdo->query("SELECT id_docente, CONCAT(nombre,' ',apellido_paterno,' ',apellido_materno) AS docente FROM docentes ORDER BY id_docente ASC")->fetchAll(PDO::FETCH_ASSOC);
-$materias = $pdo->query("SELECT id_materia, nombre_materia FROM materias ORDER BY id_materia ASC")->fetchAll(PDO::FETCH_ASSOC);
-$grados = $pdo->query("SELECT id_grado, nombre_grado FROM grados ORDER BY id_grado ASC")->fetchAll(PDO::FETCH_ASSOC);
-$ciclos = $pdo->query("SELECT id_ciclo, nombre_ciclo FROM ciclos_escolares ORDER BY id_ciclo ASC")->fetchAll(PDO::FETCH_ASSOC);
+/* =========================
+   SELECTS
+   ========================= */
+$docentes = $pdo->query("
+  SELECT id_docente, CONCAT(nombre,' ',apellido_paterno,' ',COALESCE(apellido_materno,'')) AS docente
+  FROM docentes
+  ORDER BY docente
+")->fetchAll(PDO::FETCH_ASSOC);
+
+$clavesMaterias = $pdo->query("
+  SELECT id_nombre_materia, nombre
+  FROM cat_nombres_materias
+  ORDER BY nombre
+")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -66,6 +78,17 @@ $ciclos = $pdo->query("SELECT id_ciclo, nombre_ciclo FROM ciclos_escolares ORDER
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="icon" href="../../img/ut_logo.png" sizes="32x32" type="image/png">
 </head>
+<style>
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 280px;
+        overflow-y: auto;
+        z-index: 1000;
+    }
+</style>
 
 <body>
     <div class="container">
@@ -83,7 +106,7 @@ $ciclos = $pdo->query("SELECT id_ciclo, nombre_ciclo FROM ciclos_escolares ORDER
             <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
             <div class="search-bar">
                 <i class="fas fa-search"></i>
-                <input type="text" id="buscarAsignacion" placeholder="Buscar..." />
+                <input type="text" id="buscarAsignacion" placeholder="Buscar Docentes Asignados..." />
             </div>
             <div class="header-actions">
                 <div class="notification"><i class="fas fa-bell"></i>
@@ -122,26 +145,23 @@ $ciclos = $pdo->query("SELECT id_ciclo, nombre_ciclo FROM ciclos_escolares ORDER
                             <tr>
                                 <th>ID</th>
                                 <th>Docente</th>
-                                <th>Materia</th>
-                                <th>Grado</th>
-                                <th>Ciclo Escolar</th>
-                                <th>Grupo</th>
+                                <th>Clave Materia</th>
+                                <th>Profesor-Materia-Grupo</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php if (!empty($asignaciones)): ?>
-                                <?php foreach ($asignaciones as $row): ?>
-                                    <tr data-id="<?= $row['id_asignacion_docente'] ?>" data-docente="<?= $row['id_docente'] ?>"
-                                        data-materia="<?= $row['id_materia'] ?>" data-grado="<?= $row['id_grado'] ?>"
-                                        data-ciclo="<?= $row['id_ciclo'] ?>"
-                                        data-grupo="<?= htmlspecialchars($row['grupo']) ?>">
-                                        <td><?= $row['id_asignacion_docente'] ?></td>
+                            <?php if ($asignaciones):
+                                foreach ($asignaciones as $row): ?>
+                                    <tr data-id="<?= (int) $row['id_asignacion_docente'] ?>"
+                                        data-id-docente="<?= (int) $row['id_docente'] ?>"
+                                        data-id-nombre-materia="<?= (int) $row['id_nombre_materia'] ?>"
+                                        data-id-cpmg="<?= (int) $row['id_nombre_profesor_materia_grupo'] ?>"
+                                        data-cpmg-nombre="<?= htmlspecialchars($row['profesor_materia_grupo'] ?? '') ?>">
+                                        <td><?= (int) $row['id_asignacion_docente'] ?></td>
                                         <td><?= htmlspecialchars($row['docente']) ?></td>
-                                        <td><?= htmlspecialchars($row['materia']) ?></td>
-                                        <td><?= htmlspecialchars($row['grado']) ?></td>
-                                        <td><?= htmlspecialchars($row['ciclo']) ?></td>
-                                        <td><?= htmlspecialchars($row['grupo']) ?></td>
+                                        <td><?= htmlspecialchars($row['clave_materia'] ?? '—') ?></td>
+                                        <td><?= htmlspecialchars($row['profesor_materia_grupo'] ?? '—') ?></td>
                                         <td>
                                             <button class="btn btn-outline btn-sm btn-editar"><i class="fas fa-edit"></i>
                                                 Editar</button>
@@ -149,10 +169,9 @@ $ciclos = $pdo->query("SELECT id_ciclo, nombre_ciclo FROM ciclos_escolares ORDER
                                                 Eliminar</button>
                                         </td>
                                     </tr>
-                                <?php endforeach; ?>
-                            <?php else: ?>
+                                <?php endforeach; else: ?>
                                 <tr>
-                                    <td colspan="7">No hay asignaciones registradas.</td>
+                                    <td colspan="5">No hay asignaciones registradas.</td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>
@@ -162,7 +181,7 @@ $ciclos = $pdo->query("SELECT id_ciclo, nombre_ciclo FROM ciclos_escolares ORDER
         </div>
     </div>
 
-    <!-- MODAL NUEVA ASIGNACIÓN -->
+    <!-- MODAL NUEVO -->
     <div class="modal-overlay" id="modalNuevo">
         <div class="modal">
             <button type="button" class="close-modal" id="closeModal">&times;</button>
@@ -173,36 +192,23 @@ $ciclos = $pdo->query("SELECT id_ciclo, nombre_ciclo FROM ciclos_escolares ORDER
                     <select name="id_docente" id="docente" required>
                         <option value="">Selecciona un docente</option>
                         <?php foreach ($docentes as $d): ?>
-                            <option value="<?= $d['id_docente'] ?>"><?= htmlspecialchars($d['docente']) ?></option>
+                            <option value="<?= (int) $d['id_docente'] ?>"><?= htmlspecialchars($d['docente']) ?></option>
                         <?php endforeach; ?>
                     </select>
 
-                    <label for="materia">Materia</label>
-                    <select name="id_materia" id="materia" required>
-                        <option value="">Selecciona una materia</option>
-                        <?php foreach ($materias as $m): ?>
-                            <option value="<?= $m['id_materia'] ?>"><?= htmlspecialchars($m['nombre_materia']) ?></option>
+                    <label for="materia">Clave de Materia</label>
+                    <select name="id_nombre_materia" id="materia" required>
+                        <option value="">Selecciona una clave</option>
+                        <?php foreach ($clavesMaterias as $m): ?>
+                            <option value="<?= (int) $m['id_nombre_materia'] ?>"><?= htmlspecialchars($m['nombre']) ?>
+                            </option>
                         <?php endforeach; ?>
                     </select>
 
-                    <label for="grado">Grado</label>
-                    <select name="id_grado" id="grado" required>
-                        <option value="">Selecciona un grado</option>
-                        <?php foreach ($grados as $g): ?>
-                            <option value="<?= $g['id_grado'] ?>"><?= htmlspecialchars($g['nombre_grado']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-
-                    <label for="ciclo">Ciclo Escolar</label>
-                    <select name="id_ciclo" id="ciclo" required>
-                        <option value="">Selecciona un ciclo</option>
-                        <?php foreach ($ciclos as $c): ?>
-                            <option value="<?= $c['id_ciclo'] ?>"><?= htmlspecialchars($c['nombre_ciclo']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-
-                    <label for="grupo">Grupo</label>
-                    <input type="text" name="grupo" id="grupo" placeholder="Ej. A" required>
+                    <label for="nombreProfesorGrupo">Profesor-Materia-Grupo</label>
+                    <input type="text" id="nombreProfesorGrupo" name="nombre_profesor_materia_grupo" readonly
+                        placeholder="Se generará automáticamente">
+                    <input type="hidden" name="id_nombre_profesor_materia_grupo" id="idNombreProfesorGrupoNuevo">
                 </fieldset>
 
                 <div class="actions">
@@ -213,7 +219,7 @@ $ciclos = $pdo->query("SELECT id_ciclo, nombre_ciclo FROM ciclos_escolares ORDER
         </div>
     </div>
 
-    <!-- MODAL EDITAR ASIGNACIÓN -->
+    <!-- MODAL EDITAR -->
     <div class="modal-overlay" id="modalEditar">
         <div class="modal">
             <button type="button" class="close-modal" id="closeModalEditar">&times;</button>
@@ -224,36 +230,23 @@ $ciclos = $pdo->query("SELECT id_ciclo, nombre_ciclo FROM ciclos_escolares ORDER
                     <select name="id_docente" id="editDocente" required>
                         <option value="">Selecciona un docente</option>
                         <?php foreach ($docentes as $d): ?>
-                            <option value="<?= $d['id_docente'] ?>"><?= htmlspecialchars($d['docente']) ?></option>
+                            <option value="<?= (int) $d['id_docente'] ?>"><?= htmlspecialchars($d['docente']) ?></option>
                         <?php endforeach; ?>
                     </select>
 
-                    <label for="editMateria">Materia</label>
-                    <select name="id_materia" id="editMateria" required>
-                        <option value="">Selecciona una materia</option>
-                        <?php foreach ($materias as $m): ?>
-                            <option value="<?= $m['id_materia'] ?>"><?= htmlspecialchars($m['nombre_materia']) ?></option>
+                    <label for="editMateria">Clave de Materia</label>
+                    <select name="id_nombre_materia" id="editMateria" required>
+                        <option value="">Selecciona una clave</option>
+                        <?php foreach ($clavesMaterias as $m): ?>
+                            <option value="<?= (int) $m['id_nombre_materia'] ?>"><?= htmlspecialchars($m['nombre']) ?>
+                            </option>
                         <?php endforeach; ?>
                     </select>
 
-                    <label for="editGrado">Grado</label>
-                    <select name="id_grado" id="editGrado" required>
-                        <option value="">Selecciona un grado</option>
-                        <?php foreach ($grados as $g): ?>
-                            <option value="<?= $g['id_grado'] ?>"><?= htmlspecialchars($g['nombre_grado']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-
-                    <label for="editCiclo">Ciclo Escolar</label>
-                    <select name="id_ciclo" id="editCiclo" required>
-                        <option value="">Selecciona un ciclo</option>
-                        <?php foreach ($ciclos as $c): ?>
-                            <option value="<?= $c['id_ciclo'] ?>"><?= htmlspecialchars($c['nombre_ciclo']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-
-                    <label for="editGrupo">Grupo</label>
-                    <input type="text" name="grupo" id="editGrupo" placeholder="Ej. A" required>
+                    <label for="editNombreProfesorGrupo">Profesor-Materia-Grupo</label>
+                    <input type="text" id="editNombreProfesorGrupo" name="nombre_profesor_materia_grupo" readonly
+                        placeholder="Se generará automáticamente">
+                    <input type="hidden" name="id_nombre_profesor_materia_grupo" id="idNombreProfesorGrupoEditar">
                 </fieldset>
 
                 <div class="actions">
@@ -265,20 +258,35 @@ $ciclos = $pdo->query("SELECT id_ciclo, nombre_ciclo FROM ciclos_escolares ORDER
     </div>
 
     <script>
-        window.rolUsuarioPHP = "<?= $rolUsuario; ?>";
+        // Autogenerar "Profesor {Docente} - {Clave}"
+        function actualizarNombrePMg(selectDoc, selectMat, output) {
+            const docente = selectDoc.options[selectDoc.selectedIndex]?.text || '';
+            const clave = selectMat.options[selectMat.selectedIndex]?.text || '';
+            output.value = (docente && clave) ? `Profesor ${docente} - ${clave}` : '';
+        }
 
-        // BUSCAR
-        document.getElementById('buscarAsignacion').addEventListener('keyup', function () {
-            const filtro = this.value.toLowerCase();
-            const filas = document.querySelectorAll('#tablaAsignaciones tbody tr');
-            filas.forEach(fila => {
-                fila.style.display = fila.innerText.toLowerCase().includes(filtro) ? '' : 'none';
-            });
-        });
+        // NUEVO
+        const selDocN = document.getElementById('docente');
+        const selMatN = document.getElementById('materia');
+        const outN = document.getElementById('nombreProfesorGrupo');
+        selDocN.addEventListener('change', () => actualizarNombrePMg(selDocN, selMatN, outN));
+        selMatN.addEventListener('change', () => actualizarNombrePMg(selDocN, selMatN, outN));
+
+        // EDITAR
+        const selDocE = document.getElementById('editDocente');
+        const selMatE = document.getElementById('editMateria');
+        const outE = document.getElementById('editNombreProfesorGrupo');
+        selDocE.addEventListener('change', () => actualizarNombrePMg(selDocE, selMatE, outE));
+        selMatE.addEventListener('change', () => actualizarNombrePMg(selDocE, selMatE, outE));
     </script>
 
-    <script src="/Plataforma_UT/js/DashboardY.js"></script>
-    <script src="../../js/admin/AsignacionesDocente.js"></script>
+    <script>
+        window.rolUsuarioPHP =
+            "<?= $rolUsuario; ?>"; // BÚSQUEDA EN TIEMPO REAL document.getElementById('buscarAsignacion').addEventListener('keyup', function () { const filtro = this.value.toLowerCase(); const filas = document.querySelectorAll('#tablaAsignaciones tbody tr'); filas.forEach(fila => { fila.style.display = fila.innerText.toLowerCase().includes(filtro) ? '' : 'none'; }); }); 
+    </script>
+
+    <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
+    <script src="../../js/admin/AsignacionesDocentes3.js"></script>
 </body>
 
 </html>

@@ -40,14 +40,28 @@ $administradores = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet" />
+    <link rel="stylesheet" href="../../css/styleD.css" />
     <link rel="stylesheet" href="../../css/admin/admin.css" />
-    <link rel="stylesheet" href="/Plataforma_UT/css/styleD.css" />
     <link rel="stylesheet" href="../../css/admin/adminModal.css" />
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="icon" href="../../img/ut_logo.png" sizes="32x32" type="image/png">
 </head>
 
+<style>
+    .is-hidden {
+        display: none !important;
+    }
+
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 280px;
+        overflow-y: auto;
+        z-index: 1000;
+    }
+</style>
 
 <body>
     <div class="container">
@@ -66,7 +80,7 @@ $administradores = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </button>
             <div class="search-bar">
                 <i class="fas fa-search"></i>
-                <input type="text" id="buscarAdmin" placeholder="Buscar..." />
+                <input type="text" id="buscarAdmin" placeholder="Buscar Admin..." />
             </div>
             <div class="header-actions">
                 <div class="notification"><i class="fas fa-bell"></i>
@@ -94,7 +108,7 @@ $administradores = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <i class="fas fa-download"></i> Exportar
                     </button>
                     <button class="btn btn-outline btn-sm" id="btnNuevo">
-                        <i class="fas fa-plus"></i> Nuevo
+                        <i class="fas fa-plus"></i> Nuevo Administrador
                     </button>
                 </div>
             </div>
@@ -151,7 +165,6 @@ $administradores = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </tbody>
                 </table>
                 <div class="pagination-container" id="pagination"></div>
-
             </div>
         </div>
     </div>
@@ -229,9 +242,106 @@ $administradores = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 fila.style.display = fila.innerText.toLowerCase().includes(filtro) ? '' : 'none';
             });
         });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const table = document.getElementById("tablaAdmins");
+            if (!table) return;
+
+            const tbody = table.querySelector("tbody");
+            const pagination = document.getElementById("pagination");
+            const searchInput = document.getElementById("buscarAdmin");
+
+            const ROWS_PER_PAGE = 5;
+            let currentPage = 1;
+            const allRows = Array.from(tbody.querySelectorAll("tr"));
+
+            // ===== Helpers =====
+            const getFilteredRows = () => {
+                const q = (searchInput?.value || "").trim().toLowerCase();
+                if (!q) return allRows;
+                return allRows.filter(tr => tr.innerText.toLowerCase().includes(q));
+            };
+
+            const paginate = (rows, page, perPage) => {
+                const total = rows.length;
+                const totalPages = Math.max(1, Math.ceil(total / perPage));
+                if (page > totalPages) page = totalPages;
+                if (page < 1) page = 1;
+
+                // Oculta todo (inline, robusto)
+                allRows.forEach(tr => {
+                    tr.style.display = "none";
+                });
+
+                // Muestra sólo el segmento actual
+                const start = (page - 1) * perPage;
+                const end = start + perPage;
+                rows.slice(start, end).forEach(tr => {
+                    tr.style.display = "";
+                });
+
+                renderPagination(totalPages, page);
+                currentPage = page;
+            };
+
+            const renderPagination = (totalPages, page) => {
+                pagination.innerHTML = "";
+
+                const mkBtn = (num, label = null, disabled = false, active = false) => {
+                    const b = document.createElement("button");
+                    b.className = "pagination-btn";
+                    b.textContent = label ?? num;
+                    if (active) b.classList.add("active");
+                    b.disabled = disabled;
+                    b.addEventListener("click", () => goToPage(num));
+                    return b;
+                };
+
+                // «
+                pagination.appendChild(mkBtn(page - 1, "«", page === 1));
+
+                // Números (siempre visible, aunque haya 1 página)
+                const windowSize = 1;
+                const addDots = () => {
+                    const s = document.createElement("span");
+                    s.textContent = "…";
+                    s.style.padding = "6px";
+                    s.style.color = "#999";
+                    pagination.appendChild(s);
+                };
+
+                for (let i = 1; i <= totalPages; i++) {
+                    if (i === 1 || i === totalPages || Math.abs(i - page) <= windowSize) {
+                        pagination.appendChild(mkBtn(i, null, false, i === page));
+                    } else if (
+                        (i === 2 && page > windowSize + 2) ||
+                        (i === totalPages - 1 && page < totalPages - windowSize - 1)
+                    ) {
+                        addDots();
+                    }
+                }
+
+                // »
+                pagination.appendChild(mkBtn(page + 1, "»", page === totalPages));
+            };
+
+            const goToPage = (p) => {
+                paginate(getFilteredRows(), p, ROWS_PER_PAGE);
+            };
+
+            // ===== Buscador integrado a la paginación =====
+            if (searchInput) {
+                searchInput.addEventListener("keyup", () => {
+                    paginate(getFilteredRows(), 1, ROWS_PER_PAGE);
+                });
+            }
+
+            // ===== Inicializar =====
+            paginate(getFilteredRows(), 1, ROWS_PER_PAGE);
+        });
     </script>
-    <script src="/Plataforma_UT/js/DashboardY.js"></script>
-    <script src="../../js/admin/AdminO.js"></script>
+    <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
+    <script src="../../js/admin/Admin.js"></script>
 
 </body>
 
