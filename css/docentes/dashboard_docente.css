@@ -1,17 +1,19 @@
 /* ==============================
-   DASHBOARD DOCENTES REFINED
+   DASHBOARD DOCENTES (ADMINLTE STYLE)
    ============================== */
 
 :root {
   --primary: #006400;
-  --primary-light: #90ee90;
+  --primary-light: #8de9b5;
   --secondary: #20c997;
   --success: #38b000;
   --danger: #e63946;
   --warning: #ffb703;
+  --info: #17a2b8;
   --dark: #1b4332;
-  --surface: #ffffff;
+  --light: #f8f9fa;
   --bg: #f5f7fb;
+  --surface: #ffffff;
   --text: #1d3557;
   --text-light: #6c757d;
   --radius: 12px;
@@ -20,6 +22,7 @@
   --transition: all 0.3s ease;
 }
 
+/* ===== Global ===== */
 * {
   margin: 0;
   padding: 0;
@@ -143,177 +146,377 @@ body {
   border-radius: 6px;
 }
 
-/* ===== Buttons ===== */
-.btn {
-  display: inline-flex;
+/* ===============================
+   📊 CARDS ESTILO ADMINLTE
+   =============================== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 22px;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 10px 18px;
-  border-radius: var(--radius);
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  border: none;
-  transition: var(--transition);
-}
-.btn i { font-size: 14px; }
-.btn-primary {
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
-  color: #fff;
-}
-.btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
-}
-.btn-outline {
-  border: 2px solid var(--primary);
-  background: transparent;
-  color: var(--primary);
-}
-.btn-outline:hover {
-  background: var(--primary);
-  color: #fff;
-}
-
-/* ===== Table Card ===== */
-.table-card {
-  background: var(--surface);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
-  padding: 0;
-  overflow-x: auto;
-  transition: var(--transition);
-}
-.card-title {
-  padding: 20px;
-  border-bottom: 1px solid #e9ecef;
-  font-weight: 600;
-  color: var(--primary);
-  background: rgba(245, 247, 251, 0.8);
-}
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
-.data-table th,
-.data-table td {
-  padding: 14px 12px;
-  font-size: 14px;
-  text-align: left;
-  white-space: normal;
-  word-break: break-word;
-}
-.data-table th {
-  background: #f8f9fa;
-  font-weight: 600;
-  color: var(--text);
-}
-.data-table tbody tr {
-  transition: var(--transition);
-  cursor: pointer;
-}
-.data-table tbody tr:hover {
-  background: #eef7ee;
-  transform: scale(1.005);
-}
-
-/* ===== Action buttons ===== */
-.btn-sm {
-  padding: 6px 10px;
-  font-size: 12px;
-  border-radius: 8px;
-}
-.btn-sm i { font-size: 12px; }
-
-/* ===== Modal general ===== */
-#modalTarea {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-#modalTarea .box {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: var(--shadow-md);
-  padding: 25px;
-  width: 90%;
-  max-width: 550px;
-  animation: fadeIn 0.3s ease;
-}
-#modalTarea input, #modalTarea textarea {
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  font-size: 14px;
-  outline: none;
-}
-#modalTarea input:focus, #modalTarea textarea:focus {
-  border-color: var(--primary-light);
-  box-shadow: 0 0 5px var(--primary-light);
-}
-
-/* ===== Modal vista previa ===== */
-.vista-modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.45);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 10000;
-}
-.vista-content {
-  background: #fff;
+  gap: 18px;
   border-radius: 14px;
-  padding: 28px;
-  width: 90%;
-  max-width: 600px;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.25);
-  animation: fadeIn 0.3s ease;
+  padding: 20px 25px;
+  color: #fff;
+  box-shadow: var(--shadow-md);
+  animation: fadeIn 0.6s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.vista-content h2 {
-  color: var(--primary);
-  margin-bottom: 8px;
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.15);
+}
+.stat-card .stat-icon {
+  font-size: 38px;
+  opacity: 0.9;
+}
+.stat-card .stat-info h3 {
+  font-size: 2rem;
+  margin: 0;
   font-weight: 700;
 }
-.vista-content hr {
-  margin: 10px 0;
-  border: 0;
-  height: 1px;
-  background: #e0e0e0;
-}
-.vista-content p {
-  color: var(--text);
-  line-height: 1.6;
-}
-.vista-content a {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--primary);
-  text-decoration: none;
-  font-weight: 600;
-  margin-top: 10px;
-}
-.vista-content a:hover {
-  text-decoration: underline;
+.stat-card .stat-info p {
+  margin: 0;
+  font-size: 0.95rem;
+  opacity: 0.9;
+  font-weight: 500;
 }
 
-/* ===== Animaciones ===== */
+/* 🔹 Colores tipo AdminLTE */
+.stat-card.azul { background: linear-gradient(135deg, #007bff, #17a2b8); }
+.stat-card.verde { background: linear-gradient(135deg, #28a745, #38b000); }
+.stat-card.naranja { background: linear-gradient(135deg, #ffb703, #fd7e14); }
+
+/* ===============================
+   📘 ASIGNACIONES DOCENTE
+   =============================== */
+.asignaciones-container {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.asignacion-card {
+  display: flex;
+  align-items: center;
+  background: var(--light, #f8f9fa);
+  border-radius: 14px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+  padding: 16px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.asignacion-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 16px rgba(0, 0, 0, 0.12);
+}
+
+.asignacion-card i {
+  font-size: 36px;
+  color: var(--primary, #006400);
+  margin-right: 14px;
+}
+
+.asignacion-info h4 {
+  font-size: 1.1rem;
+  color: var(--dark, #1b4332);
+  margin: 0;
+}
+
+.asignacion-info p {
+  font-size: 0.9rem;
+  color: var(--text-light, #6c757d);
+  margin: 4px 0 0;
+}
+
+.no-asignaciones {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--text-light, #6c757d);
+  font-style: italic;
+  margin-top: 10px;
+}
+
+/* ===============================
+   🎨 CARDS SECUNDARIAS
+   =============================== */
+.resumen-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 22px;
+  margin-top: 15px;
+}
+
+.resumen-cards .card {
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.resumen-cards .card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+.resumen-cards .card i {
+  font-size: 36px;
+  color: var(--primary);
+  margin-bottom: 10px;
+}
+.resumen-cards .card h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 5px;
+}
+.resumen-cards .card p {
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+/* ===============================
+   🔄 Animaciones
+   =============================== */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-15px); }
+  from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== Responsive ===== */
+/* ===============================
+   📱 Responsive
+   =============================== */
 @media (max-width: 992px) {
   .main-content { padding: 20px; }
   .page-title .title { font-size: 22px; }
   .btn { padding: 8px 14px; font-size: 13px; }
+}
+
+/* ===============================
+   🎓 TARJETAS GRANDES DE MATERIAS
+   =============================== */
+.materias-grid {
+  margin-top: 25px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 25px;
+  animation: fadeIn 0.8s ease;
+}
+
+.materia-card {
+  background: var(--surface);
+  border-radius: 18px;
+  padding: 28px 22px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+  transition: all 0.35s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.materia-card::before {
+  content: "";
+  position: absolute;
+  top: -60%;
+  right: -60%;
+  width: 180%;
+  height: 180%;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  transform: rotate(25deg);
+  border-radius: 50%;
+}
+
+.materia-card:hover::before {
+  opacity: 0.08;
+}
+
+.materia-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+}
+
+.materia-icon {
+  flex-shrink: 0;
+  width: 65px;
+  height: 65px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--primary-light), var(--primary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 28px;
+  box-shadow: 0 4px 12px rgba(0, 100, 0, 0.25);
+  transition: all 0.3s ease;
+}
+
+.materia-card:hover .materia-icon {
+  transform: rotate(-6deg) scale(1.05);
+  box-shadow: 0 6px 18px rgba(0, 100, 0, 0.35);
+}
+
+.materia-info h4 {
+  font-size: 1.25rem;
+  color: var(--dark);
+  margin: 0 0 4px;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.materia-info p {
+  margin: 0;
+  color: var(--text-light);
+  font-size: 0.95rem;
+}
+
+.materia-card:hover .materia-info h4 {
+  color: var(--primary);
+}
+
+@media (max-width: 600px) {
+  .materia-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  .materia-icon {
+    margin-bottom: 10px;
+  }
+}
+
+/* ===============================
+   🌈 TARJETAS MODERNAS DE MATERIAS
+   =============================== */
+.materias-modern-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 30px;
+  padding: 10px 5px;
+}
+
+.materia-modern-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+  padding: 28px 26px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  transition: all 0.35s ease;
+  cursor: pointer;
+}
+
+.materia-modern-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 28px rgba(0, 0, 0, 0.18);
+}
+
+.materia-modern-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  opacity: 0.05;
+  z-index: 1;
+  transition: opacity 0.4s ease;
+}
+
+.materia-modern-card:hover .materia-modern-bg {
+  opacity: 0.12;
+}
+
+.materia-modern-icon {
+  z-index: 2;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: #fff;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  font-size: 32px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 100, 0, 0.25);
+  transition: transform 0.3s ease;
+}
+
+.materia-modern-card:hover .materia-modern-icon {
+  transform: scale(1.1) rotate(-5deg);
+  box-shadow: 0 8px 16px rgba(0, 100, 0, 0.35);
+}
+
+.materia-modern-content {
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.materia-modern-content h4 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 6px;
+  transition: color 0.3s ease;
+}
+
+.materia-modern-card:hover .materia-modern-content h4 {
+  color: var(--primary);
+}
+
+.materia-modern-content p {
+  font-size: 0.95rem;
+  color: var(--text-light);
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  .materia-modern-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .materia-modern-icon {
+    margin-bottom: 10px;
+  }
+}
+
+/* Quitar subrayado y heredar color */
+.materia-modern-card {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Por si el subrayado viene de los <p> o <h4> dentro */
+.materia-modern-card h4,
+.materia-modern-card p {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* En hover, mantenemos el efecto visual limpio */
+.materia-modern-card:hover {
+  text-decoration: none;
+  transform: translateY(-5px);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12);
+  transition: all 0.3s ease;
+}
+
+.materia-modern-card:hover {
+  text-decoration: none;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 128, 0, 0.15);
 }

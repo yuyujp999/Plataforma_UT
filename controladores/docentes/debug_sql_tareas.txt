@@ -1,4 +1,0 @@
-INSERT INTO tareas (id_docente, titulo, descripcion, fecha_entrega, archivo, grupo)
-        VALUES ('15', 'glosario ', 'hacer un glosario', '2025-10-10', '', '')
-INSERT INTO tareas (id_docente, titulo, descripcion, fecha_entrega, archivo, grupo)
-        VALUES ('15', 'glosario ', 'asdasdad', '2025-10-10', '1759996351_Actividad_Transversal_Investigacion.docx', '')

@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
       {
         icon: "fas fa-chart-pie",
         text: "Dashboard",
-        path: "/vistas/docentes/dashboardDocente.php",
+        path: "/Plataforma_UT/vistas/docentes/dashboardDocente.php",
       },
       {
         icon: "fas fa-box",
