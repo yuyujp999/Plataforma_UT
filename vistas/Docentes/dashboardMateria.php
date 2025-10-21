@@ -7,6 +7,7 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'docente') {
 
 include_once __DIR__ . "/../../conexion/conexion.php";
 include_once __DIR__ . "/../../controladores/docentes/docentecontroller.php";
+include_once __DIR__ . "/../../controladores/docentes/TareasController.php";
 
 $idAsignacion = intval($_GET['id'] ?? 0);
 $rolUsuario = $_SESSION['rol'];
@@ -14,9 +15,8 @@ $usuario = $_SESSION['usuario'] ?? [];
 $nombre = $usuario['nombre'] ?? 'Docente';
 $apellido = $usuario['apellido_paterno'] ?? '';
 $usuarioNombre = $nombre . ' ' . $apellido;
-$iniciales = strtoupper(substr($nombre, 0, 1) . substr($apellido, 0, 1));
 
-// Obtener datos de la materia seleccionada
+// datos de la materia
 $conexion = $conn;
 $sql = "
   SELECT 
@@ -36,6 +36,9 @@ $sql = "
   LIMIT 1
 ";
 $materia = $conexion->query($sql)->fetch_assoc();
+
+// tareas
+$tareas = TareasController::obtenerTareasPorMateria($idAsignacion);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -46,43 +49,38 @@ $materia = $conexion->query($sql)->fetch_assoc();
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
   <link rel="stylesheet" href="../../css/styleD.css">
   <link rel="stylesheet" href="../../css/docentes/materia_docente.css">
-  <link rel="icon" href="../../img/ut_logo.png" sizes="32x32" type="image/png">
 </head>
 <body>
   <div class="container">
-    <!-- 🧭 SIDEBAR -->
+    <!-- SIDEBAR (estructura que espera el JS) -->
     <div class="sidebar" id="sidebar">
+      <div class="overlay" id="overlay"></div>
       <div class="logo"><h1>UT<span>Panel</span></h1></div>
       <div class="nav-menu" id="menu">
         <div class="menu-heading">Menú</div>
+        <!-- El JS inyecta aquí los items -->
       </div>
     </div>
 
-    <!-- 🧩 CONTENIDO PRINCIPAL -->
+    <!-- CONTENIDO -->
     <div class="main-content">
-
-      <!-- 🔹 NAVBAR SUPERIOR DE MATERIA -->
-      <div class="top-navbar">
+      <div class="materia-navbar">
         <div class="materia-info">
-          <h2><?= htmlspecialchars($materia['nombre_materia'] ?? 'Materia') ?></h2>
-          <span class="codigo"><?= htmlspecialchars($materia['codigo_materia'] ?? '') ?> - <?= htmlspecialchars($materia['grupo'] ?? '') ?></span>
+          <h2><i class="fa-solid fa-book"></i> <?= htmlspecialchars($materia['nombre_materia'] ?? 'Materia') ?></h2>
+          <p><strong>Grupo:</strong> <?= htmlspecialchars($materia['grupo'] ?? '—') ?></p>
         </div>
-        <div class="docente-info">
-          <i class="fa-solid fa-user"></i>
+        <div class="user-info">
+          <i class="fa-solid fa-user-tie"></i>
           <span><?= htmlspecialchars($usuarioNombre) ?></span>
         </div>
       </div>
 
-      <!-- 🔙 BOTÓN VOLVER -->
-      <a href="dashboardDocente.php" class="btn-outline"><i class="fa-solid fa-arrow-left"></i> Volver</a>
-
-      <!-- 🔸 PANEL DE OPCIONES -->
       <div class="materia-panel">
         <div class="card">
           <i class="fa-solid fa-upload"></i>
           <h3>Subir Recursos</h3>
           <p>Agrega archivos y material para tus alumnos.</p>
-          <a href="#" class="btn">Ir</a>
+          <a href="subirTarea.php?id=<?= $idAsignacion ?>" class="btn">Ir</a>
         </div>
 
         <div class="card">
@@ -99,10 +97,32 @@ $materia = $conexion->query($sql)->fetch_assoc();
           <a href="#" class="btn">Ir</a>
         </div>
       </div>
+
+      <div class="tareas-section">
+        <h2><i class="fa-solid fa-tasks"></i> Tareas publicadas</h2>
+        <?php if ($tareas && $tareas->num_rows > 0): ?>
+          <div class="tareas-list">
+            <?php while ($t = $tareas->fetch_assoc()): ?>
+              <div class="tarea-card">
+                <h4><?= htmlspecialchars($t['titulo']) ?></h4>
+                <p><?= htmlspecialchars($t['descripcion']) ?></p>
+                <p><strong>Entrega:</strong> <?= $t['fecha_entrega'] ? htmlspecialchars($t['fecha_entrega']) : 'Sin fecha' ?></p>
+                <?php if (!empty($t['archivo'])): ?>
+                  <a class="archivo" href="/Plataforma_UT/<?= htmlspecialchars($t['archivo']) ?>" target="_blank">
+                    <i class="fa-solid fa-file-arrow-down"></i> Descargar
+                  </a>
+                <?php endif; ?>
+              </div>
+            <?php endwhile; ?>
+          </div>
+        <?php else: ?>
+          <p class="no-tareas">Aún no se han publicado tareas para esta materia.</p>
+        <?php endif; ?>
+      </div>
     </div>
   </div>
 
-  <!-- JS -->
+  <!-- Pasa el rol al JS ANTES de cargar el script del menú -->
   <script>
     window.rolUsuarioPHP = "<?= htmlspecialchars($rolUsuario, ENT_QUOTES, 'UTF-8'); ?>";
   </script>
