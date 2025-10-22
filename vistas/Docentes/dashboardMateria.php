@@ -99,26 +99,39 @@ $tareas = TareasController::obtenerTareasPorMateria($idAsignacion);
       </div>
 
       <div class="tareas-section">
-        <h2><i class="fa-solid fa-tasks"></i> Tareas publicadas</h2>
-        <?php if ($tareas && $tareas->num_rows > 0): ?>
-          <div class="tareas-list">
-            <?php while ($t = $tareas->fetch_assoc()): ?>
-              <div class="tarea-card">
-                <h4><?= htmlspecialchars($t['titulo']) ?></h4>
-                <p><?= htmlspecialchars($t['descripcion']) ?></p>
-                <p><strong>Entrega:</strong> <?= $t['fecha_entrega'] ? htmlspecialchars($t['fecha_entrega']) : 'Sin fecha' ?></p>
-                <?php if (!empty($t['archivo'])): ?>
-                  <a class="archivo" href="/Plataforma_UT/<?= htmlspecialchars($t['archivo']) ?>" target="_blank">
-                    <i class="fa-solid fa-file-arrow-down"></i> Descargar
-                  </a>
-                <?php endif; ?>
-              </div>
-            <?php endwhile; ?>
+  <h2><i class="fa-solid fa-tasks"></i> Tareas publicadas</h2>
+  <?php if ($tareas && $tareas->num_rows > 0): ?>
+    <div class="tareas-list">
+      <?php while ($t = $tareas->fetch_assoc()): ?>
+        <div class="tarea-card">
+          <h4><?= htmlspecialchars($t['titulo']) ?></h4>
+          <p><?= htmlspecialchars($t['descripcion']) ?></p>
+          <p><strong>Entrega:</strong> <?= $t['fecha_entrega'] ?: 'Sin fecha' ?></p>
+
+          <?php if (!empty($t['archivo'])): ?>
+            <a class="archivo" href="/Plataforma_UT/<?= htmlspecialchars($t['archivo']) ?>" target="_blank">
+              <i class="fa-solid fa-file-arrow-down"></i> Descargar
+            </a>
+          <?php endif; ?>
+
+          <div class="tarea-actions">
+            <a href="editarTarea.php?id=<?= $t['id_tarea'] ?>" class="btn-edit">
+              <i class="fa-solid fa-pen"></i> Editar
+            </a>
+            <a href="eliminarTarea.php?id=<?= $t['id_tarea'] ?>&asig=<?= $idAsignacion ?>" 
+               class="btn-delete"
+               onclick="return confirm('¿Seguro que deseas eliminar esta tarea?');">
+              <i class="fa-solid fa-trash"></i> Eliminar
+            </a>
           </div>
-        <?php else: ?>
-          <p class="no-tareas">Aún no se han publicado tareas para esta materia.</p>
-        <?php endif; ?>
-      </div>
+        </div>
+      <?php endwhile; ?>
+    </div>
+  <?php else: ?>
+    <p class="no-tareas">Aún no se han publicado tareas para esta materia.</p>
+  <?php endif; ?>
+</div>
+
     </div>
   </div>
 

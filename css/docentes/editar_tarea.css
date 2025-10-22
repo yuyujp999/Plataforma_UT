@@ -1,0 +1,136 @@
+/* ===========================================
+   🎨 ESTILOS PARA EDITAR TAREAS (DOCENTES)
+   =========================================== */
+
+:root {
+  --primary: #006400;
+  --primary-light: #8de9b5;
+  --secondary: #20c997;
+  --danger: #c1121f;
+  --success: #38b000;
+  --dark: #1b4332;
+  --light: #f8f9fa;
+  --text: #1d3557;
+  --text-light: #6c757d;
+  --shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  --radius: 12px;
+}
+
+/* ======== CONTENEDOR PRINCIPAL ======== */
+.form-card {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 40px;
+  margin-top: 40px;
+  max-width: 900px;
+  margin-inline: auto;
+}
+
+.form-card h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.6rem;
+  color: var(--primary);
+  margin-bottom: 25px;
+}
+
+.mensaje {
+  padding: 12px 18px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.mensaje.success {
+  background: #d8f3dc;
+  color: var(--dark);
+  border-left: 5px solid var(--success);
+}
+
+.mensaje.error {
+  background: #ffe5e5;
+  color: var(--danger);
+  border-left: 5px solid var(--danger);
+}
+
+/* ======== FORMULARIO ======== */
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.upload-form label {
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.upload-form input[type="text"],
+.upload-form input[type="date"],
+.upload-form textarea,
+.upload-form input[type="file"] {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  color: var(--text);
+  background-color: #fff;
+  transition: all 0.3s ease;
+}
+
+.upload-form input:focus,
+.upload-form textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 128, 0, 0.15);
+  outline: none;
+}
+
+textarea {
+  resize: vertical;
+}
+
+/* ======== BOTÓN ======== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 22px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  align-self: flex-start;
+}
+
+.btn:hover {
+  background: var(--secondary);
+  transform: translateY(-2px);
+}
+
+/* ======== ARCHIVO ACTUAL ======== */
+.upload-form p a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.upload-form p a:hover {
+  text-decoration: underline;
+}
+
+/* ======== RESPONSIVE ======== */
+@media (max-width: 768px) {
+  .form-card {
+    padding: 25px;
+  }
+}
