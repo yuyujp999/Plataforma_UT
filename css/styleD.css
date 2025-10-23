@@ -878,3 +878,20 @@ body {
 }
 /* Forzar SweetAlert2 por encima del modal */
 .swal2-container { z-index: 30000 !important; }
+
+/* ===============================
+   🔧 FIX: Evitar overlay que cubra contenido
+   =============================== */
+.overlay {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.main-content {
+  position: relative;
+  z-index: 10 !important;
+  background-color: var(--light);
+  min-height: 100vh;
+  padding: 20px;
+}

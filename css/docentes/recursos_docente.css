@@ -1,0 +1,224 @@
+/* =============================================
+   📁 RECURSOS DOCENTE — ESTILO DE SUBIDA Y LISTADO
+   ============================================= */
+:root {
+  --primary: #006400;
+  --primary-light: #8de9b5;
+  --secondary: #20c997;
+  --success: #38b000;
+  --danger: #e63946;
+  --dark: #1b4332;
+  --light: #f8f9fa;
+  --text: #1d3557;
+  --text-light: #6c757d;
+  --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* =========================
+   🔹 CONTENEDOR PRINCIPAL
+   ========================= */
+.container-form {
+  max-width: 600px;
+  margin: 60px auto;
+  background: var(--light);
+  padding: 30px 40px;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+.container-form h2 {
+  text-align: center;
+  color: var(--primary);
+  margin-bottom: 25px;
+  font-size: 1.6rem;
+}
+
+.container-form h2 i {
+  margin-right: 8px;
+  color: var(--secondary);
+}
+
+/* =========================
+   🔹 FORMULARIO
+   ========================= */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+label {
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+input[type="text"],
+input[type="file"],
+textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: 0.2s ease-in-out;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+  border-color: var(--secondary);
+  box-shadow: 0 0 5px var(--primary-light);
+  outline: none;
+}
+
+/* =========================
+   🔹 BOTONES
+   ========================= */
+.btn-guardar {
+  background: var(--primary);
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-guardar:hover {
+  background: var(--success);
+}
+
+.btn-volver {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: var(--dark);
+  font-weight: 600;
+  margin-top: 25px;
+  transition: color 0.2s;
+}
+
+.btn-volver:hover {
+  color: var(--primary);
+}
+
+/* =========================
+   🔹 ALERTAS
+   ========================= */
+.alert {
+  background-color: var(--primary-light);
+  color: var(--dark);
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 15px;
+  text-align: center;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* =========================
+   🔹 LISTADO DE RECURSOS
+   ========================= */
+.recursos-section {
+  margin-top: 40px;
+}
+
+.recursos-section h2 {
+  font-size: 1.4rem;
+  color: var(--primary);
+  margin-bottom: 15px;
+  border-bottom: 2px solid var(--primary-light);
+  padding-bottom: 6px;
+}
+
+.recursos-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.recurso-card {
+  background: #fff;
+  padding: 18px;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.recurso-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12);
+}
+
+.recurso-card h4 {
+  color: var(--dark);
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+}
+
+.recurso-card p {
+  color: var(--text-light);
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.recurso-card a.archivo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--secondary);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.recurso-card a.archivo:hover {
+  background: var(--success);
+}
+
+.recurso-card .btn-delete {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--danger);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
+
+.recurso-card .btn-delete:hover {
+  color: #b02a37;
+}
+
+/* =========================
+   📱 RESPONSIVE
+   ========================= */
+@media (max-width: 768px) {
+  .container-form {
+    margin: 40px 15px;
+    padding: 25px;
+  }
+
+  .recursos-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================
+   🩹 FIX: Overlay cubriendo contenido
+   ========================= */
+#overlay {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}

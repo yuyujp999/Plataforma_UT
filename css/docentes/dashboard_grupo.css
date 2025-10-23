@@ -1,0 +1,258 @@
+/* ===============================
+   🎓 DASHBOARD GRUPO DOCENTE
+   =============================== */
+:root {
+  --primary: #006400;
+  --primary-light: #8de9b5;
+  --secondary: #20c997;
+  --dark: #1b4332;
+  --light: #f8f9fa;
+  --text: #1d3557;
+  --text-light: #6c757d;
+  --shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.main-content {
+  padding: 30px;
+}
+
+.materia-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--light);
+  padding: 15px 25px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  margin-bottom: 25px;
+}
+
+.materia-info h2 {
+  color: var(--primary);
+  font-size: 1.6rem;
+  margin-bottom: 8px;
+}
+
+.alumnos-section {
+  background: var(--light);
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+
+.alumnos-section h2 {
+  font-size: 1.3rem;
+  color: var(--primary);
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tabla-alumnos {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.tabla-alumnos thead {
+  background: var(--primary);
+  color: white;
+}
+
+.tabla-alumnos th, .tabla-alumnos td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.tabla-alumnos tbody tr:hover {
+  background: var(--primary-light);
+  color: var(--dark);
+}
+
+.no-alumnos {
+  color: var(--text-light);
+  font-style: italic;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.btn-volver {
+  display: inline-block;
+  margin-top: 25px;
+  background: var(--primary);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.btn-volver:hover {
+  background: var(--secondary);
+}
+:root {
+  --primary: #006400;
+  --primary-light: #8de9b5;
+  --secondary: #20c997;
+  --dark: #1b4332;
+  --light: #f8f9fa;
+  --text: #1d3557;
+  --text-light: #6c757d;
+  --shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.main-content {
+  padding: 30px;
+}
+
+.materia-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--light);
+  padding: 15px 25px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  margin-bottom: 25px;
+}
+
+.materia-info h2 {
+  color: var(--primary);
+  font-size: 1.6rem;
+  margin-bottom: 8px;
+}
+
+.alumnos-section {
+  background: var(--light);
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+
+.alumnos-section h2 {
+  font-size: 1.3rem;
+  color: var(--primary);
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tabla-alumnos {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.tabla-alumnos thead {
+  background: var(--primary);
+  color: white;
+}
+
+.tabla-alumnos th, .tabla-alumnos td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.tabla-alumnos tbody tr:hover {
+  background: var(--primary-light);
+  color: var(--dark);
+}
+
+.no-alumnos {
+  color: var(--text-light);
+  font-style: italic;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.btn-volver {
+  display: inline-block;
+  margin-top: 25px;
+  background: var(--primary);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.btn-volver:hover {
+  background: var(--secondary);
+}
+
+/* ===============================
+   📘 MATERIAS DEL DOCENTE EN ESTE GRUPO
+   =============================== */
+.materias-grupo-section {
+  margin-bottom: 30px;
+  background: var(--light);
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+
+.materias-grupo-section h2 {
+  color: var(--primary);
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.materias-grupo-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.materia-btn {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  padding: 14px 20px;
+  border-radius: 10px;
+  font-weight: 500;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.materia-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(0, 100, 0, 0.3);
+  color: white;
+}
+
+.no-materias {
+  color: var(--text-light);
+  font-style: italic;
+}
+/* ===============================
+   📘 MATERIAS DEL DOCENTE EN ESTE GRUPO
+   =============================== */
+.materias-grupo-section{
+  margin-bottom:30px;background:var(--light);padding:25px;border-radius:14px;box-shadow:var(--shadow);
+}
+.materias-grupo-section h2{
+  color:var(--primary);font-size:1.3rem;margin-bottom:15px;display:flex;align-items:center;gap:10px;
+}
+.materias-grupo-grid{
+  display:flex;flex-wrap:wrap;gap:15px;
+}
+.materia-btn{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;padding:14px 20px;border-radius:10px;
+  font-weight:500;text-decoration:none;display:flex;align-items:center;gap:10px;transition:transform .2s, box-shadow .2s;
+}
+.materia-btn:hover{transform:translateY(-3px);box-shadow:0 8px 15px rgba(0,100,0,.3);color:#fff;}
+.no-materias{color:var(--text-light);font-style:italic;}
+

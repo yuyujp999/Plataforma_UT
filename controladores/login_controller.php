@@ -14,28 +14,32 @@ if (!$rol || $pass === '') {
     die('Datos incompletos.');
 }
 
-// Determinar tabla, campo y usuario
+// Determinar tabla, campo y usuario según rol
 switch ($rol) {
     case 'docente':
         $tabla = 'docentes';
         $campo = 'matricula';
         $usuario = trim($_POST['matricula'] ?? '');
         break;
+
     case 'alumno':
         $tabla = 'alumnos';
         $campo = 'matricula';
         $usuario = trim($_POST['matricula'] ?? '');
         break;
+
     case 'secretaria':
         $tabla = 'secretarias';
         $campo = 'correo_institucional';
         $usuario = trim($_POST['correo'] ?? '');
         break;
+
     case 'admin':
         $tabla = 'administradores';
         $campo = 'correo';
         $usuario = trim($_POST['correo'] ?? '');
         break;
+
     default:
         die('Rol no válido.');
 }
@@ -44,7 +48,7 @@ if (!$usuario) {
     die('Usuario requerido.');
 }
 
-// Preparar y ejecutar la consulta
+// Preparar consulta
 $sql = "SELECT * FROM `$tabla` WHERE `$campo` = ? LIMIT 1";
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
@@ -68,7 +72,9 @@ if (!$row) {
     exit;
 }
 
-// Funciones para verificar hash
+/* ===============================
+   🔒 Verificación de contraseña
+================================ */
 function looks_like_bcrypt_or_argon($s)
 {
     return (bool) preg_match('/^\$2[ayb]\$|^\$argon2i\$|^\$argon2id\$/', $s);
@@ -79,7 +85,6 @@ function looks_like_sha256_hex($s)
     return (bool) (strlen($s) === 64 && ctype_xdigit($s));
 }
 
-// Verificar contraseña
 $login_ok = false;
 $stored = $row['password'] ?? '';
 
@@ -91,50 +96,75 @@ if ($stored !== '' && looks_like_bcrypt_or_argon($stored)) {
     $login_ok = ($pass === $stored);
 }
 
+/* ===============================
+   ✅ Si la contraseña es válida
+================================ */
 if ($login_ok) {
-    // Guardar datos completos en sesión según tipo de usuario
     $_SESSION['rol'] = $rol;
 
-    if ($rol === 'admin' || $rol === 'secretaria') {
-        $_SESSION['usuario'] = [
-            'id' => $row['id_admin'] ?? $row['id_secretaria'] ?? '',
-            'nombre' => $row['nombre'] ?? '',
-            'apellido_paterno' => $row['apellido_paterno'] ?? '',
-            'apellido_materno' => $row['apellido_materno'] ?? '',
-            'correo' => $row['correo_institucional'] ?? $row['correo'] ?? '',
-            'nivel_acceso' => $row['nivel_acceso'] ?? '',
-            'fecha_registro' => $row['fecha_registro'] ?? ''
-        ];
-    } else { // docente o alumno
-        $_SESSION['usuario'] = [
-            'matricula' => $row['matricula'] ?? '',
-            'nombre' => $row['nombre'] ?? '',
-            'apellido_paterno' => $row['apellido_paterno'] ?? '',
-            'apellido_materno' => $row['apellido_materno'] ?? ''
-        ];
-    }
-
-    // === Guardar ID específico según rol (para tareas y vínculos directos)
-    if ($rol === 'docente' && isset($row['id_docente'])) {
-        $_SESSION['id_docente'] = $row['id_docente'];
-    } elseif ($rol === 'alumno' && isset($row['id_alumno'])) {
-        $_SESSION['id_alumno'] = $row['id_alumno'];
-    }
-
-    // Redirigir según rol
     switch ($rol) {
-        case 'admin':
-            $destino = '/Plataforma_UT/vistas/admin/dashboardAdmin.php';
-            break;
+        /* ===============================
+           👨‍🏫 DOCENTE
+        ================================ */
         case 'docente':
+            $_SESSION['usuario'] = [
+                'id_docente' => $row['id_docente'] ?? null,
+                'matricula' => $row['matricula'] ?? '',
+                'nombre' => $row['nombre'] ?? '',
+                'apellido_paterno' => $row['apellido_paterno'] ?? '',
+                'apellido_materno' => $row['apellido_materno'] ?? ''
+            ];
+            $_SESSION['id_docente'] = $row['id_docente'] ?? null; // compatibilidad
             $destino = '/Plataforma_UT/vistas/Docentes/dashboardDocente.php';
             break;
+
+        /* ===============================
+           🎓 ALUMNO
+        ================================ */
         case 'alumno':
+            $_SESSION['usuario'] = [
+                'id_alumno' => $row['id_alumno'] ?? null,
+                'matricula' => $row['matricula'] ?? '',
+                'nombre' => $row['nombre'] ?? '',
+                'apellido_paterno' => $row['apellido_paterno'] ?? '',
+                'apellido_materno' => $row['apellido_materno'] ?? ''
+            ];
+            $_SESSION['id_alumno'] = $row['id_alumno'] ?? null;
             $destino = '/Plataforma_UT/vistas/Alumnos/dashboardAlumno.php';
             break;
+
+        /* ===============================
+           🧑‍💼 SECRETARIA
+        ================================ */
         case 'secretaria':
+            $_SESSION['usuario'] = [
+                'id_secretaria' => $row['id_secretaria'] ?? null,
+                'nombre' => $row['nombre'] ?? '',
+                'apellido_paterno' => $row['apellido_paterno'] ?? '',
+                'apellido_materno' => $row['apellido_materno'] ?? '',
+                'correo' => $row['correo_institucional'] ?? '',
+                'nivel_acceso' => $row['nivel_acceso'] ?? '',
+                'fecha_registro' => $row['fecha_registro'] ?? ''
+            ];
             $destino = '/Plataforma_UT/vistas/Secretarias/dashboardSecretaria.php';
             break;
+
+        /* ===============================
+           👑 ADMINISTRADOR
+        ================================ */
+        case 'admin':
+            $_SESSION['usuario'] = [
+                'id_admin' => $row['id_admin'] ?? null,
+                'nombre' => $row['nombre'] ?? '',
+                'apellido_paterno' => $row['apellido_paterno'] ?? '',
+                'apellido_materno' => $row['apellido_materno'] ?? '',
+                'correo' => $row['correo'] ?? '',
+                'nivel_acceso' => $row['nivel_acceso'] ?? '',
+                'fecha_registro' => $row['fecha_registro'] ?? ''
+            ];
+            $destino = '/Plataforma_UT/vistas/admin/dashboardAdmin.php';
+            break;
+
         default:
             $destino = '/Plataforma_UT/inicio.php';
             break;
@@ -147,3 +177,4 @@ if ($login_ok) {
     header('Location: /Plataforma_UT/Login.php?rol=' . urlencode($rol));
     exit;
 }
+?>

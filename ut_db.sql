@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 21-10-2025 a las 23:13:40
+-- Tiempo de generación: 23-10-2025 a las 18:15:52
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -189,7 +189,9 @@ INSERT INTO `asignaciones_docentes` (`id_asignacion_docente`, `id_docente`, `id_
 (6, 11, 11, 7),
 (8, 11, 12, 9),
 (9, 11, 8, 10),
-(10, 14, 8, 11);
+(10, 14, 8, 11),
+(11, 11, 14, 12),
+(12, 11, 7, 13);
 
 -- --------------------------------------------------------
 
@@ -244,7 +246,8 @@ INSERT INTO `asignar_materias` (`id_asignacion`, `id_materia`, `id_nombre_grupo_
 (8, 10, 6, 8),
 (9, 4, 8, 11),
 (10, 1, 8, 12),
-(11, 1, 5, 13);
+(11, 1, 5, 13),
+(12, 7, 6, 14);
 
 -- --------------------------------------------------------
 
@@ -310,6 +313,7 @@ CREATE TABLE `cat_nombres_materias` (
 
 INSERT INTO `cat_nombres_materias` (`id_nombre_materia`, `nombre`) VALUES
 (2, 'ADMI-II1G2'),
+(14, 'ADMI-IM1G2'),
 (9, 'ADMI-IS1G2'),
 (7, 'COMU-IM1G1'),
 (8, 'COMU-IM1G2'),
@@ -368,7 +372,9 @@ INSERT INTO `cat_nombre_profesor_materia_grupo` (`id_nombre_profesor_materia_gru
 (7, 'Profesor Angel Antonio Loza Flores - PROG-IS1G1'),
 (9, 'Profesor Angel Antonio Loza Flores - MATE-IS1G1'),
 (10, 'Profesor Angel Antonio Loza Flores - COMU-IM1G2'),
-(11, 'Profesor Brayan David Casas Morales - COMU-IM1G2');
+(11, 'Profesor Brayan David Casas Morales - COMU-IM1G2'),
+(12, 'Profesor Angel Antonio Loza Flores - ADMI-IM1G2'),
+(13, 'Profesor Angel Antonio Loza Flores - COMU-IM1G1');
 
 -- --------------------------------------------------------
 
@@ -474,6 +480,28 @@ INSERT INTO `materias` (`id_materia`, `nombre_materia`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `recursos_materias`
+--
+
+CREATE TABLE `recursos_materias` (
+  `id_recurso` int(11) NOT NULL,
+  `id_asignacion_docente` int(11) NOT NULL,
+  `titulo` varchar(255) NOT NULL,
+  `descripcion` text DEFAULT NULL,
+  `archivo` varchar(255) DEFAULT NULL,
+  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `recursos_materias`
+--
+
+INSERT INTO `recursos_materias` (`id_recurso`, `id_asignacion_docente`, `titulo`, `descripcion`, `archivo`, `fecha_creacion`) VALUES
+(1, 9, 'Clase 1', 'actividad para clase', 'uploads/recursos/1761165567_Ecosabor_Snacks_Ventas_2025.xlsx', '2025-10-22 20:39:27');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `secretarias`
 --
 
@@ -558,7 +586,8 @@ CREATE TABLE `tareas_materias` (
 --
 
 INSERT INTO `tareas_materias` (`id_tarea`, `id_asignacion_docente`, `titulo`, `descripcion`, `archivo`, `fecha_entrega`, `fecha_creacion`) VALUES
-(1, 9, 'Glosario', 'Hacer un Glosario', 'uploads/tareas/1761076300_Act2-ADT-XX.docx', '2025-10-22', '2025-10-21 19:51:40');
+(1, 9, 'Glosario', 'Hacer un Glosario', 'uploads/tareas/1761076300_Act2-ADT-XX.docx', '2025-10-22', '2025-10-21 19:51:40'),
+(3, 9, 'caca', 'adasdad', NULL, NULL, '2025-10-23 06:26:21');
 
 --
 -- Índices para tablas volcadas
@@ -673,6 +702,13 @@ ALTER TABLE `materias`
   ADD PRIMARY KEY (`id_materia`);
 
 --
+-- Indices de la tabla `recursos_materias`
+--
+ALTER TABLE `recursos_materias`
+  ADD PRIMARY KEY (`id_recurso`),
+  ADD KEY `id_asignacion_docente` (`id_asignacion_docente`);
+
+--
 -- Indices de la tabla `secretarias`
 --
 ALTER TABLE `secretarias`
@@ -724,7 +760,7 @@ ALTER TABLE `asignaciones_alumnos`
 -- AUTO_INCREMENT de la tabla `asignaciones_docentes`
 --
 ALTER TABLE `asignaciones_docentes`
-  MODIFY `id_asignacion_docente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_asignacion_docente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `asignaciones_grupo_alumno`
@@ -736,7 +772,7 @@ ALTER TABLE `asignaciones_grupo_alumno`
 -- AUTO_INCREMENT de la tabla `asignar_materias`
 --
 ALTER TABLE `asignar_materias`
-  MODIFY `id_asignacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id_asignacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `carreras`
@@ -754,7 +790,7 @@ ALTER TABLE `cat_nombres_grupo`
 -- AUTO_INCREMENT de la tabla `cat_nombres_materias`
 --
 ALTER TABLE `cat_nombres_materias`
-  MODIFY `id_nombre_materia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id_nombre_materia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `cat_nombres_semestre`
@@ -766,7 +802,7 @@ ALTER TABLE `cat_nombres_semestre`
 -- AUTO_INCREMENT de la tabla `cat_nombre_profesor_materia_grupo`
 --
 ALTER TABLE `cat_nombre_profesor_materia_grupo`
-  MODIFY `id_nombre_profesor_materia_grupo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id_nombre_profesor_materia_grupo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `docentes`
@@ -787,6 +823,12 @@ ALTER TABLE `materias`
   MODIFY `id_materia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
+-- AUTO_INCREMENT de la tabla `recursos_materias`
+--
+ALTER TABLE `recursos_materias`
+  MODIFY `id_recurso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT de la tabla `secretarias`
 --
 ALTER TABLE `secretarias`
@@ -802,7 +844,7 @@ ALTER TABLE `semestres`
 -- AUTO_INCREMENT de la tabla `tareas_materias`
 --
 ALTER TABLE `tareas_materias`
-  MODIFY `id_tarea` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_tarea` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Restricciones para tablas volcadas
@@ -849,6 +891,12 @@ ALTER TABLE `asignar_materias`
 ALTER TABLE `grupos`
   ADD CONSTRAINT `fk_grupos_cat_nombres_sem` FOREIGN KEY (`id_nombre_semestre`) REFERENCES `cat_nombres_semestre` (`id_nombre_semestre`) ON UPDATE CASCADE,
   ADD CONSTRAINT `grupos_ibfk_1` FOREIGN KEY (`id_nombre_grupo`) REFERENCES `cat_nombres_grupo` (`id_nombre_grupo`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `recursos_materias`
+--
+ALTER TABLE `recursos_materias`
+  ADD CONSTRAINT `recursos_materias_ibfk_1` FOREIGN KEY (`id_asignacion_docente`) REFERENCES `asignaciones_docentes` (`id_asignacion_docente`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `semestres`
