@@ -1,0 +1,177 @@
+:root {
+  --primary: #006400;
+  --primary-light: #8de9b5;
+  --dark: #1b4332;
+  --surface: #ffffff;
+  --bg: #f5f7fb;
+  --shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  --radius: 12px;
+  --transition: all 0.3s ease;
+}
+
+/* === Lista de ajustes === */
+.ajustes-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  padding: 1rem;
+}
+
+.ajuste-item {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  transition: var(--transition);
+}
+
+.ajuste-item:hover {
+  background-color: #f4fff4;
+  transform: translateX(3px);
+}
+
+.ajuste-info {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  color: var(--dark);
+  font-weight: 500;
+}
+
+.ajuste-info i {
+  color: var(--primary);
+  font-size: 1.2rem;
+}
+
+/* === Modal === */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(3px);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 2rem;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: var(--shadow);
+  animation: slideIn 0.3s ease;
+}
+
+.modal-content h3 {
+  color: var(--primary);
+  margin-bottom: 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* === Formulario === */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  color: var(--dark);
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+}
+
+.form-group input {
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: 0.2s;
+}
+
+.form-group input:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 100, 0, 0.1);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+}
+
+/* === Mensajes === */
+.msg {
+  margin-top: 1rem;
+  font-weight: 500;
+}
+
+.msg.success {
+  color: #28a745;
+}
+
+.msg.error {
+  color: #d9534f;
+}
+
+/* === Animación === */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* === Campos con botón de mostrar/ocultar === */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrapper input {
+  width: 100%;
+  padding-right: 40px;
+}
+
+.toggle-visibility {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: 0.2s;
+}
+
+.toggle-visibility:hover {
+  color: var(--primary);
+}
+
+.password-toggle i {
+  pointer-events: none;
+}
+
+/* Mejora de foco en input */
+.input-wrapper input:focus + .toggle-visibility,
+.input-wrapper .toggle-visibility:focus {
+  outline: none;
+}
