@@ -88,12 +88,13 @@ $recursos = RecursosController::obtenerRecursosPorMateria($idAsignacion);
         </div>
 
         <!-- Calificar Tareas -->
-        <div class="card">
-          <i class="fa-solid fa-clipboard-check"></i>
-          <h3>Calificar Tareas</h3>
-          <p>Consulta y evalúa las tareas entregadas.</p>
-          <a href="#" class="btn">Ir</a>
-        </div>
+<div class="card">
+  <i class="fa-solid fa-clipboard-check"></i>
+  <h3>Calificar Tareas</h3>
+  <p>Consulta y evalúa las tareas entregadas.</p>
+  <a href="dashboardCalificar.php?id=<?= $idAsignacion ?>" class="btn">Ir</a>
+</div>
+
 
         <!-- Subir Recursos -->
         <div class="card">
