@@ -35,6 +35,7 @@ $grupos = $idDocente ? DocenteController::obtenerGruposAsignados($idDocente) : [
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../../css/styleD.css">
+  <link rel="stylesheet" href="/Plataforma_UT/css/darkmode.css">
   <link rel="stylesheet" href="../../css/docentes/dashboard_docente.css">
   <link rel="icon" href="../../img/ut_logo.png" sizes="32x32" type="image/png">
 </head>
@@ -138,5 +139,6 @@ $grupos = $idDocente ? DocenteController::obtenerGruposAsignados($idDocente) : [
     window.rolUsuarioPHP = "<?= htmlspecialchars($rolUsuario, ENT_QUOTES, 'UTF-8'); ?>";
   </script>
   <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
+  <script src="/Plataforma_UT/js/modeToggle.js"></script>
 </body>
 </html>

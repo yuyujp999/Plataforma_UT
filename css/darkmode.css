@@ -1,0 +1,683 @@
+/* 🌙 UT PANEL - MODO OSCURO GLOBAL */
+body.dark-mode {
+  --bg: #0e0e0e;
+  --surface: #1a1a1a;
+  --text: #e8f5e9;
+  --dark: #d7f9e9;
+  --primary: #1db954;
+  --primary-light: #4ef37a;
+  --border: #2c2c2c;
+  --shadow: 0 3px 10px rgba(0, 0, 0, 0.6);
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+/* === Sidebar === */
+body.dark-mode .sidebar {
+  background: linear-gradient(180deg, #071a11 0%, #0e291e 100%);
+  box-shadow: none;
+}
+
+body.dark-mode .sidebar .logo h1 {
+  color: #e8f5e9;
+}
+
+body.dark-mode .sidebar .logo span {
+  color: var(--primary);
+}
+
+body.dark-mode .menu-heading {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+body.dark-mode .nav-item {
+  color: #d8f3dc;
+}
+
+body.dark-mode .nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-left-color: var(--primary);
+  color: #ffffff;
+}
+
+body.dark-mode .nav-item.active {
+  background: linear-gradient(90deg, rgba(67, 238, 129, 0.15), transparent);
+  border-left-color: var(--primary);
+  color: #fff;
+}
+
+/* === Header === */
+body.dark-mode .header {
+  background-color: #121212;
+  color: var(--text);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .title {
+  color: var(--primary-light);
+}
+
+body.dark-mode .user-profile {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .profile-img {
+  background: linear-gradient(135deg, var(--primary-light), var(--primary));
+}
+
+/* === Contenido === */
+body.dark-mode .main-content {
+  background-color: var(--bg);
+}
+
+/* === Tarjetas, tablas y elementos === */
+body.dark-mode .table-card,
+body.dark-mode .stat-card,
+body.dark-mode .ajuste-item {
+  background: #1d1d1d;
+  color: #e8f5e9;
+  border: 1px solid #2e2e2e;
+  box-shadow: none;
+}
+
+body.dark-mode .table-card th,
+body.dark-mode .table-card td {
+  color: #d7f9e9;
+}
+
+/* === Botones === */
+body.dark-mode .btn {
+  box-shadow: none;
+}
+
+body.dark-mode .btn.btn-outline {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+body.dark-mode .btn.btn-outline:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+body.dark-mode .btn.btn-primary {
+  background: linear-gradient(135deg, #136b3f, #1db954);
+  color: #fff;
+}
+
+/* === Modal === */
+body.dark-mode .modal-content {
+  background: #1c1c1c;
+  color: #f1f1f1;
+  border: 1px solid #333;
+}
+
+/* === Inputs, selects y textos === */
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+  background: #222;
+  color: #fff;
+  border-color: #333;
+}
+
+body.dark-mode input::placeholder {
+  color: #aaa;
+}
+
+body.dark-mode .msg.success {
+  color: #4ef37a;
+}
+
+body.dark-mode .msg.error {
+  color: #ff7070;
+}
+
+/* === 🌙 FIX: Colores de texto, títulos y barra de búsqueda === */
+
+/* Textos generales */
+body.dark-mode,
+body.dark-mode p,
+body.dark-mode span,
+body.dark-mode td,
+body.dark-mode th {
+  color: #eafaf1 !important;
+}
+
+/* Encabezados */
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4 {
+  color: #b9ffcb !important;
+}
+
+/* Títulos de secciones */
+body.dark-mode .page-title h2,
+body.dark-mode .section-title,
+body.dark-mode .pp-inicio h2 {
+  color: #4ef37a !important;
+}
+
+/* Subtítulos o texto secundario */
+body.dark-mode .pp-inicio .pp-sub,
+body.dark-mode small {
+  color: #b4e4c4 !important;
+}
+
+/* === Barra de búsqueda === */
+body.dark-mode .search-bar {
+  background-color: #1b1b1b !important;
+  border: 1px solid #2f2f2f !important;
+  box-shadow: none !important;
+}
+
+body.dark-mode .search-bar input {
+  color: #eafaf1 !important;
+}
+
+body.dark-mode .search-bar i {
+  color: #a3e4b4 !important;
+}
+
+body.dark-mode .search-bar:focus-within {
+  border-color: var(--primary-light) !important;
+  box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.2);
+}
+
+/* === Tarjetas de materias y grupos === */
+body.dark-mode .stat-card,
+body.dark-mode .pp-card {
+  background: #141414 !important;
+  color: #eafaf1 !important;
+  border: 1px solid #2e2e2e !important;
+}
+
+body.dark-mode .pp-card h3,
+body.dark-mode .pp-card p {
+  color: #dfffe9 !important;
+}
+
+body.dark-mode .pp-card i {
+  color: var(--primary-light) !important;
+}
+
+/* === Sidebar texto === */
+body.dark-mode .sidebar {
+  background: linear-gradient(180deg, #021d13 0%, #08271c 100%);
+}
+
+body.dark-mode .nav-item {
+  color: #d8f3dc;
+}
+
+body.dark-mode .nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  border-left-color: var(--primary-light);
+}
+
+body.dark-mode .logo h1,
+body.dark-mode .logo span {
+  color: #b9ffcb !important;
+}
+
+/* === Header general === */
+body.dark-mode .header {
+  background-color: #0f0f0f;
+  color: #eafaf1;
+}
+
+/* ==========================================================
+   🌙 UT PANEL — FIX MODO OSCURO PARA DASHBOARD DOCENTE
+   ========================================================== */
+
+/* === Fondo general === */
+body.dark-mode {
+  background-color: #0e0e0e !important;
+  color: #e8f5e9 !important;
+}
+
+/* === Header === */
+body.dark-mode .header {
+  background: #121212 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6) !important;
+}
+
+body.dark-mode .header .user-profile {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .header .profile-img {
+  background: linear-gradient(135deg, #1db954, #40c57a);
+}
+
+/* === Barra de búsqueda === */
+body.dark-mode .search-bar {
+  background: #1a1a1a !important;
+  border: 1px solid #333 !important;
+  box-shadow: none !important;
+}
+
+body.dark-mode .search-bar input {
+  color: #e8f5e9 !important;
+}
+
+body.dark-mode .search-bar i {
+  color: #40c57a !important;
+}
+
+/* === Sidebar === */
+body.dark-mode .sidebar {
+  background: linear-gradient(180deg, #021c12 0%, #08291c 100%) !important;
+}
+
+body.dark-mode .menu-heading {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+body.dark-mode .nav-item {
+  color: #e8f5e9 !important;
+}
+
+body.dark-mode .nav-item:hover,
+body.dark-mode .nav-item.active {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-left-color: #40c57a !important;
+  color: #ffffff !important;
+}
+
+/* === Títulos === */
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4 {
+  color: #b9ffcb !important;
+}
+
+/* === Cards de materias === */
+body.dark-mode .materia-modern-card {
+  background: #1a1a1a !important;
+  color: #e8f5e9 !important;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.dark-mode .materia-modern-content h4 {
+  color: #dfffe9 !important;
+}
+
+body.dark-mode .materia-modern-content p {
+  color: #b4e4c4 !important;
+}
+
+body.dark-mode .materia-modern-bg {
+  background: linear-gradient(135deg, #1db954, #40c57a) !important;
+  opacity: 0.07 !important;
+}
+
+/* === Cards de grupos === */
+body.dark-mode .grupo-modern-card {
+  background: #1a1a1a !important;
+  color: #e8f5e9 !important;
+  border: 1px solid #2e2e2e !important;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.dark-mode .grupo-modern-content h4 {
+  color: #c6ffd6 !important;
+}
+
+body.dark-mode .grupo-modern-content p {
+  color: #b4e4c4 !important;
+}
+
+/* === Textos secundarios === */
+body.dark-mode p,
+body.dark-mode span,
+body.dark-mode .no-asignaciones,
+body.dark-mode .no-grupos {
+  color: #c4f1d2 !important;
+}
+
+/* === Fondos interactivos === */
+body.dark-mode .materia-modern-icon,
+body.dark-mode .grupo-modern-icon {
+  background: linear-gradient(135deg, #1db954, #40c57a) !important;
+  box-shadow: 0 3px 10px rgba(29, 185, 84, 0.3) !important;
+}
+
+/* === Animación suave entre temas === */
+* {
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+}
+
+/* ==========================================================
+   🌙 UT PANEL — FIX MODO OSCURO PARA DASHBOARD MATERIA DOCENTE
+   ========================================================== */
+
+/* === Fondo general === */
+body.dark-mode {
+  background-color: #0e0e0e !important;
+  color: #e8f5e9 !important;
+}
+
+/* === Barra superior de materia === */
+body.dark-mode .materia-navbar {
+  background-color: #121212 !important;
+  border-bottom: 1px solid #1db954 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6) !important;
+}
+
+body.dark-mode .materia-navbar h2 {
+  color: #4ef37a !important;
+}
+
+body.dark-mode .materia-navbar p,
+body.dark-mode .materia-navbar span {
+  color: #b4e4c4 !important;
+}
+
+/* === Tarjetas principales === */
+body.dark-mode .materia-panel .card {
+  background: #1a1a1a !important;
+  color: #e8f5e9 !important;
+  border: 1px solid #2e2e2e !important;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5) !important;
+}
+
+body.dark-mode .materia-panel .card i {
+  color: #40c57a !important;
+}
+
+body.dark-mode .materia-panel .card h3 {
+  color: #dfffe9 !important;
+}
+
+body.dark-mode .materia-panel .card p {
+  color: #b4e4c4 !important;
+}
+
+body.dark-mode .materia-panel .card .btn {
+  background: linear-gradient(135deg, #136b3f, #1db954);
+  color: #fff;
+  border: none;
+  box-shadow: 0 0 10px rgba(29, 185, 84, 0.3);
+}
+body.dark-mode .materia-panel .card .btn:hover {
+  background: linear-gradient(135deg, #1db954, #40c57a);
+}
+
+/* === Tareas y recursos === */
+body.dark-mode .tareas-section {
+  background-color: transparent !important;
+}
+
+body.dark-mode .tareas-section h2 {
+  color: #4ef37a !important;
+}
+
+body.dark-mode .tarea-card {
+  background: #161616 !important;
+  color: #e8f5e9 !important;
+  border: 1px solid #2e2e2e !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.dark-mode .tarea-card h4 {
+  color: #b9ffcb !important;
+}
+
+body.dark-mode .tarea-card p {
+  color: #c4f1d2 !important;
+}
+
+body.dark-mode .tarea-card a.archivo {
+  color: #4ef37a !important;
+}
+
+body.dark-mode .tarea-card .btn-edit,
+body.dark-mode .tarea-card .btn-delete {
+  background: transparent !important;
+  border: 1px solid #40c57a !important;
+  color: #4ef37a !important;
+}
+
+body.dark-mode .tarea-card .btn-edit:hover {
+  background: #40c57a !important;
+  color: #0e0e0e !important;
+}
+
+body.dark-mode .tarea-card .btn-delete:hover {
+  background: #e63946 !important;
+  color: #fff !important;
+}
+
+/* === Textos de vacío === */
+body.dark-mode .no-tareas {
+  color: #b4e4c4 !important;
+  font-style: italic;
+}
+
+/* === Transición suave === */
+* {
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+}
+/* ==========================================================
+   🌙 UT PANEL — FIX MODO OSCURO PARA SUBIR TAREA
+   ========================================================== */
+
+/* Fondo general */
+body.dark-mode {
+  background-color: #0e0e0e !important;
+  color: #e8f5e9 !important;
+}
+
+/* Sidebar */
+body.dark-mode .sidebar {
+  background: linear-gradient(180deg, #021c12 0%, #08291c 100%) !important;
+}
+
+/* Botón volver */
+body.dark-mode .btn-outline {
+  border: 2px solid #4ef37a !important;
+  color: #4ef37a !important;
+  background: transparent !important;
+}
+
+body.dark-mode .btn-outline:hover {
+  background: #4ef37a !important;
+  color: #0e0e0e !important;
+}
+
+/* Contenedor principal del formulario */
+body.dark-mode .form-card {
+  background: #1a1a1a !important;
+  border-radius: 14px !important;
+  padding: 25px !important;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5) !important;
+  border: 1px solid #2e2e2e !important;
+}
+
+body.dark-mode .form-card h2 {
+  color: #4ef37a !important;
+  margin-bottom: 20px !important;
+}
+
+body.dark-mode .form-card i {
+  color: #40c57a !important;
+}
+
+/* Campos de entrada */
+body.dark-mode .form-group label {
+  color: #b9ffcb !important;
+}
+
+body.dark-mode input[type="text"],
+body.dark-mode input[type="date"],
+body.dark-mode input[type="file"],
+body.dark-mode textarea {
+  background: #141414 !important;
+  color: #e8f5e9 !important;
+  border: 1px solid #333 !important;
+  border-radius: 10px !important;
+  padding: 10px !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+body.dark-mode input[type="text"]::placeholder,
+body.dark-mode textarea::placeholder {
+  color: #91caa2 !important;
+}
+
+body.dark-mode input:focus,
+body.dark-mode textarea:focus {
+  outline: none !important;
+  border-color: #40c57a !important;
+  box-shadow: 0 0 0 2px rgba(64, 197, 122, 0.3) !important;
+}
+
+/* Botón publicar */
+body.dark-mode .btn-submit {
+  background: linear-gradient(135deg, #136b3f, #1db954) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 10px !important;
+  padding: 12px 22px !important;
+  font-weight: 600 !important;
+  transition: 0.3s !important;
+}
+
+body.dark-mode .btn-submit:hover {
+  background: linear-gradient(135deg, #1db954, #4ef37a) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Mensajes */
+body.dark-mode .mensaje.success {
+  background: rgba(64, 197, 122, 0.1) !important;
+  color: #4ef37a !important;
+  border: 1px solid #40c57a !important;
+}
+
+body.dark-mode .mensaje.error {
+  background: rgba(230, 57, 70, 0.1) !important;
+  color: #ff7373 !important;
+  border: 1px solid #e63946 !important;
+}
+
+/* Transición suave */
+* {
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+}
+
+/* ==========================================================
+   🌙 UT PANEL — FIX MODO OSCURO PARA SUBIR RECURSO
+   ========================================================== */
+
+/* Fondo principal */
+body.dark-mode {
+  background-color: #0e0e0e !important;
+  color: #e8f5e9 !important;
+}
+
+/* Sidebar */
+body.dark-mode .sidebar {
+  background: linear-gradient(180deg, #021c12 0%, #08291c 100%) !important;
+}
+
+/* Barra superior de materia */
+body.dark-mode .materia-navbar {
+  background-color: #121212 !important;
+  border-bottom: 1px solid #1db954 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6) !important;
+}
+
+body.dark-mode .materia-navbar h2 {
+  color: #4ef37a !important;
+}
+
+body.dark-mode .materia-navbar .user-info span {
+  color: #b4e4c4 !important;
+}
+
+/* Contenedor del formulario */
+body.dark-mode .container-form {
+  background: #1a1a1a !important;
+  border-radius: 14px !important;
+  padding: 25px !important;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5) !important;
+  border: 1px solid #2e2e2e !important;
+}
+
+body.dark-mode .container-form label {
+  color: #b9ffcb !important;
+}
+
+body.dark-mode .container-form input[type="text"],
+body.dark-mode .container-form input[type="file"],
+body.dark-mode .container-form textarea {
+  background: #141414 !important;
+  color: #e8f5e9 !important;
+  border: 1px solid #333 !important;
+  border-radius: 10px !important;
+  padding: 10px !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+body.dark-mode .container-form input::placeholder,
+body.dark-mode .container-form textarea::placeholder {
+  color: #91caa2 !important;
+}
+
+body.dark-mode .container-form input:focus,
+body.dark-mode .container-form textarea:focus {
+  outline: none !important;
+  border-color: #40c57a !important;
+  box-shadow: 0 0 0 2px rgba(64, 197, 122, 0.3) !important;
+}
+
+/* Texto de archivo seleccionado */
+body.dark-mode #archivoNombre {
+  color: #a6dbb6 !important;
+}
+
+/* Botón subir recurso */
+body.dark-mode .btn-guardar {
+  background: linear-gradient(135deg, #136b3f, #1db954) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 10px !important;
+  padding: 12px 22px !important;
+  font-weight: 600 !important;
+  transition: 0.3s !important;
+}
+
+body.dark-mode .btn-guardar:hover {
+  background: linear-gradient(135deg, #1db954, #4ef37a) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Botón volver */
+body.dark-mode .btn-volver {
+  border: 2px solid #4ef37a !important;
+  color: #4ef37a !important;
+  background: transparent !important;
+}
+
+body.dark-mode .btn-volver:hover {
+  background: #4ef37a !important;
+  color: #0e0e0e !important;
+}
+
+/* Mensaje de alerta */
+body.dark-mode .alert {
+  background: rgba(64, 197, 122, 0.1) !important;
+  border: 1px solid #40c57a !important;
+  color: #4ef37a !important;
+  border-radius: 8px !important;
+  padding: 10px !important;
+}
+
+/* Transición suave */
+* {
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+}

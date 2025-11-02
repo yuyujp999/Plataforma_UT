@@ -16,6 +16,7 @@ $base = "/Plataforma_UT";
 
   <link rel="stylesheet" href="<?= $base ?>/css/styleD.css">
   <link rel="stylesheet" href="<?= $base ?>/css/docentes/DashboardAjustes.css">
+  <link rel="stylesheet" href="/Plataforma_UT/css/darkmode.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 </head>
 
@@ -45,17 +46,33 @@ $base = "/Plataforma_UT";
 
     <!-- Main content -->
     <main class="main-content">
-      <section class="content-area ajustes-lista">
-        <div class="ajuste-item">
-          <div class="ajuste-info">
-            <i class="fa-solid fa-lock"></i>
-            <span>Cambiar contraseña</span>
-          </div>
-          <button class="btn btn-outline" id="abrirModal">
-            <i class="fa-solid fa-pen"></i> Abrir
-          </button>
-        </div>
-      </section>
+     <section class="content-area ajustes-lista">
+  <!-- Cambiar contraseña -->
+  <div class="ajuste-item">
+    <div class="ajuste-info">
+      <i class="fa-solid fa-lock"></i>
+      <span>Cambiar contraseña</span>
+    </div>
+    <button class="btn btn-outline" id="abrirModal">
+      <i class="fa-solid fa-pen"></i> Abrir
+    </button>
+  </div>
+
+  <!-- Cambiar modo -->
+<div class="ajuste-item">
+  <div class="ajuste-info">
+    <i class="fa-solid fa-moon"></i>
+    <span>Modo oscuro</span>
+  </div>
+  <div class="theme-slider" id="themeSlider">
+    <div class="slider-ball">
+      <i class="fa-solid fa-sun sun-icon"></i>
+      <i class="fa-solid fa-moon moon-icon"></i>
+    </div>
+  </div>
+</div>
+</section>
+
     </main>
   </div>
 
@@ -108,6 +125,7 @@ $base = "/Plataforma_UT";
     window.rolUsuarioPHP = "docente";
   </script>
   <script src="<?= $base ?>/js/Dashboard_Inicio.js"></script>
+  <script src="/Plataforma_UT/js/modeToggle.js"></script>
 
   <script>
     const modal = document.getElementById("modalPassword");
@@ -167,6 +185,27 @@ document.querySelectorAll(".toggle-visibility").forEach(btn => {
     }
   });
 });
+
+// === 🌙 Control de modo oscuro ===
+const toggleDark = document.getElementById("toggleDark");
+
+// Al cargar la página, leer el modo guardado
+if (localStorage.getItem("modo") === "oscuro") {
+  document.body.classList.add("dark-mode");
+  toggleDark.checked = true;
+}
+
+// Al cambiar el switch
+toggleDark.addEventListener("change", () => {
+  if (toggleDark.checked) {
+    document.body.classList.add("dark-mode");
+    localStorage.setItem("modo", "oscuro");
+  } else {
+    document.body.classList.remove("dark-mode");
+    localStorage.setItem("modo", "claro");
+  }
+});
+
 
   </script>
 </body>

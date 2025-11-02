@@ -29,6 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   <title>Editar Recurso | UT Panel</title>
   <link rel="stylesheet" href="../../css/styleD.css">
   <link rel="stylesheet" href="../../css/docentes/recursos_docente.css">
+  <link rel="stylesheet" href="/Plataforma_UT/css/darkmode.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 </head>
 <body>
@@ -64,5 +65,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       <i class="fa-solid fa-arrow-left"></i> Volver a la materia
     </a>
   </div>
+  <script src="/Plataforma_UT/js/modeToggle.js"></script>
 </body>
 </html>

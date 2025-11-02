@@ -175,3 +175,136 @@
 .input-wrapper .toggle-visibility:focus {
   outline: none;
 }
+
+/* === 🌙 Botón estético modo oscuro === */
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #fff;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  border-radius: 30px;
+  padding: 8px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.theme-toggle-btn i {
+  font-size: 1.1rem;
+  transition: transform 0.3s ease;
+}
+
+.theme-toggle-btn:hover {
+  background: var(--primary);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.theme-toggle-btn.active {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: #fff;
+  box-shadow: 0 0 12px rgba(29, 185, 84, 0.4);
+}
+
+.theme-toggle-btn.active i {
+  transform: rotate(-20deg);
+}
+
+/* === Oscurecer en modo oscuro === */
+body.dark-mode .theme-toggle-btn {
+  background: #1d1d1d;
+  border-color: #4ef37a;
+  color: #4ef37a;
+}
+
+body.dark-mode .theme-toggle-btn:hover {
+  background: #4ef37a;
+  color: #0f0f0f;
+}
+
+body.dark-mode .theme-toggle-btn.active {
+  background: linear-gradient(135deg, #136b3f, #1db954);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(29, 185, 84, 0.5);
+}
+/* === 🌙 Switch deslizante modo oscuro === */
+.theme-slider {
+  position: relative;
+  width: 60px;
+  height: 30px;
+  border-radius: 50px;
+  background: linear-gradient(45deg, #c2f5d3, #1db954);
+  cursor: pointer;
+  transition: all 0.4s ease;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 3px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.slider-ball {
+  width: 24px;
+  height: 24px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s ease;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.sun-icon,
+.moon-icon {
+  position: absolute;
+  font-size: 14px;
+  color: #1db954;
+  transition: all 0.3s ease;
+}
+
+.moon-icon {
+  opacity: 0;
+  transform: scale(0.5);
+  color: #fff;
+}
+
+/* 🔄 Estado activado (modo oscuro) */
+.theme-slider.active {
+  background: linear-gradient(45deg, #0a3c1c, #0e291e);
+  justify-content: flex-end;
+}
+
+.theme-slider.active .slider-ball {
+  background: #1db954;
+  transform: translateX(0);
+}
+
+.theme-slider.active .sun-icon {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+.theme-slider.active .moon-icon {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* 🌑 En modo oscuro global */
+body.dark-mode .theme-slider {
+  background: linear-gradient(45deg, #1db954, #0e291e);
+}
+
+body.dark-mode .slider-ball {
+  background: #1db954;
+  color: #fff;
+}
+
+body.dark-mode .sun-icon {
+  color: #fff;
+}

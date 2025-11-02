@@ -30,6 +30,7 @@ $materias = GrupoController::obtenerMateriasPorDocenteYGrupo($idDocente, $idGrup
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
   <link rel="stylesheet" href="../../css/styleD.css">
   <link rel="stylesheet" href="../../css/docentes/dashboard_grupo.css">
+  <link rel="stylesheet" href="/Plataforma_UT/css/darkmode.css">
 </head>
 <body>
   <div class="container">
@@ -110,5 +111,6 @@ $materias = GrupoController::obtenerMateriasPorDocenteYGrupo($idDocente, $idGrup
     window.rolUsuarioPHP = "<?= htmlspecialchars($_SESSION['rol'], ENT_QUOTES, 'UTF-8'); ?>";
   </script>
   <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
+  <script src="/Plataforma_UT/js/modeToggle.js"></script>
 </body>
 </html>
