@@ -31,6 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   <link rel="stylesheet" href="../../css/styleD.css">
   <link rel="stylesheet" href="../../css/docentes/materia_docente.css">
   <link rel="stylesheet" href="../../css/docentes/editar_tarea.css">
+  <link rel="stylesheet" href="/Plataforma_UT/css/darkmode.css">
 </head>
 <body>
   <div class="container">
@@ -82,5 +83,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     window.rolUsuarioPHP = "<?= htmlspecialchars($_SESSION['rol'] ?? '', ENT_QUOTES, 'UTF-8'); ?>";
   </script>
   <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
+  <script src="/Plataforma_UT/js/modeToggle.js"></script>
 </body>
 </html>
