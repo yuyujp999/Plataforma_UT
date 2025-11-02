@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// Mostrar errores para debug
+// Debug (apaga en prod)
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -17,6 +17,19 @@ $usuarioSesion = $_SESSION['usuario'] ?? [];
 $nombreCompleto = trim(($usuarioSesion['nombre'] ?? '') . ' ' . ($usuarioSesion['apellido_paterno'] ?? ''));
 $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($usuarioSesion['apellido_paterno'] ?? '', 0, 1));
 
+// ===== Permisos =====
+// Admin: crear/editar/eliminar
+// Secretarías: crear/editar, NO eliminar
+$rol = mb_strtolower((string) $rolUsuario, 'UTF-8');
+$esAdmin = ($rol === 'admin');
+$esSecretaria = in_array($rol, ['secretaria', 'secretarías', 'secretarias', 'secretaría'], true);
+
+$permisos = [
+    'crear' => $esAdmin || $esSecretaria,
+    'editar' => $esAdmin || $esSecretaria,
+    'eliminar' => $esAdmin, // <-- Secretarías NO pueden eliminar
+];
+
 // Conexión PDO
 try {
     $pdo = new PDO("mysql:host=localhost;dbname=ut_db;charset=utf8mb4", "root", "");
@@ -25,9 +38,14 @@ try {
     die("Error de conexión: " . $e->getMessage());
 }
 
-// Obtener materias (solo id y nombre)
-$stmt = $pdo->query("SELECT id_materia, nombre_materia FROM materias");
+// Materias ordenadas alfabéticamente
+$stmt = $pdo->query("SELECT id_materia, nombre_materia FROM materias ORDER BY nombre_materia ASC");
 $materias = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+function h($v)
+{
+    return htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -63,6 +81,7 @@ $materias = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <body>
     <div class="container">
+        <!-- SIDEBAR -->
         <div class="sidebar" id="sidebar">
             <div class="overlay" id="overlay"></div>
             <div class="logo">
@@ -73,6 +92,7 @@ $materias = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </div>
 
+        <!-- HEADER -->
         <div class="header">
             <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
             <div class="search-bar">
@@ -80,24 +100,27 @@ $materias = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <input type="text" id="buscarMateria" placeholder="Buscar Materias..." />
             </div>
             <div class="header-actions">
-
-                <div class="user-profile" id="userProfile" data-nombre="<?= htmlspecialchars($nombreCompleto) ?>"
-                    data-rol="<?= htmlspecialchars($rolUsuario) ?>">
-                    <div class="profile-img"><?= $iniciales ?></div>
+                <div class="user-profile" id="userProfile" data-nombre="<?= h($nombreCompleto) ?>"
+                    data-rol="<?= h($rolUsuario) ?>">
+                    <div class="profile-img"><?= h($iniciales) ?></div>
                     <div class="user-info">
-                        <div class="user-name"><?= htmlspecialchars($nombreCompleto ?: 'Usuario') ?></div>
-                        <div class="user-role"><?= htmlspecialchars($rolUsuario ?: 'Rol') ?></div>
+                        <div class="user-name"><?= h($nombreCompleto ?: 'Usuario') ?></div>
+                        <div class="user-role"><?= h($rolUsuario ?: 'Rol') ?></div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- MAIN -->
         <div class="main-content">
             <div class="page-title">
                 <div class="title">Gestión de Materias</div>
                 <div class="action-buttons">
-                    <button class="btn btn-outline btn-sm" id="btnNuevo"><i class="fas fa-plus"></i> Nueva
-                        Materia</button>
+                    <?php if ($permisos['crear']): ?>
+                        <button class="btn btn-outline btn-sm" id="btnNuevo">
+                            <i class="fas fa-plus"></i> Nueva Materia
+                        </button>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -118,15 +141,25 @@ $materias = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <tbody>
                             <?php if (!empty($materias)): ?>
                                 <?php foreach ($materias as $row): ?>
-                                    <tr data-id="<?= htmlspecialchars($row['id_materia']) ?>"
-                                        data-nombre="<?= htmlspecialchars($row['nombre_materia']) ?>">
-                                        <td><?= htmlspecialchars($row['id_materia']) ?></td>
-                                        <td><?= htmlspecialchars($row['nombre_materia']) ?></td>
+                                    <tr data-id="<?= h($row['id_materia']) ?>" data-nombre="<?= h($row['nombre_materia']) ?>">
+                                        <td><?= h($row['id_materia']) ?></td>
+                                        <td><?= h($row['nombre_materia']) ?></td>
                                         <td>
-                                            <button class="btn btn-outline btn-sm btn-editar"><i class="fas fa-edit"></i>
-                                                Editar</button>
-                                            <button class="btn btn-outline btn-sm btn-eliminar"><i class="fas fa-trash"></i>
-                                                Eliminar</button>
+                                            <?php if ($permisos['editar']): ?>
+                                                <button class="btn btn-outline btn-sm btn-editar">
+                                                    <i class="fas fa-edit"></i> Editar
+                                                </button>
+                                            <?php endif; ?>
+                                            <?php if ($permisos['eliminar']): ?>
+                                                <button class="btn btn-outline btn-sm btn-eliminar">
+                                                    <i class="fas fa-trash"></i> Eliminar
+                                                </button>
+                                            <?php else: ?>
+                                                <!-- Secretarías no pueden eliminar -->
+                                            <?php endif; ?>
+                                            <?php if (!$permisos['editar'] && !$permisos['eliminar']): ?>
+                                                —
+                                            <?php endif; ?>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -138,50 +171,61 @@ $materias = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         </tbody>
                     </table>
                 </div>
+
                 <div class="pagination-container" id="paginationMaterias"></div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL NUEVA MATERIA -->
-    <div class="modal-overlay" id="modalNuevo">
-        <div class="modal">
-            <button type="button" class="close-modal" id="closeModal">&times;</button>
-            <h2>Nueva Materia</h2>
-            <form id="formNuevo">
-                <fieldset>
-                    <label for="nombre_materia">Nombre de la Materia</label>
-                    <input type="text" name="nombre_materia" id="nombre_materia" required>
-                </fieldset>
-                <div class="actions">
-                    <button type="button" class="btn-cancel" id="cancelModal">Cancelar</button>
-                    <button type="submit" class="btn-save">Guardar</button>
-                </div>
-            </form>
+    <!-- MODALES (según permisos) -->
+    <?php if ($permisos['crear']): ?>
+        <!-- NUEVA MATERIA -->
+        <div class="modal-overlay" id="modalNuevo">
+            <div class="modal">
+                <button type="button" class="close-modal" id="closeModal">&times;</button>
+                <h2>Nueva Materia</h2>
+                <form id="formNuevo">
+                    <fieldset>
+                        <label for="nombre_materia">Nombre de la Materia</label>
+                        <input type="text" name="nombre_materia" id="nombre_materia" required>
+                    </fieldset>
+                    <div class="actions">
+                        <button type="button" class="btn-cancel" id="cancelModal">Cancelar</button>
+                        <button type="submit" class="btn-save">Guardar</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
+    <?php endif; ?>
 
-    <!-- MODAL EDITAR MATERIA -->
-    <div class="modal-overlay" id="modalEditar">
-        <div class="modal">
-            <button type="button" class="close-modal" id="closeModalEditar">&times;</button>
-            <h2>Editar Materia</h2>
-            <form id="formEditar">
-                <fieldset>
-                    <label for="editNombreMateria">Nombre de la Materia</label>
-                    <input type="text" name="nombre_materia" id="editNombreMateria" required>
-                </fieldset>
-                <div class="actions">
-                    <button type="button" class="btn-cancel" id="cancelModalEditar">Cancelar</button>
-                    <button type="submit" class="btn-save">Guardar Cambios</button>
-                </div>
-            </form>
+    <?php if ($permisos['editar']): ?>
+        <!-- EDITAR MATERIA -->
+        <div class="modal-overlay" id="modalEditar">
+            <div class="modal">
+                <button type="button" class="close-modal" id="closeModalEditar">&times;</button>
+                <h2>Editar Materia</h2>
+                <form id="formEditar">
+                    <fieldset>
+                        <label for="editNombreMateria">Nombre de la Materia</label>
+                        <input type="text" name="nombre_materia" id="editNombreMateria" required>
+                    </fieldset>
+                    <div class="actions">
+                        <button type="button" class="btn-cancel" id="cancelModalEditar">Cancelar</button>
+                        <button type="submit" class="btn-save">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
+    <?php endif; ?>
 
     <script>
-        window.rolUsuarioPHP = "<?= $rolUsuario; ?>";
+        // Exponer permisos al JS
+        window.rolUsuarioPHP = "<?= h($rolUsuario) ?>";
+        window.PERMISOS = <?= json_encode($permisos) ?>;
+    </script>
 
+    <script>
+        // Buscador
         document.getElementById('buscarMateria').addEventListener('keyup', function () {
             const filtro = this.value.toLowerCase();
             const filas = document.querySelectorAll('#tablaMaterias tbody tr');
@@ -189,6 +233,8 @@ $materias = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 fila.style.display = fila.innerText.toLowerCase().includes(filtro) ? '' : 'none';
             });
         });
+
+        // Paginación cliente
         document.addEventListener("DOMContentLoaded", () => {
             const table = document.getElementById("tablaMaterias");
             if (!table) return;
@@ -197,37 +243,14 @@ $materias = $stmt->fetchAll(PDO::FETCH_ASSOC);
             const pagination = document.getElementById("paginationMaterias");
             const searchInput = document.getElementById("buscarMateria");
 
-            const ROWS_PER_PAGE = 5; // Número de filas por página
+            const ROWS_PER_PAGE = 5;
             let currentPage = 1;
             const allRows = Array.from(tbody.querySelectorAll("tr"));
 
-            // ===== Helpers =====
             const getFilteredRows = () => {
                 const q = (searchInput?.value || "").trim().toLowerCase();
                 if (!q) return allRows;
                 return allRows.filter(tr => tr.innerText.toLowerCase().includes(q));
-            };
-
-            const paginate = (rows, page, perPage) => {
-                const total = rows.length;
-                const totalPages = Math.max(1, Math.ceil(total / perPage));
-                if (page > totalPages) page = totalPages;
-                if (page < 1) page = 1;
-
-                // Ocultar todas las filas
-                allRows.forEach(tr => {
-                    tr.style.display = "none";
-                });
-
-                // Mostrar solo las filas visibles de la página actual
-                const start = (page - 1) * perPage;
-                const end = start + perPage;
-                rows.slice(start, end).forEach(tr => {
-                    tr.style.display = "";
-                });
-
-                renderPagination(totalPages, page);
-                currentPage = page;
             };
 
             const renderPagination = (totalPages, page) => {
@@ -244,10 +267,8 @@ $materias = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     return b;
                 };
 
-                // Botón « (anterior)
                 pagination.appendChild(mkBtn(page - 1, "«", page === 1));
 
-                // Números con puntos suspensivos
                 const windowSize = 1;
                 const addDots = () => {
                     const s = document.createElement("span");
@@ -268,24 +289,39 @@ $materias = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     }
                 }
 
-                // Botón » (siguiente)
                 pagination.appendChild(mkBtn(page + 1, "»", page === totalPages));
+            };
+
+            const paginate = (rows, page, perPage) => {
+                const total = rows.length;
+                const totalPages = Math.max(1, Math.ceil(total / perPage));
+                if (page > totalPages) page = totalPages;
+                if (page < 1) page = 1;
+
+                allRows.forEach(tr => tr.style.display = "none");
+
+                const start = (page - 1) * perPage;
+                const end = start + perPage;
+                rows.slice(start, end).forEach(tr => tr.style.display = "");
+
+                renderPagination(totalPages, page);
+                currentPage = page;
             };
 
             const goToPage = (p) => paginate(getFilteredRows(), p, ROWS_PER_PAGE);
 
-            // ===== Buscador =====
             searchInput?.addEventListener("keyup", () => {
                 paginate(getFilteredRows(), 1, ROWS_PER_PAGE);
             });
 
-            // ===== Inicializar =====
             paginate(getFilteredRows(), 1, ROWS_PER_PAGE);
         });
     </script>
 
+    <!-- JS global -->
     <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
-    <script src="../../js/admin/Materias8.js"></script>
+    <!-- JS de secretarías (usa PERMISOS para bloquear eliminar en el front si lo manejas ahí) -->
+    <script src="../../js/secretarias/Materias.js"></script>
 </body>
 
 </html>

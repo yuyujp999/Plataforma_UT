@@ -17,6 +17,18 @@ $usuarioSesion = $_SESSION['usuario'] ?? [];
 $nombreCompleto = trim(($usuarioSesion['nombre'] ?? '') . ' ' . ($usuarioSesion['apellido_paterno'] ?? ''));
 $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($usuarioSesion['apellido_paterno'] ?? '', 0, 1));
 
+// ===== Permisos por rol =====
+$rol = mb_strtolower((string) $rolUsuario, 'UTF-8');
+$esAdmin = ($rol === 'admin');
+$esSecretaria = in_array($rol, ['secretaria', 'secretarías', 'secretarias', 'secretaría'], true);
+
+/* Secretaría: crear/editar ✔; eliminar ✖ — Admin: todo ✔ */
+$permisos = [
+    'crear' => ($esAdmin || $esSecretaria),
+    'editar' => ($esAdmin || $esSecretaria),
+    'eliminar' => $esAdmin,
+];
+
 try {
     $pdo = new PDO("mysql:host=localhost;dbname=ut_db;charset=utf8mb4", "root", "");
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -24,7 +36,7 @@ try {
     die("Error de conexión: " . $e->getMessage());
 }
 
-// Helper para escapar
+// Helper escapar
 function h($str)
 {
     return htmlspecialchars((string) $str, ENT_QUOTES, 'UTF-8');
@@ -33,11 +45,6 @@ function h($str)
 /* ===========================
    LISTADOS (SOLO LECTURA)
    =========================== */
-
-/**
- * Muestra TODOS los grupos y los ordena por ID ascendente (1, 2, 3, …)
- * Nota: mantenemos LEFT JOIN para no ocultar registros “huérfanos”.
- */
 $stmt = $pdo->query("
     SELECT 
         g.id_grupo,
@@ -54,14 +61,11 @@ $stmt = $pdo->query("
 ");
 $grupos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/**
- * Catálogo de semestres para los selects
- * Ordenado por ID ascendente para consistencia.
- */
+/* Catálogo de semestres para selects */
 $gradosStmt = $pdo->query("
     SELECT id_nombre_semestre, nombre 
-    FROM cat_nombres_semestre
-    ORDER BY id_nombre_semestre ASC
+      FROM cat_nombres_semestre
+  ORDER BY id_nombre_semestre ASC
 ");
 $gradosList = $gradosStmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -71,7 +75,7 @@ $gradosList = $gradosStmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gestión de Grupos</title>
+    <title>Gestión de Grupos (Secretarías)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
@@ -83,15 +87,15 @@ $gradosList = $gradosStmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="icon" href="../../img/ut_logo.png" sizes="32x32" type="image/png">
 </head>
 <style>
-    .sidebar {
-        position: fixed;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 280px;
-        overflow-y: auto;
-        z-index: 1000;
-    }
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 280px;
+    overflow-y: auto;
+    z-index: 1000;
+}
 </style>
 
 <body>
@@ -113,7 +117,6 @@ $gradosList = $gradosStmt->fetchAll(PDO::FETCH_ASSOC);
                 <input type="text" id="buscarGrado" placeholder="Buscar Grupos..." />
             </div>
             <div class="header-actions">
-
                 <div class="user-profile" id="userProfile" data-nombre="<?= h($nombreCompleto) ?>"
                     data-rol="<?= h($rolUsuario) ?>">
                     <div class="profile-img"><?= h($iniciales) ?></div>
@@ -129,8 +132,11 @@ $gradosList = $gradosStmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="page-title">
                 <div class="title">Gestión de Grupos</div>
                 <div class="action-buttons">
-                    <button class="btn btn-outline btn-sm" id="btnNuevo"><i class="fas fa-plus"></i> Nuevo
-                        Grupo</button>
+                    <?php if ($permisos['crear']): ?>
+                    <button class="btn btn-outline btn-sm" id="btnNuevo">
+                        <i class="fas fa-plus"></i> Nuevo Grupo
+                    </button>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -150,30 +156,36 @@ $gradosList = $gradosStmt->fetchAll(PDO::FETCH_ASSOC);
                         </thead>
                         <tbody>
                             <?php if (!empty($grupos)): ?>
-                                <?php foreach ($grupos as $row):
+                            <?php foreach ($grupos as $row):
                                     $nombreSem = $row['nombre_semestre'] ?? '(sin semestre)';
                                     $nombreGrupo = $row['nombre_grupo'] ?? '(sin nombre)';
                                     ?>
-                                    <tr data-id="<?= (int) $row['id_grupo'] ?>"
-                                        data-id-nombre-semestre="<?= (int) $row['id_nombre_semestre'] ?>"
-                                        data-id-nombre-grupo="<?= (int) $row['id_nombre_grupo'] ?>"
-                                        data-nombre-semestre="<?= h($nombreSem) ?>" data-nombre-grupo="<?= h($nombreGrupo) ?>"
-                                        data-nombre-grado="<?= h($nombreSem) ?>">
-                                        <td><?= (int) $row['id_grupo'] ?></td>
-                                        <td><?= h($nombreSem) ?></td>
-                                        <td><?= h($nombreGrupo) ?></td>
-                                        <td>
-                                            <button class="btn btn-outline btn-sm btn-editar"><i class="fas fa-edit"></i>
-                                                Editar</button>
-                                            <button class="btn btn-outline btn-sm btn-eliminar"><i class="fas fa-trash"></i>
-                                                Eliminar</button>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
+                            <tr data-id="<?= (int) $row['id_grupo'] ?>"
+                                data-id-nombre-semestre="<?= (int) $row['id_nombre_semestre'] ?>"
+                                data-id-nombre-grupo="<?= (int) $row['id_nombre_grupo'] ?>"
+                                data-nombre-semestre="<?= h($nombreSem) ?>" data-nombre-grupo="<?= h($nombreGrupo) ?>"
+                                data-nombre-grado="<?= h($nombreSem) ?>">
+                                <td><?= (int) $row['id_grupo'] ?></td>
+                                <td><?= h($nombreSem) ?></td>
+                                <td><?= h($nombreGrupo) ?></td>
+                                <td>
+                                    <?php if ($permisos['editar']): ?>
+                                    <button class="btn btn-outline btn-sm btn-editar">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                    <?php endif; ?>
+                                    <?php if ($permisos['eliminar']): ?>
+                                    <button class="btn btn-outline btn-sm btn-eliminar">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </button>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
                             <?php else: ?>
-                                <tr>
-                                    <td colspan="4">No hay grupos registrados.</td>
-                                </tr>
+                            <tr>
+                                <td colspan="4">No hay grupos registrados.</td>
+                            </tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
@@ -184,7 +196,8 @@ $gradosList = $gradosStmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
 
-    <!-- MODAL NUEVO GRUPO -->
+    <!-- MODAL NUEVO GRUPO (según permisos) -->
+    <?php if ($permisos['crear']): ?>
     <div class="modal-overlay" id="modalNuevo">
         <div class="modal">
             <button type="button" class="close-modal" id="closeModal">&times;</button>
@@ -195,9 +208,9 @@ $gradosList = $gradosStmt->fetchAll(PDO::FETCH_ASSOC);
                     <select name="id_nombre_semestre" id="nombre_grado" required>
                         <option value="">Seleccione...</option>
                         <?php foreach ($gradosList as $g): ?>
-                            <option value="<?= (int) $g['id_nombre_semestre'] ?>" data-nombre="<?= h($g['nombre']) ?>">
-                                <?= h($g['nombre']) ?>
-                            </option>
+                        <option value="<?= (int) $g['id_nombre_semestre'] ?>" data-nombre="<?= h($g['nombre']) ?>">
+                            <?= h($g['nombre']) ?>
+                        </option>
                         <?php endforeach; ?>
                     </select>
 
@@ -212,8 +225,10 @@ $gradosList = $gradosStmt->fetchAll(PDO::FETCH_ASSOC);
             </form>
         </div>
     </div>
+    <?php endif; ?>
 
-    <!-- MODAL EDITAR GRUPO -->
+    <!-- MODAL EDITAR GRUPO (según permisos) -->
+    <?php if ($permisos['editar']): ?>
     <div class="modal-overlay" id="modalEditar">
         <div class="modal">
             <button type="button" class="close-modal" id="closeModalEditar">&times;</button>
@@ -224,9 +239,9 @@ $gradosList = $gradosStmt->fetchAll(PDO::FETCH_ASSOC);
                     <select name="id_nombre_semestre" id="editNombreGrado" required>
                         <option value="">Seleccione...</option>
                         <?php foreach ($gradosList as $g): ?>
-                            <option value="<?= (int) $g['id_nombre_semestre'] ?>" data-nombre="<?= h($g['nombre']) ?>">
-                                <?= h($g['nombre']) ?>
-                            </option>
+                        <option value="<?= (int) $g['id_nombre_semestre'] ?>" data-nombre="<?= h($g['nombre']) ?>">
+                            <?= h($g['nombre']) ?>
+                        </option>
                         <?php endforeach; ?>
                     </select>
 
@@ -240,126 +255,108 @@ $gradosList = $gradosStmt->fetchAll(PDO::FETCH_ASSOC);
             </form>
         </div>
     </div>
+    <?php endif; ?>
 
     <script>
-        window.rolUsuarioPHP = "<?= h($rolUsuario) ?>";
-
-        // Filtro de búsqueda en la tabla
-        document.getElementById('buscarGrado').addEventListener('keyup', function () {
-            const filtro = this.value.toLowerCase();
-            const filas = document.querySelectorAll('#tablaGrados tbody tr');
-            filas.forEach(fila => {
-                const texto = fila.innerText.toLowerCase();
-                fila.style.display = texto.includes(filtro) ? '' : 'none';
-            });
-        });
+    // Exponer rol y permisos al JS (para mostrar/ocultar y bloquear acciones)
+    window.rolUsuarioPHP = "<?= h($rolUsuario) ?>";
+    window.PERMISOS = <?= json_encode($permisos) ?>;
     </script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const table = document.getElementById("tablaGrados");
-            if (!table) return;
+    // Búsqueda en tabla
+    document.getElementById('buscarGrado')?.addEventListener('keyup', function() {
+        const filtro = this.value.toLowerCase();
+        document.querySelectorAll('#tablaGrados tbody tr').forEach(fila => {
+            fila.style.display = fila.innerText.toLowerCase().includes(filtro) ? '' : 'none';
+        });
+    });
+    </script>
 
-            const tbody = table.querySelector("tbody");
-            const pagination = document.getElementById("paginationGrupo");
-            const searchInput = document.getElementById("buscarGrado");
+    <script>
+    // Paginación simple en cliente
+    document.addEventListener("DOMContentLoaded", () => {
+        const table = document.getElementById("tablaGrados");
+        if (!table) return;
 
-            const ROWS_PER_PAGE = 8; // ajusta si quieres 5, 10, etc.
-            let currentPage = 1;
+        const tbody = table.querySelector("tbody");
+        const pagination = document.getElementById("paginationGrupo");
+        const searchInput = document.getElementById("buscarGrado");
 
-            // Mantén una copia de TODAS las filas inicialmente
-            const allRows = Array.from(tbody.querySelectorAll("tr"));
+        const ROWS_PER_PAGE = 8;
+        let currentPage = 1;
+        const allRows = Array.from(tbody.querySelectorAll("tr"));
 
-            // ===== Helpers =====
-            const getFilteredRows = () => {
-                const q = (searchInput?.value || "").trim().toLowerCase();
-                if (!q) return allRows;
-                return allRows.filter(tr => tr.innerText.toLowerCase().includes(q));
+        const getFilteredRows = () => {
+            const q = (searchInput?.value || "").trim().toLowerCase();
+            return q ? allRows.filter(tr => tr.innerText.toLowerCase().includes(q)) : allRows;
+        };
+
+        const hideAll = () => {
+            allRows.forEach(tr => tr.style.display = "none");
+        };
+
+        const paginate = (rows, page, perPage) => {
+            const total = rows.length;
+            const totalPages = Math.max(1, Math.ceil(total / perPage));
+            page = Math.min(Math.max(1, page), totalPages);
+
+            hideAll();
+            const start = (page - 1) * perPage;
+            rows.slice(start, start + perPage).forEach(tr => tr.style.display = "");
+            renderPagination(totalPages, page);
+            currentPage = page;
+        };
+
+        const goToPage = (p) => paginate(getFilteredRows(), p, ROWS_PER_PAGE);
+
+        const renderPagination = (totalPages, page) => {
+            if (!pagination) return;
+            pagination.innerHTML = "";
+
+            const mkBtn = (num, label = null, disabled = false, active = false) => {
+                const b = document.createElement("button");
+                b.className = "pagination-btn";
+                b.textContent = label ?? num;
+                if (active) b.classList.add("active");
+                b.disabled = disabled;
+                b.addEventListener("click", () => goToPage(num));
+                return b;
             };
 
-            const hideAll = () => {
-                allRows.forEach(tr => {
-                    tr.style.display = "none";
-                });
+            pagination.appendChild(mkBtn(page - 1, "«", page === 1));
+
+            const windowSize = 1;
+            const addDots = () => {
+                const s = document.createElement("span");
+                s.textContent = "…";
+                s.style.padding = "6px";
+                s.style.color = "#999";
+                pagination.appendChild(s);
             };
 
-            const paginate = (rows, page, perPage) => {
-                const total = rows.length;
-                const totalPages = Math.max(1, Math.ceil(total / perPage));
-                page = Math.min(Math.max(1, page), totalPages);
-
-                hideAll();
-
-                const start = (page - 1) * perPage;
-                const end = start + perPage;
-                rows.slice(start, end).forEach(tr => {
-                    tr.style.display = "";
-                });
-
-                renderPagination(totalPages, page);
-                currentPage = page;
-            };
-
-            const goToPage = (p) => {
-                paginate(getFilteredRows(), p, ROWS_PER_PAGE);
-            };
-
-            const renderPagination = (totalPages, page) => {
-                if (!pagination) return;
-                pagination.innerHTML = "";
-
-                const mkBtn = (num, label = null, disabled = false, active = false) => {
-                    const b = document.createElement("button");
-                    b.className = "pagination-btn";
-                    b.textContent = label ?? num;
-                    if (active) b.classList.add("active");
-                    b.disabled = disabled;
-                    b.addEventListener("click", () => goToPage(num));
-                    return b;
-                };
-
-                // « anterior
-                pagination.appendChild(mkBtn(page - 1, "«", page === 1));
-
-                // Ventana de números
-                const windowSize = 1;
-                const addDots = () => {
-                    const s = document.createElement("span");
-                    s.textContent = "…";
-                    s.style.padding = "6px";
-                    s.style.color = "#999";
-                    pagination.appendChild(s);
-                };
-
-                for (let i = 1; i <= totalPages; i++) {
-                    if (i === 1 || i === totalPages || Math.abs(i - page) <= windowSize) {
-                        pagination.appendChild(mkBtn(i, null, false, i === page));
-                    } else if (
-                        (i === 2 && page > windowSize + 2) ||
-                        (i === totalPages - 1 && page < totalPages - windowSize - 1)
-                    ) {
-                        addDots();
-                    }
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || Math.abs(i - page) <= windowSize) {
+                    pagination.appendChild(mkBtn(i, null, false, i === page));
+                } else if (
+                    (i === 2 && page > windowSize + 2) ||
+                    (i === totalPages - 1 && page < totalPages - windowSize - 1)
+                ) {
+                    addDots();
                 }
-
-                // siguiente »
-                pagination.appendChild(mkBtn(page + 1, "»", page === totalPages));
-            };
-
-            // ===== Buscador =====
-            if (searchInput) {
-                searchInput.addEventListener("keyup", () => {
-                    goToPage(1); // resetea a la primera página al buscar
-                });
             }
 
-            // ===== Inicializar =====
-            goToPage(1);
-        });
+            pagination.appendChild(mkBtn(page + 1, "»", page === totalPages));
+        };
+
+        searchInput?.addEventListener("keyup", () => goToPage(1));
+        goToPage(1);
+    });
     </script>
 
     <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
-    <script src="../../js/admin/Grupo3.js"></script>
+    <!-- JS específico para Secretarías -->
+    <script src="../../js/secretarias/Grupos.js"></script>
 </body>
 
 </html>

@@ -91,7 +91,6 @@ document.addEventListener("DOMContentLoaded", function () {
         text: "Alumnos",
         path: "/Plataforma_UT/vistas/admin/gestion_de_alumnos.php",
       },
-
       {
         icon: "fas fa-university",
         text: "Carreras",
@@ -101,6 +100,12 @@ document.addEventListener("DOMContentLoaded", function () {
         icon: "fas fa-layer-group",
         text: "Semestres",
         path: "/Plataforma_UT/vistas/admin/gestion_de_semestres.php",
+      },
+      // NUEVO
+      {
+        icon: "fas fa-calendar-check",
+        text: "Ciclo Escolar",
+        path: "/Plataforma_UT/vistas/admin/gestion_de_ciclo_escolar.php",
       },
       {
         icon: "fas fa-users",
@@ -129,8 +134,8 @@ document.addEventListener("DOMContentLoaded", function () {
       },
       {
         icon: "fas fa-bell",
-        text: "Notificaciones",
-        path: "/Plataforma_UT/vistas/admin/notificaciones.php",
+        text: "Mensajes",
+        path: "/Plataforma_UT/vistas/admin/mensajes.php",
       },
       {
         icon: "fas fa-cog",
@@ -143,37 +148,94 @@ document.addEventListener("DOMContentLoaded", function () {
       {
         icon: "fas fa-chart-pie",
         text: "Dashboard",
-        path: "/secretaria/dashboard.php",
+        path: "/Plataforma_UT/vistas/secretarias/dashboardSecretaria.php",
       },
       {
-        icon: "fas fa-users-cog",
-        text: "Gestionar Grupos/Materias",
-        path: "/secretaria/gestionar_grupos.php",
+        icon: "fas fa-chalkboard-teacher",
+        text: "Docentes",
+        path: "/Plataforma_UT/vistas/secretarias/gestion_de_profesores.php",
+      },
+      {
+        icon: "fas fa-user-graduate",
+        text: "Alumnos",
+        path: "/Plataforma_UT/vistas/secretarias/gestion_de_alumnos.php",
+      },
+      {
+        icon: "fas fa-university",
+        text: "Carreras",
+        path: "/Plataforma_UT/vistas/secretarias/gestion_de_carreras.php",
+      },
+      {
+        icon: "fas fa-layer-group",
+        text: "Semestres",
+        path: "/Plataforma_UT/vistas/secretarias/gestion_de_semestres.php",
+      },
+
+      {
+        icon: "fas fa-calendar-check",
+        text: "Ciclo Escolar",
+        path: "/Plataforma_UT/vistas/secretarias/gestion_de_ciclo_escolar.php",
+      },
+      {
+        icon: "fas fa-users",
+        text: "Grupos",
+        path: "/Plataforma_UT/vistas/secretarias/gestion_de_grupos.php",
+      },
+      {
+        icon: "fas fa-book",
+        text: "Materias",
+        path: "/Plataforma_UT/vistas/secretarias/gestion_de_materias.php",
+      },
+      {
+        icon: "fas fa-book-open",
+        text: "Asignar Materias",
+        path: "/Plataforma_UT/vistas/secretarias/gestion_de_asignaciones_materias.php",
+      },
+      {
+        icon: "fas fa-chalkboard-teacher",
+        text: "Asignar Docente",
+        path: "/Plataforma_UT/vistas/secretarias/gestion_de_asignaciones_docente.php",
+      },
+      {
+        icon: "fas fa-user-graduate",
+        text: "Asignar Alumno",
+        path: "/Plataforma_UT/vistas/secretarias/gestion_de_asignaciones_alumno.php",
       },
       {
         icon: "fas fa-file-excel",
         text: "Importar Listas",
-        path: "/secretaria/importar_listas.php",
+        path: "/Plataforma_UT/vistas/secretarias/importar_listas.php",
       },
       {
         icon: "fas fa-dollar-sign",
         text: "Adeudos y Pagos",
-        path: "/secretaria/adeudos_pagos.php",
+        path: "/Plataforma_UT/vistas/secretarias/adeudos_pagos.php",
       },
       {
         icon: "fas fa-file-alt",
         text: "Reportes Acad./Financieros",
-        path: "/secretaria/reportes.php",
+        path: "/Plataforma_UT/vistas/secretarias/reportes.php",
       },
-      { icon: "fas fa-cog", text: "Ajustes", path: "/secretaria/ajustes.php" },
+      {
+        icon: "fas fa-bell",
+        text: "Notificaciones",
+        path: "/Plataforma_UT/vistas/secretarias/notificaciones.php",
+      },
+      {
+        icon: "fas fa-cog",
+        text: "Ajustes",
+        path: "/Plataforma_UT/vistas/secretarias/ajustes.php",
+      },
     ],
   };
 
   const menu = document.getElementById("menu");
-  menu.innerHTML = "";
+  if (menu) menu.innerHTML = "";
 
-  // --- Función para crear secciones ---
+  // --- Creador de secciones ---
   function renderSeccion(headingText, items) {
+    if (!menu || !items?.length) return;
+
     const sectionDiv = document.createElement("div");
     sectionDiv.classList.add("nav-menu");
 
@@ -196,13 +258,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const rolUsuario = window.rolUsuarioPHP;
 
-  // --- Renderizado dinámico ---
+  // --- Render por rol ---
   if (rolUsuario === "admin") {
+    // Menú principal
     renderSeccion("Menú", menuConfig.admin.slice(0, 1));
+    // Gestión de Usuarios: Administradores, Secretarías, Docentes, Alumnos
     renderSeccion("Gestión de Usuarios", menuConfig.admin.slice(1, 5));
-    renderSeccion("Gestión Académica", menuConfig.admin.slice(5, 12));
-    renderSeccion("Configuraciones", menuConfig.admin.slice(12));
+    // Gestión Académica: Carreras -> Asignar Alumno (incluye Ciclo Escolar)
+    renderSeccion("Gestión Académica", menuConfig.admin.slice(5, 13));
+    // Configuraciones: Notificaciones, Ajustes
+    renderSeccion("Configuraciones", menuConfig.admin.slice(13));
+  } else if (rolUsuario === "secretaria") {
+    // Menú principal
+    renderSeccion("Menú", menuConfig.secretaria.slice(0, 1)); // Dashboard
+    // Gestión de Usuarios: Docentes, Alumnos
+    renderSeccion("Gestión de Usuarios", menuConfig.secretaria.slice(1, 3));
+    // Gestión Académica: Carreras -> Asignar Alumno (incluye Ciclo Escolar)
+    renderSeccion("Gestión Académica", menuConfig.secretaria.slice(3, 11));
+    // Operativa: Importar Listas, Adeudos y Pagos, Reportes
+    renderSeccion("Gestión Operativa", menuConfig.secretaria.slice(11, 14));
+    // Configuraciones: Notificaciones, Ajustes
+    renderSeccion("Configuraciones", menuConfig.secretaria.slice(14));
   } else {
+    // Otros roles
     renderSeccion("Menú", menuConfig[rolUsuario] || []);
   }
 
@@ -214,6 +292,30 @@ document.addEventListener("DOMContentLoaded", function () {
       path: "/Plataforma_UT/controladores/logout.php",
     },
   ]);
+
+  // === Perfil de usuario ===
+  const profile = document.getElementById("userProfile");
+  if (profile) {
+    const nombre = profile.dataset.nombre || "";
+    const rol = profile.dataset.rol || "";
+
+    const iniciales = nombre
+      .split(" ")
+      .filter(Boolean)
+      .map((w) => w[0].toUpperCase())
+      .join("");
+
+    const img = profile.querySelector(".profile-img");
+    const nameEl = profile.querySelector(".user-name");
+    const roleEl = profile.querySelector(".user-role");
+
+    if (img) img.textContent = iniciales || "?";
+    if (nameEl) nameEl.textContent = nombre || "Usuario";
+    if (roleEl)
+      roleEl.textContent = rol
+        ? rol.charAt(0).toUpperCase() + rol.slice(1)
+        : "Rol";
+  }
 });
 
 // === Toggle sidebar ===
@@ -222,29 +324,9 @@ const sidebar = document.getElementById("sidebar");
 const overlay = document.getElementById("overlay");
 
 function toggleMenu() {
-  sidebar.classList.toggle("active");
-  overlay.classList.toggle("active");
+  if (sidebar) sidebar.classList.toggle("active");
+  if (overlay) overlay.classList.toggle("active");
 }
 
 if (hamburger) hamburger.addEventListener("click", toggleMenu);
 if (overlay) overlay.addEventListener("click", toggleMenu);
-
-// === Perfil de usuario ===
-document.addEventListener("DOMContentLoaded", () => {
-  const profile = document.getElementById("userProfile");
-  if (!profile) return;
-
-  const nombre = profile.dataset.nombre || "";
-  const rol = profile.dataset.rol || "";
-
-  const iniciales = nombre
-    .split(" ")
-    .filter(Boolean)
-    .map((w) => w[0].toUpperCase())
-    .join("");
-
-  profile.querySelector(".profile-img").textContent = iniciales;
-  profile.querySelector(".user-name").textContent = nombre;
-  profile.querySelector(".user-role").textContent =
-    rol.charAt(0).toUpperCase() + rol.slice(1);
-});

@@ -65,7 +65,7 @@ $clavesMaterias = $pdo->query("
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gestión de Asignaciones de Docentes</title>
+    <title>Gestión de Asignaciones de Docentes (Secretarías)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
@@ -92,6 +92,7 @@ $clavesMaterias = $pdo->query("
 
 <body>
     <div class="container">
+        <!-- SIDEBAR -->
         <div class="sidebar" id="sidebar">
             <div class="overlay" id="overlay"></div>
             <div class="logo">
@@ -102,6 +103,7 @@ $clavesMaterias = $pdo->query("
             </div>
         </div>
 
+        <!-- HEADER -->
         <div class="header">
             <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
             <div class="search-bar">
@@ -109,7 +111,6 @@ $clavesMaterias = $pdo->query("
                 <input type="text" id="buscarAsignacion" placeholder="Buscar Docentes Asignados..." />
             </div>
             <div class="header-actions">
-
                 <div class="user-profile" id="userProfile" data-nombre="<?= htmlspecialchars($nombreCompleto) ?>"
                     data-rol="<?= htmlspecialchars($rolUsuario) ?>">
                     <div class="profile-img"><?= $iniciales ?></div>
@@ -121,6 +122,7 @@ $clavesMaterias = $pdo->query("
             </div>
         </div>
 
+        <!-- MAIN -->
         <div class="main-content">
             <div class="page-title">
                 <div class="title">Gestión de Asignaciones de Docentes</div>
@@ -158,10 +160,10 @@ $clavesMaterias = $pdo->query("
                                         <td><?= htmlspecialchars($row['clave_materia'] ?? '—') ?></td>
                                         <td><?= htmlspecialchars($row['profesor_materia_grupo'] ?? '—') ?></td>
                                         <td>
-                                            <button class="btn btn-outline btn-sm btn-editar"><i class="fas fa-edit"></i>
-                                                Editar</button>
-                                            <button class="btn btn-outline btn-sm btn-eliminar"><i class="fas fa-trash"></i>
-                                                Eliminar</button>
+                                            <button class="btn btn-outline btn-sm btn-editar">
+                                                <i class="fas fa-edit"></i> Editar
+                                            </button>
+                                            <!-- Secretaría NO puede eliminar: botón eliminado -->
                                         </td>
                                     </tr>
                                 <?php endforeach; else: ?>
@@ -171,8 +173,10 @@ $clavesMaterias = $pdo->query("
                             <?php endif; ?>
                         </tbody>
                     </table>
+                    <div class="pagination-container" id="paginationAsignacionesDocentes"></div>
                 </div>
-                <div class="pagination-container" id="paginationAsignacionesDocentes"></div>
+
+
             </div>
         </div>
     </div>
@@ -274,11 +278,6 @@ $clavesMaterias = $pdo->query("
         const outE = document.getElementById('editNombreProfesorGrupo');
         selDocE.addEventListener('change', () => actualizarNombrePMg(selDocE, selMatE, outE));
         selMatE.addEventListener('change', () => actualizarNombrePMg(selDocE, selMatE, outE));
-    </script>
-
-    <script>
-        window.rolUsuarioPHP =
-            "<?= $rolUsuario; ?>"; // BÚSQUEDA EN TIEMPO REAL document.getElementById('buscarAsignacion').addEventListener('keyup', function () { const filtro = this.value.toLowerCase(); const filas = document.querySelectorAll('#tablaAsignaciones tbody tr'); filas.forEach(fila => { fila.style.display = fila.innerText.toLowerCase().includes(filtro) ? '' : 'none'; }); }); 
     </script>
     <script>
         // Paginación cliente para Asignaciones (estilo « 1 2 3 »)
@@ -404,8 +403,22 @@ $clavesMaterias = $pdo->query("
         });
     </script>
 
+    <script>
+        window.rolUsuarioPHP = "<?= $rolUsuario; ?>";
+
+        // BÚSQUEDA EN TIEMPO REAL
+        document.getElementById('buscarAsignacion')?.addEventListener('keyup', function () {
+            const filtro = this.value.toLowerCase();
+            const filas = document.querySelectorAll('#tablaAsignaciones tbody tr');
+            filas.forEach(fila => {
+                fila.style.display = fila.innerText.toLowerCase().includes(filtro) ? '' : 'none';
+            });
+        });
+    </script>
+
     <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
-    <script src="../../js/admin/AsignacionesDocentes3.js"></script>
+    <!-- JS separado para SECRETARÍAS (agregar/editar, sin eliminar) -->
+    <script src="../../js/secretarias/AsignacionesDocentes.js"></script>
 </body>
 
 </html>

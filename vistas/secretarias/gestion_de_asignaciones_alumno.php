@@ -580,7 +580,7 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
     <!-- ====== /ORDEN SEGURO ====== -->
 
     <!-- JS principal de la página -->
-    <script src="../../js/admin/AsignacionesAlumnos63.js" defer></script>
+    <script src="../../js/secretarias/AsignacionesAlumnos.js" defer></script>
 
     <!-- Toggle de tarjetas (abrir/cerrar y recordar estado) -->
     <script>

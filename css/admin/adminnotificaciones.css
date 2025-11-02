@@ -1,0 +1,353 @@
+:root {
+  --bg: #ffffff;
+  --card: #fff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --line: #eef2f7;
+  --primary: #16a34a;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --info: #3b82f6;
+  --ring: 0 6px 30px rgba(2, 6, 23, 0.12);
+  --blur: saturate(140%) blur(6px);
+}
+
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 280px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+/* ===== campanita / sobre ===== */
+.header .notification {
+  position: relative;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  transition: background 0.2s ease;
+}
+
+.header .notification:hover {
+  background: #f8fafc;
+}
+
+.header .notification i {
+  font-size: 18px;
+  color: #0f172a;
+}
+
+.header .notification .badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  min-width: 18px;
+  height: 18px;
+  line-height: 18px;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #ef4444, #f43f5e);
+  box-shadow: 0 0 0 2px #fff;
+  display: none;
+}
+
+/* ===== Dropdown base ===== */
+.notif-dropdown {
+  position: absolute;
+  right: 20px;
+  top: 60px;
+  width: 440px;
+  max-width: 92vw;
+  background: var(--bg);
+  border: 1px solid #e9eef5;
+  border-radius: 14px;
+  box-shadow: var(--ring);
+  padding: 10px;
+  z-index: 2000;
+  display: none;
+  max-height: 65vh;
+  overflow: auto;
+  backdrop-filter: var(--blur);
+}
+
+/* Scrollbar suave */
+.notif-dropdown::-webkit-scrollbar {
+  width: 10px;
+}
+
+.notif-dropdown::-webkit-scrollbar-track {
+  background: #f8fafc;
+  border-radius: 10px;
+}
+
+.notif-dropdown::-webkit-scrollbar-thumb {
+  background: #e5e7eb;
+  border-radius: 10px;
+}
+
+.notif-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #d1d5db;
+}
+
+/* Head */
+.notif-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 6px 2px 6px;
+}
+
+.notif-head span {
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.2px;
+}
+
+.notif-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.notif-btn {
+  border: 1px solid #e5e7eb;
+  background: #f8fafc;
+  color: #0f172a;
+  padding: 6px 10px;
+  border-radius: 9px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.notif-btn:hover {
+  background: #eef2f7;
+}
+
+/* Item */
+.notif-item {
+  position: relative;
+  padding: 12px;
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 42px 1fr auto;
+  gap: 12px;
+  align-items: start;
+  background: #fff;
+  transition: background 0.15s ease;
+}
+
+.notif-item:hover {
+  background: #fcfdff;
+}
+
+.notif-item.unread {
+  background: #f8fbff;
+}
+
+.notif-item.unread::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--info);
+}
+
+/* Icono circular por tipo/estado */
+.notif-ico {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: #f1f5f9;
+  color: #334155;
+  font-size: 16px;
+}
+
+.notif-ico.success {
+  background: rgba(22, 163, 74, 0.12);
+  color: var(--primary);
+}
+
+.notif-ico.info {
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--info);
+}
+
+.notif-ico.warn {
+  background: rgba(245, 158, 11, 0.14);
+  color: var(--warning);
+}
+
+.notif-ico.danger {
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--danger);
+}
+
+/* Contenido */
+.notif-title {
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.25;
+}
+
+.notif-body {
+  font-size: 13px;
+  color: #334155;
+  margin-top: 2px;
+}
+
+.notif-meta {
+  margin-top: 6px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Píldoras */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 22px;
+  border-radius: 999px;
+  padding: 0 10px;
+  font-size: 11px;
+  font-weight: 600;
+  background: #f1f5f9;
+  color: #334155;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.pill.info {
+  background: rgba(59, 130, 246, 0.1);
+  color: #1d4ed8;
+}
+
+.pill.success {
+  background: rgba(22, 163, 74, 0.1);
+  color: #15803d;
+}
+
+.pill.warn {
+  background: rgba(245, 158, 11, 0.12);
+  color: #b45309;
+}
+
+.pill.danger {
+  background: rgba(239, 68, 68, 0.1);
+  color: #b91c1c;
+}
+
+/* Botón borrar */
+.notif-del {
+  border: none;
+  background: transparent;
+  color: var(--danger);
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  transition: background 0.15s ease, transform 0.05s ease;
+}
+
+.notif-del:hover {
+  background: #fff1f2;
+}
+
+.notif-del:active {
+  transform: scale(0.96);
+}
+
+/* Estado vacío */
+.notif-empty {
+  padding: 24px;
+  color: #334155;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+.notif-empty strong {
+  display: block;
+  margin-top: 4px;
+  color: var(--text);
+}
+
+/* Footer opcional */
+.notif-foot {
+  border-top: 1px solid var(--line);
+  padding: 10px;
+  text-align: center;
+}
+
+.notif-link {
+  font-size: 12px;
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.notif-link:hover {
+  text-decoration: underline;
+}
+
+/* Modo compacto en ≤480px */
+@media (max-width: 480px) {
+  .notif-item {
+    grid-template-columns: 36px 1fr auto;
+  }
+
+  .notif-ico {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+}
+/* Pie del dropdown */
+.notif-foot {
+  border-top: 1px solid #eef2f7;
+  padding: 10px;
+  text-align: center;
+}
+
+/* Enlace/btn “Ver todas” y “Cerrar” */
+.notif-link {
+  display: inline-block;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 8px;
+  color: #2563eb;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  text-decoration: none;
+  transition: background 0.15s ease, border-color 0.15s ease,
+    transform 0.03s ease;
+}
+.notif-link:hover {
+  background: #e0edff;
+  border-color: #c7ddff;
+  text-decoration: none;
+}
+.notif-link:active {
+  transform: scale(0.98);
+}

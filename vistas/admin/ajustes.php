@@ -79,12 +79,7 @@ try {
                 <input type="text" id="buscarAsignacion" placeholder="Buscar..." />
             </div>
             <div class="header-actions">
-                <div class="notification"><i class="fas fa-bell"></i>
-                    <div class="badge">3</div>
-                </div>
-                <div class="notification"><i class="fas fa-envelope"></i>
-                    <div class="badge">5</div>
-                </div>
+
                 <div class="user-profile" id="userProfile" data-nombre="<?= htmlspecialchars($nombreCompleto) ?>"
                     data-rol="<?= htmlspecialchars($rolUsuario) ?>">
                     <div class="profile-img"><?= $iniciales ?></div>

@@ -168,10 +168,10 @@ $clavesCat = $pdo->query("SELECT id_nombre_materia, nombre FROM cat_nombres_mate
                                                 class="clave-chip"><?= htmlspecialchars($row['clave_generada'] ?: '—') ?></span>
                                         </td>
                                         <td>
-                                            <button class="btn btn-outline btn-sm btn-editar"><i class="fas fa-edit"></i>
-                                                Editar</button>
-                                            <button class="btn btn-outline btn-sm btn-eliminar"><i class="fas fa-trash"></i>
-                                                Eliminar</button>
+                                            <button class="btn btn-outline btn-sm btn-editar">
+                                                <i class="fas fa-edit"></i> Editar
+                                            </button>
+                                            <?php /* Secretaría NO puede eliminar: botón eliminado */ ?>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -457,7 +457,7 @@ $clavesCat = $pdo->query("SELECT id_nombre_materia, nombre FROM cat_nombres_mate
     </script>
 
     <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
-    <script src="../../js/admin/AsignarMaterias3.js"></script>
+    <script src="../../js/secretarias/AsignarMaterias.js"></script>
 </body>
 
 </html>

@@ -28,6 +28,97 @@ try {
 
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
 
+/* ======================= Helpers: Notificaciones ======================= */
+
+/**
+ * Obtiene actor_id priorizando id_secretaria desde la sesión (para mostrar “POR:”).
+ * Revisa múltiples claves comúnmente usadas.
+ */
+function getSecretariaActorIdFromSession(): ?int
+{
+    $roles_secretaria = ['secretaria', 'secretarías', 'secretarias', 'secretaría'];
+    $rol = strtolower((string) ($_SESSION['rol'] ?? ''));
+    if (!in_array($rol, $roles_secretaria, true)) {
+        return null; // Solo etiquetamos actor_id para secretarías
+    }
+
+    // Candidatos donde puede venir el id
+    $candidatos = [];
+    if (isset($_SESSION['usuario']) && is_array($_SESSION['usuario']))
+        $candidatos[] = $_SESSION['usuario'];
+    $candidatos[] = $_SESSION;
+
+    $claves = [
+        'id_secretaria',
+        'secretaria_id',
+        'idSecretaria',
+        'idSec',
+        'id',
+        'iduser',
+        'user_id'
+    ];
+    foreach ($candidatos as $arr) {
+        foreach ($claves as $k) {
+            if (isset($arr[$k]) && (int) $arr[$k] > 0) {
+                return (int) $arr[$k];
+            }
+        }
+    }
+    return null;
+}
+
+/**
+ * Inserta notificación dirigida a admin. Silencioso si falla para no romper flujo.
+ * Tabla sugerida:
+ *  CREATE TABLE IF NOT EXISTS notificaciones (
+ *    id INT AUTO_INCREMENT PRIMARY KEY,
+ *    tipo ENUM('movimiento','mensaje') NOT NULL DEFAULT 'movimiento',
+ *    titulo VARCHAR(120) NOT NULL,
+ *    detalle TEXT NULL,
+ *    para_rol ENUM('admin','secretaria') NOT NULL DEFAULT 'admin',
+ *    actor_id INT NULL,
+ *    recurso VARCHAR(50) NULL,
+ *    accion  VARCHAR(30) NULL,
+ *    meta JSON NULL,
+ *    leido TINYINT(1) NOT NULL DEFAULT 0,
+ *    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+ *  );
+ */
+function notificar_admin_pdo(PDO $pdo, array $cfg): void
+{
+    try {
+        $tipo = (isset($cfg['tipo']) && in_array($cfg['tipo'], ['movimiento', 'mensaje'], true)) ? $cfg['tipo'] : 'movimiento';
+        $titulo = (string) ($cfg['titulo'] ?? '');
+        $detalle = (string) ($cfg['detalle'] ?? '');
+        $para_rol = 'admin';
+        $actor_id = $cfg['actor_id'] ?? null;
+        $recurso = $cfg['recurso'] ?? null;
+        $accion = $cfg['accion'] ?? null;
+        $meta = $cfg['meta'] ?? null;
+        if (is_array($meta))
+            $meta = json_encode($meta, JSON_UNESCAPED_UNICODE);
+
+        $st = $pdo->prepare("
+            INSERT INTO notificaciones (tipo, titulo, detalle, para_rol, actor_id, recurso, accion, meta, leido)
+            VALUES (:tipo, :titulo, :detalle, :para_rol, :actor_id, :recurso, :accion, :meta, 0)
+        ");
+        $st->execute([
+            ':tipo' => $tipo,
+            ':titulo' => $titulo,
+            ':detalle' => $detalle,
+            ':para_rol' => $para_rol,
+            ':actor_id' => $actor_id,
+            ':recurso' => $recurso,
+            ':accion' => $accion,
+            ':meta' => $meta,
+        ]);
+    } catch (Throwable $e) {
+        // No romper
+    }
+}
+
+/* ======================= Helpers negocio ======================= */
+
 function fetchAllByIds(PDO $pdo, array $ids)
 {
     if (empty($ids))
@@ -287,16 +378,38 @@ try {
             $res1 = ['id' => $idGrupo, 'titulo' => $titulo1, 'alumnos' => $al1];
 
             $res2 = null;
+            $al2 = [];
             if ($grupo2_id) {
                 $titulo2 = ($row2['nombre_semestre'] ?? '') . ' - ' . ($row2['nombre_grupo'] ?? 'Grupo 2');
                 $al2 = fetchAllByIds($pdo, $insertados2);
                 $res2 = ['id' => $grupo2_id, 'titulo' => $titulo2, 'alumnos' => $al2];
             }
 
+            // ---- Notificación: asignación a grupo(s)
+            $actorId = getSecretariaActorIdFromSession();
+            $total1 = count($insertados1);
+            $total2 = count($insertados2);
+            $pend = count($pendientes);
+
+            $detalle = "G1: {$total1}" . ($grupo2_id ? " • G2: {$total2}" : '') . " • Pendientes: {$pend}";
+            notificar_admin_pdo($pdo, [
+                'tipo' => 'movimiento',
+                'titulo' => 'Asignación de alumnos a grupo',
+                'detalle' => $detalle,
+                'actor_id' => $actorId,
+                'recurso' => 'asignacion_grupo',
+                'accion' => 'alta',
+                'meta' => [
+                    'grupo1' => ['id' => $idGrupo, 'titulo' => $titulo1, 'insertados' => $al1],
+                    'grupo2' => $grupo2_id ? ['id' => $grupo2_id, 'titulo' => ($row2['nombre_semestre'] ?? '') . ' - ' . ($row2['nombre_grupo'] ?? 'Grupo 2'), 'insertados' => $al2] : null,
+                    'pendientes' => $pendientes,
+                ]
+            ]);
+
             echo json_encode([
                 'ok' => true,
-                'msg' => "Asignados G1: " . count($insertados1) . ", G2: " . count($insertados2) . ". Pendientes: " . count($pendientes),
-                'resumen' => ['grupo1' => $res1, 'grupo2' => $res2, 'pendientes' => count($pendientes)]
+                'msg' => "Asignados G1: " . $total1 . ", G2: " . $total2 . ". Pendientes: " . $pend,
+                'resumen' => ['grupo1' => $res1, 'grupo2' => $res2, 'pendientes' => $pend]
             ]);
             break;
         }
@@ -342,7 +455,6 @@ try {
             break;
         }
 
-        /* ===== ASIGNAR CICLO (bloqueo + reinscripción + NO duplicar ciclo) ===== */
         /* ===== ASIGNAR CICLO (bloqueo + reinscripción + NO duplicados) ===== */
         case 'asignar_ciclo_grupo': {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -378,7 +490,7 @@ try {
                 break;
             }
 
-            // BLOQUEO: si tienen un ciclo vigente distinto al nuevo, pedir REINSCRIPCIÓN
+            // BLOQUEO: si tienen ciclo vigente distinto al nuevo, pedir REINSCRIPCIÓN
             $in = implode(',', array_fill(0, count($alumnosGrupo), '?'));
             $sqlBloq = "SELECT ac.id_alumno
                 FROM alumno_ciclo ac
@@ -407,7 +519,7 @@ try {
 
                 $movidos = 0;
                 if ($bloqueados && $reinscribir) {
-                    // Cerrar ciclo vigente distinto (marcar concluido)
+                    // Cerrar ciclo vigente distinto (concluir)
                     $inB = implode(',', array_fill(0, count($bloqueados), '?'));
                     $sqlClose = "UPDATE alumno_ciclo ac
                          INNER JOIN ciclos_escolares ce ON ce.id_ciclo = ac.id_ciclo
@@ -420,7 +532,7 @@ try {
                     $movidos = $stC->rowCount();
                 }
 
-                // Conteo previo de "ya tenían este ciclo" (en cualquier estatus) para reporte
+                // Conteo previo de "ya tenían este ciclo"
                 $stPrev = $pdo->prepare("SELECT COUNT(*)
                                  FROM asignaciones_grupo_alumno aga
                                  INNER JOIN alumno_ciclo ac ON ac.id_alumno = aga.id_alumno AND ac.id_ciclo = :c
@@ -428,16 +540,16 @@ try {
                 $stPrev->execute([':g' => $idGrupo, ':c' => $idCiclo]);
                 $yaTenianAntes = (int) $stPrev->fetchColumn();
 
-                // INSERTAR SOLO LOS FALTANTES (sin duplicar) – BLINDADO CON UNIQUE + INSERT IGNORE
+                // INSERT IGNORE solo faltantes
                 $sqlInsert = "INSERT IGNORE INTO alumno_ciclo (id_alumno, id_ciclo, id_grupo, estatus, fecha_inscripcion)
                       SELECT aga.id_alumno, :c1, :g1, 'inscrito', NOW()
                       FROM asignaciones_grupo_alumno aga
                       WHERE aga.id_grupo = :g2";
                 $ins = $pdo->prepare($sqlInsert);
                 $ins->execute([':c1' => $idCiclo, ':g1' => $idGrupo, ':g2' => $idGrupo]);
-                $insertados = $ins->rowCount(); // solo cuenta los realmente insertados
+                $insertados = $ins->rowCount();
 
-                // Para el resumen final (quién quedó con ese ciclo)
+                // Para resumen final
                 $stRes = $pdo->prepare("SELECT a.id_alumno, CONCAT(a.nombre,' ',a.apellido_paterno) AS nombre, a.matricula
                                 FROM alumno_ciclo ac
                                 INNER JOIN alumnos a ON a.id_alumno = ac.id_alumno
@@ -448,10 +560,48 @@ try {
 
                 $pdo->commit();
 
-                $omitidos = $yaTenianAntes; // para mensaje claro
+                $omitidos = $yaTenianAntes;
                 $msg = "Insertados: $insertados. Omitidos (ya tenían este ciclo): $omitidos.";
                 if ($movidos)
                     $msg .= " Reinscritos: $movidos.";
+
+                // ---- Notificación: asignación de ciclo ----
+                $actorId = getSecretariaActorIdFromSession();
+
+                // Nombre del ciclo legible
+                $stCiclo = $pdo->prepare("SELECT fecha_inicio, fecha_fin, IFNULL(activo,0) AS activo FROM ciclos_escolares WHERE id_ciclo=?");
+                $stCiclo->execute([$idCiclo]);
+                $rc = $stCiclo->fetch(PDO::FETCH_ASSOC);
+                $cicloLabel = $rc ? (date('Y', strtotime($rc['fecha_inicio'])) . '-' . date('Y', strtotime($rc['fecha_fin'])) . ((int) $rc['activo'] ? ' • ACTIVO' : '')) : ("ID $idCiclo");
+
+                // Nombre del grupo legible
+                $stG = $pdo->prepare("SELECT cng.nombre AS nombre_grupo, cns.nombre AS nombre_semestre
+                                      FROM grupos g
+                                      INNER JOIN cat_nombres_grupo cng ON cng.id_nombre_grupo = g.id_nombre_grupo
+                                      INNER JOIN cat_nombres_semestre cns ON cns.id_nombre_semestre = g.id_nombre_semestre
+                                      WHERE g.id_grupo=?");
+                $stG->execute([$idGrupo]);
+                $rg = $stG->fetch(PDO::FETCH_ASSOC);
+                $grupoLabel = $rg ? ($rg['nombre_semestre'] . ' - ' . $rg['nombre_grupo']) : "Grupo $idGrupo";
+
+                notificar_admin_pdo($pdo, [
+                    'tipo' => 'movimiento',
+                    'titulo' => 'Asignación de ciclo a grupo',
+                    'detalle' => "Grupo: {$grupoLabel} • Ciclo: {$cicloLabel} • {$msg}",
+                    'actor_id' => $actorId,
+                    'recurso' => 'alumno_ciclo',
+                    'accion' => 'alta',
+                    'meta' => [
+                        'id_grupo' => $idGrupo,
+                        'grupo' => $grupoLabel,
+                        'id_ciclo' => $idCiclo,
+                        'ciclo' => $cicloLabel,
+                        'insertados' => $insertados,
+                        'omitidos' => $omitidos,
+                        'reinscritos' => $movidos,
+                        'alumnos_result' => $alumnosCiclo
+                    ]
+                ]);
 
                 echo json_encode([
                     'ok' => true,
@@ -465,7 +615,6 @@ try {
             }
             break;
         }
-
 
         /* ===== TABLERO: UN CICLO POR GRUPO (vigente o el más reciente) ===== */
         case 'grupos_ciclo_cards': {
@@ -565,8 +714,8 @@ try {
                     'id_grupo' => (int) $p['id_grupo'],
                     'id_ciclo' => (int) $p['id_ciclo'],
                     'titulo' => "{$p['nombre_semestre']} - {$p['nombre_grupo']} ({$p['nombre_carrera']})",
-                    'ciclo' => $label,      // para nuevos front
-                    'ciclo_label' => $label,      // compatibilidad con front viejo
+                    'ciclo' => $label,            // para front nuevo
+                    'ciclo_label' => $label,      // compat front viejo
                     'total' => (int) $p['total'],
                     'alumnos' => $al
                 ];

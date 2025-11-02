@@ -83,12 +83,7 @@ $administradores = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <input type="text" id="buscarAdmin" placeholder="Buscar Admin..." />
             </div>
             <div class="header-actions">
-                <div class="notification"><i class="fas fa-bell"></i>
-                    <div class="badge">3</div>
-                </div>
-                <div class="notification"><i class="fas fa-envelope"></i>
-                    <div class="badge">5</div>
-                </div>
+
                 <div class="user-profile" id="userProfile" data-nombre="<?= htmlspecialchars($nombreCompleto) ?>"
                     data-rol="<?= htmlspecialchars($rolUsuario) ?>">
                     <div class="profile-img"><?= $iniciales ?></div>

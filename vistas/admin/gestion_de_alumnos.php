@@ -31,33 +31,76 @@ try {
  * Mostraremos el nombre del semestre desde cat_nombres_semestre.
  */
 
-// === CONSULTA ALUMNOS ===
-$sqlAlumnos = "
-    SELECT
-        a.id_alumno,
-        a.nombre,
-        a.apellido_paterno,
-        a.apellido_materno,
-        a.curp,
-        a.fecha_nacimiento,
-        a.sexo,
-        a.telefono,
-        a.direccion,
-        a.correo_personal,
-        a.matricula,
-        a.password,
-        a.id_nombre_semestre,
-        ns.nombre AS nombre_semestre,
-        a.contacto_emergencia,
-        a.parentesco_emergencia,
-        a.telefono_emergencia,
-        a.fecha_registro
-    FROM alumnos a
-    LEFT JOIN cat_nombres_semestre ns
-        ON a.id_nombre_semestre = ns.id_nombre_semestre
-    ORDER BY a.id_alumno ASC
-";
-$alumnos = $pdo->query($sqlAlumnos)->fetchAll(PDO::FETCH_ASSOC);
+/* ======== NUEVO: Filtro de estatus (activo | baja | suspendido | todos) ======== */
+$estatusFiltro = isset($_GET['estatus']) ? strtolower(trim($_GET['estatus'])) : 'todos';
+$estatusValidos = ['activo', 'baja', 'suspendido', 'todos'];
+if (!in_array($estatusFiltro, $estatusValidos, true)) {
+    $estatusFiltro = 'todos';
+}
+
+/* === CONSULTA ALUMNOS ===
+   (Se añadió a.estatus y un WHERE opcional si se filtra) */
+if ($estatusFiltro === 'todos') {
+    $sqlAlumnos = "
+        SELECT
+            a.id_alumno,
+            a.estatus,
+            a.nombre,
+            a.apellido_paterno,
+            a.apellido_materno,
+            a.curp,
+            a.fecha_nacimiento,
+            a.sexo,
+            a.telefono,
+            a.direccion,
+            a.correo_personal,
+            a.matricula,
+            a.password,
+            a.id_nombre_semestre,
+            ns.nombre AS nombre_semestre,
+            a.contacto_emergencia,
+            a.parentesco_emergencia,
+            a.telefono_emergencia,
+            a.fecha_registro
+        FROM alumnos a
+        LEFT JOIN cat_nombres_semestre ns
+            ON a.id_nombre_semestre = ns.id_nombre_semestre
+        ORDER BY a.id_alumno ASC
+    ";
+    $stmtAlu = $pdo->prepare($sqlAlumnos);
+    $stmtAlu->execute();
+} else {
+    $sqlAlumnos = "
+        SELECT
+            a.id_alumno,
+            a.estatus,
+            a.nombre,
+            a.apellido_paterno,
+            a.apellido_materno,
+            a.curp,
+            a.fecha_nacimiento,
+            a.sexo,
+            a.telefono,
+            a.direccion,
+            a.correo_personal,
+            a.matricula,
+            a.password,
+            a.id_nombre_semestre,
+            ns.nombre AS nombre_semestre,
+            a.contacto_emergencia,
+            a.parentesco_emergencia,
+            a.telefono_emergencia,
+            a.fecha_registro
+        FROM alumnos a
+        LEFT JOIN cat_nombres_semestre ns
+            ON a.id_nombre_semestre = ns.id_nombre_semestre
+        WHERE a.estatus = :estatus
+        ORDER BY a.id_alumno DESC
+    ";
+    $stmtAlu = $pdo->prepare($sqlAlumnos);
+    $stmtAlu->execute([':estatus' => $estatusFiltro]);
+}
+$alumnos = $stmtAlu->fetchAll(PDO::FETCH_ASSOC);
 
 // === CONSULTA SEMESTRES PARA SELECT ===
 $sqlSemestres = "
@@ -134,6 +177,79 @@ $semestres = $pdo->query($sqlSemestres)->fetchAll(PDO::FETCH_ASSOC);
             overflow-y: auto;
             z-index: 1000;
         }
+
+        /* ===== NUEVO: badges estatus + filtro ===== */
+        .badge-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .3px;
+        }
+
+        .st-activo {
+            background: #e6f7ef;
+            color: #0a8a4b;
+            border: 1px solid #bdebd2;
+        }
+
+        .st-baja {
+            background: #fff1f0;
+            color: #b11b1b;
+            border: 1px solid #ffc2bf;
+        }
+
+        .st-suspendido {
+            background: #fff9e6;
+            color: #8a6d0a;
+            border: 1px solid #ffe6a3;
+        }
+
+        .filtro-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #fff;
+            border: 1px solid #e0e6ed;
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin: 10px 0 15px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .05);
+        }
+
+        .filtro-container label {
+            font-weight: 600;
+            font-size: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filtro-container i {
+            color: #00897b;
+        }
+
+        #filtroEstatus {
+            background: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 14px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        #filtroEstatus:hover {
+            border-color: #00a884;
+        }
+
+        #filtroEstatus:focus {
+            border-color: #00897b;
+            box-shadow: 0 0 0 2px rgba(0, 137, 123, .15);
+        }
     </style>
 </head>
 
@@ -157,12 +273,7 @@ $semestres = $pdo->query($sqlSemestres)->fetchAll(PDO::FETCH_ASSOC);
                 <input type="text" id="buscarAdmin" placeholder="Buscar Alumnos..." />
             </div>
             <div class="header-actions">
-                <div class="notification"><i class="fas fa-bell"></i>
-                    <div class="badge">3</div>
-                </div>
-                <div class="notification"><i class="fas fa-envelope"></i>
-                    <div class="badge">5</div>
-                </div>
+
                 <div class="user-profile" id="userProfile" data-nombre="<?= htmlspecialchars($nombreCompleto) ?>"
                     data-rol="<?= htmlspecialchars($rolUsuario) ?>">
                     <div class="profile-img"><?= $iniciales ?></div>
@@ -186,6 +297,22 @@ $semestres = $pdo->query($sqlSemestres)->fetchAll(PDO::FETCH_ASSOC);
             </div>
 
             <div class="table-card">
+
+                <!-- ===== NUEVO: Filtro Estatus (como en Docentes) ===== -->
+                <div class="filtro-container">
+                    <label for="filtroEstatus">
+                        <i class="fas fa-filter"></i> Estatus:
+                    </label>
+                    <select id="filtroEstatus" class="input">
+                        <option value="todos" <?= ($estatusFiltro === 'todos' ? 'selected' : '') ?>>Todos</option>
+                        <option value="activo" <?= ($estatusFiltro === 'activo' ? 'selected' : '') ?>>Activos</option>
+                        <option value="baja" <?= ($estatusFiltro === 'baja' ? 'selected' : '') ?>>Baja</option>
+                        <option value="suspendido" <?= ($estatusFiltro === 'suspendido' ? 'selected' : '') ?>>
+                            Suspendidos
+                        </option>
+                    </select>
+                </div>
+
                 <div class="card-title">
                     <h3><i class="fas fa-user-graduate"></i> Alumnos</h3>
                 </div>
@@ -195,6 +322,8 @@ $semestres = $pdo->query($sqlSemestres)->fetchAll(PDO::FETCH_ASSOC);
                         <thead>
                             <tr>
                                 <th>ID</th>
+                                <!-- ===== NUEVO: Columna Estatus ===== -->
+                                <th>Estatus</th>
                                 <th>Nombre</th>
                                 <th>Apellido Paterno</th>
                                 <th>Apellido Materno</th>
@@ -217,8 +346,15 @@ $semestres = $pdo->query($sqlSemestres)->fetchAll(PDO::FETCH_ASSOC);
                         <tbody id="tablaBody">
                             <?php if (!empty($alumnos)): ?>
                                 <?php foreach ($alumnos as $row): ?>
+                                    <?php
+                                    $st = strtolower($row['estatus'] ?? 'activo');
+                                    $cls = $st === 'baja' ? 'st-baja' : ($st === 'suspendido' ? 'st-suspendido' : 'st-activo');
+                                    ?>
                                     <tr data-id="<?= htmlspecialchars($row['id_alumno']) ?>">
                                         <td><?= htmlspecialchars($row['id_alumno']) ?></td>
+                                        <!-- ===== NUEVO: Celda Estatus con badge ===== -->
+                                        <td><span class="badge-status <?= $cls ?>"><?= htmlspecialchars($st) ?></span></td>
+
                                         <td><?= htmlspecialchars($row['nombre'] ?? '') ?></td>
                                         <td><?= htmlspecialchars($row['apellido_paterno'] ?? '') ?></td>
                                         <td><?= htmlspecialchars($row['apellido_materno'] ?? '') ?></td>
@@ -247,195 +383,214 @@ $semestres = $pdo->query($sqlSemestres)->fetchAll(PDO::FETCH_ASSOC);
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="18">No hay alumnos registrados.</td>
+                                    <td colspan="19">No hay alumnos registrados.</td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
-
                 <div class="pagination-container" id="paginationAlumno"></div>
+            </div>
+        </div>
 
-                <!-- MODAL NUEVO ALUMNO -->
-                <div class="modal-overlay" id="modalNuevoAlumno">
-                    <div class="modal">
-                        <button type="button" class="close-modal" id="closeModal">&times;</button>
-                        <h2>Nuevo Alumno</h2>
-                        <form id="formNuevo" autocomplete="off">
-                            <fieldset>
-                                <label for="nombre">Nombre *</label>
-                                <input type="text" name="nombre" id="nombre" required>
 
-                                <label for="apellido_paterno">Apellido Paterno *</label>
-                                <input type="text" name="apellido_paterno" id="apellido_paterno" required>
 
-                                <label for="apellido_materno">Apellido Materno</label>
-                                <input type="text" name="apellido_materno" id="apellido_materno">
+        <!-- MODAL NUEVO ALUMNO -->
+        <div class="modal-overlay" id="modalNuevoAlumno">
+            <div class="modal">
+                <button type="button" class="close-modal" id="closeModal">&times;</button>
+                <h2>Nuevo Alumno</h2>
+                <form id="formNuevo" autocomplete="off">
+                    <fieldset>
+                        <label for="nombre">Nombre *</label>
+                        <input type="text" name="nombre" id="nombre" required>
 
-                                <label for="curp">CURP *</label>
-                                <input type="text" name="curp" id="curp" maxlength="18" required
-                                    oninput="this.value=this.value.toUpperCase()">
+                        <label for="apellido_paterno">Apellido Paterno *</label>
+                        <input type="text" name="apellido_paterno" id="apellido_paterno" required>
 
-                                <label for="fecha_nacimiento">Fecha de Nacimiento *</label>
-                                <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" required>
+                        <label for="apellido_materno">Apellido Materno</label>
+                        <input type="text" name="apellido_materno" id="apellido_materno">
 
-                                <label for="sexo">Sexo *</label>
-                                <select name="sexo" id="sexo" required>
-                                    <option value="" disabled selected>Selecciona</option>
-                                    <option value="Masculino">Masculino</option>
-                                    <option value="Femenino">Femenino</option>
-                                    <option value="Otro">Otro</option>
-                                </select>
+                        <label for="curp">CURP *</label>
+                        <input type="text" name="curp" id="curp" maxlength="18" required
+                            oninput="this.value=this.value.toUpperCase()">
 
-                                <label for="telefono">Teléfono</label>
-                                <input type="tel" name="telefono" id="telefono" inputmode="numeric"
-                                    pattern="[0-9]{7,15}" title="Ingresa solo números (7 a 15 dígitos)"
-                                    oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                        <label for="fecha_nacimiento">Fecha de Nacimiento *</label>
+                        <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" required>
 
-                                <label for="direccion">Dirección</label>
-                                <input type="text" name="direccion" id="direccion">
+                        <label for="sexo">Sexo *</label>
+                        <select name="sexo" id="sexo" required>
+                            <option value="" disabled selected>Selecciona</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Femenino">Femenino</option>
+                            <option value="Otro">Otro</option>
+                        </select>
 
-                                <label for="correo_personal">Correo</label>
-                                <input type="email" name="correo_personal" id="correo_personal">
+                        <label for="telefono">Teléfono</label>
+                        <input type="tel" name="telefono" id="telefono" inputmode="numeric" pattern="[0-9]{7,15}"
+                            title="Ingresa solo números (7 a 15 dígitos)"
+                            oninput="this.value=this.value.replace(/[^0-9]/g,'')">
 
-                                <label for="matricula">Matrícula</label>
-                                <input type="text" name="matricula" id="matricula" placeholder="Autogenerada" readonly>
+                        <label for="direccion">Dirección</label>
+                        <input type="text" name="direccion" id="direccion">
 
-                                <label for="password">Contraseña</label>
-                                <input type="text" name="password" id="password" placeholder="Autogenerada" readonly>
+                        <label for="correo_personal">Correo</label>
+                        <input type="email" name="correo_personal" id="correo_personal">
 
-                                <label for="id_nombre_semestre">Semestre *</label>
-                                <select name="id_nombre_semestre" id="id_nombre_semestre" required>
-                                    <option value="" disabled selected>Selecciona un semestre</option>
-                                    <?php foreach ($semestres as $s): ?>
-                                        <option value="<?= htmlspecialchars($s['id_nombre_semestre']) ?>">
-                                            <?= htmlspecialchars($s['nombre']) ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
+                        <label for="matricula">Matrícula</label>
+                        <input type="text" name="matricula" id="matricula" placeholder="Autogenerada" readonly>
 
-                                <label for="contacto_emergencia">Contacto Emergencia</label>
-                                <input type="text" name="contacto_emergencia" id="contacto_emergencia"
-                                    pattern="[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s.'-]{2,60}"
-                                    title="Solo letras y espacios (2 a 60 caracteres)"
-                                    oninput="this.value=this.value.replace(/[0-9]/g,'')">
+                        <label for="password">Contraseña</label>
+                        <input type="text" name="password" id="password" placeholder="Autogenerada" readonly>
 
-                                <label for="parentesco_emergencia">Parentesco Emergencia</label>
-                                <input type="text" name="parentesco_emergencia" id="parentesco_emergencia">
+                        <label for="id_nombre_semestre">Semestre *</label>
+                        <select name="id_nombre_semestre" id="id_nombre_semestre" required>
+                            <option value="" disabled selected>Selecciona un semestre</option>
+                            <?php foreach ($semestres as $s): ?>
+                                <option value="<?= htmlspecialchars($s['id_nombre_semestre']) ?>">
+                                    <?= htmlspecialchars($s['nombre']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
 
-                                <label for="telefono_emergencia">Teléfono Emergencia</label>
-                                <input type="tel" name="telefono_emergencia" id="telefono_emergencia"
-                                    inputmode="numeric" pattern="[0-9]{7,15}"
-                                    title="Ingresa solo números (7 a 15 dígitos)"
-                                    oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                            </fieldset>
+                        <label for="contacto_emergencia">Contacto Emergencia</label>
+                        <input type="text" name="contacto_emergencia" id="contacto_emergencia"
+                            pattern="[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s.'-]{2,60}"
+                            title="Solo letras y espacios (2 a 60 caracteres)"
+                            oninput="this.value=this.value.replace(/[0-9]/g,'')">
 
-                            <div class="actions">
-                                <button type="button" class="btn-cancel" id="cancelModal">Cancelar</button>
-                                <button type="submit" class="btn-save">Guardar</button>
-                            </div>
-                        </form>
+                        <label for="parentesco_emergencia">Parentesco Emergencia</label>
+                        <input type="text" name="parentesco_emergencia" id="parentesco_emergencia">
+
+                        <label for="telefono_emergencia">Teléfono Emergencia</label>
+                        <input type="tel" name="telefono_emergencia" id="telefono_emergencia" inputmode="numeric"
+                            pattern="[0-9]{7,15}" title="Ingresa solo números (7 a 15 dígitos)"
+                            oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                    </fieldset>
+
+                    <div class="actions">
+                        <button type="button" class="btn-cancel" id="cancelModal">Cancelar</button>
+                        <button type="submit" class="btn-save">Guardar</button>
                     </div>
-                </div>
+                </form>
+            </div>
+        </div>
 
 
-                <div class="modal-overlay" id="modalEditar">
-                    <div class="modal">
-                        <button type="button" class="close-modal" id="closeEditar">&times;</button>
-                        <h2>Editar Alumno</h2>
-                        <form id="formEditar" autocomplete="off">
-                            <input type="hidden" id="edit_id_alumno" name="id_alumno">
-                            <fieldset>
-                                <label for="edit_nombre">Nombre *</label>
-                                <input type="text" name="nombre" id="edit_nombre" required>
+        <div class="modal-overlay" id="modalEditar">
+            <div class="modal">
+                <button type="button" class="close-modal" id="closeEditar">&times;</button>
+                <h2>Editar Alumno</h2>
+                <form id="formEditar" autocomplete="off">
+                    <input type="hidden" id="edit_id_alumno" name="id_alumno">
+                    <fieldset>
+                        <label for="edit_nombre">Nombre *</label>
+                        <input type="text" name="nombre" id="edit_nombre" required>
 
-                                <label for="edit_apellido_paterno">Apellido Paterno *</label>
-                                <input type="text" name="apellido_paterno" id="edit_apellido_paterno" required>
+                        <label for="edit_apellido_paterno">Apellido Paterno *</label>
+                        <input type="text" name="apellido_paterno" id="edit_apellido_paterno" required>
 
-                                <label for="edit_apellido_materno">Apellido Materno</label>
-                                <input type="text" name="apellido_materno" id="edit_apellido_materno">
+                        <label for="edit_apellido_materno">Apellido Materno</label>
+                        <input type="text" name="apellido_materno" id="edit_apellido_materno">
 
-                                <label for="edit_curp">CURP *</label>
-                                <input type="text" name="curp" id="edit_curp" maxlength="18" required
-                                    oninput="this.value=this.value.toUpperCase()">
+                        <label for="edit_curp">CURP *</label>
+                        <input type="text" name="curp" id="edit_curp" maxlength="18" required
+                            oninput="this.value=this.value.toUpperCase()">
 
-                                <label for="edit_fecha_nacimiento">Fecha de Nacimiento *</label>
-                                <input type="date" name="fecha_nacimiento" id="edit_fecha_nacimiento" required>
+                        <label for="edit_fecha_nacimiento">Fecha de Nacimiento *</label>
+                        <input type="date" name="fecha_nacimiento" id="edit_fecha_nacimiento" required>
 
-                                <label for="edit_sexo">Sexo *</label>
-                                <select name="sexo" id="edit_sexo" required>
-                                    <option value="" disabled selected>Selecciona</option>
-                                    <option value="Masculino">Masculino</option>
-                                    <option value="Femenino">Femenino</option>
-                                    <option value="Otro">Otro</option>
-                                </select>
+                        <label for="edit_sexo">Sexo *</label>
+                        <select name="sexo" id="edit_sexo" required>
+                            <option value="" disabled selected>Selecciona</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Femenino">Femenino</option>
+                            <option value="Otro">Otro</option>
+                        </select>
 
-                                <label for="edit_telefono">Teléfono</label>
-                                <input type="tel" name="telefono" id="edit_telefono" inputmode="numeric"
-                                    pattern="[0-9]{7,15}" title="Ingresa solo números (7 a 15 dígitos)"
-                                    oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                        <label for="edit_telefono">Teléfono</label>
+                        <input type="tel" name="telefono" id="edit_telefono" inputmode="numeric" pattern="[0-9]{7,15}"
+                            title="Ingresa solo números (7 a 15 dígitos)"
+                            oninput="this.value=this.value.replace(/[^0-9]/g,'')">
 
-                                <label for="edit_direccion">Dirección</label>
-                                <input type="text" name="direccion" id="edit_direccion">
+                        <label for="edit_direccion">Dirección</label>
+                        <input type="text" name="direccion" id="edit_direccion">
 
-                                <label for="edit_correo_personal">Correo</label>
-                                <input type="email" name="correo_personal" id="edit_correo_personal">
+                        <label for="edit_correo_personal">Correo</label>
+                        <input type="email" name="correo_personal" id="edit_correo_personal">
 
-                                <label for="edit_matricula">Matrícula</label>
-                                <input type="text" name="matricula" id="edit_matricula" readonly>
+                        <label for="edit_matricula">Matrícula</label>
+                        <input type="text" name="matricula" id="edit_matricula" readonly>
 
-                                <label for="edit_password">Contraseña</label>
-                                <input type="text" name="password" id="edit_password" readonly>
+                        <label for="edit_password">Contraseña</label>
+                        <input type="text" name="password" id="edit_password" readonly>
 
-                                <label for="edit_id_nombre_semestre">Semestre *</label>
-                                <select name="id_nombre_semestre" id="edit_id_nombre_semestre" required>
-                                    <option value="" disabled selected>Selecciona un semestre</option>
-                                    <?php foreach ($semestres as $s): ?>
-                                        <option value="<?= htmlspecialchars($s['id_nombre_semestre']) ?>">
-                                            <?= htmlspecialchars($s['nombre']) ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
+                        <label for="edit_id_nombre_semestre">Semestre *</label>
+                        <select name="id_nombre_semestre" id="edit_id_nombre_semestre" required>
+                            <option value="" disabled selected>Selecciona un semestre</option>
+                            <?php foreach ($semestres as $s): ?>
+                                <option value="<?= htmlspecialchars($s['id_nombre_semestre']) ?>">
+                                    <?= htmlspecialchars($s['nombre']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
 
-                                <label for="edit_contacto_emergencia">Contacto Emergencia</label>
-                                <input type="text" name="contacto_emergencia" id="edit_contacto_emergencia"
-                                    pattern="[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s.'-]{2,60}"
-                                    title="Solo letras y espacios (2 a 60 caracteres)"
-                                    oninput="this.value=this.value.replace(/[0-9]/g,'')">
+                        <label for="edit_contacto_emergencia">Contacto Emergencia</label>
+                        <input type="text" name="contacto_emergencia" id="edit_contacto_emergencia"
+                            pattern="[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s.'-]{2,60}"
+                            title="Solo letras y espacios (2 a 60 caracteres)"
+                            oninput="this.value=this.value.replace(/[0-9]/g,'')">
 
-                                <label for="edit_parentesco_emergencia">Parentesco Emergencia</label>
-                                <input type="text" name="parentesco_emergencia" id="edit_parentesco_emergencia">
+                        <label for="edit_parentesco_emergencia">Parentesco Emergencia</label>
+                        <input type="text" name="parentesco_emergencia" id="edit_parentesco_emergencia">
 
-                                <label for="edit_telefono_emergencia">Teléfono Emergencia</label>
-                                <input type="tel" name="telefono_emergencia" id="edit_telefono_emergencia"
-                                    inputmode="numeric" pattern="[0-9]{7,15}"
-                                    title="Ingresa solo números (7 a 15 dígitos)"
-                                    oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                            </fieldset>
+                        <label for="edit_telefono_emergencia">Teléfono Emergencia</label>
+                        <input type="tel" name="telefono_emergencia" id="edit_telefono_emergencia" inputmode="numeric"
+                            pattern="[0-9]{7,15]" title="Ingresa solo números (7 a 15 dígitos)"
+                            oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                    </fieldset>
 
-                            <div class="actions">
-                                <button type="button" class="btn-cancel" id="cancelEditar">Cancelar</button>
-                                <button type="submit" class="btn-save">Guardar Cambios</button>
-                            </div>
-                        </form>
+                    <div class="actions">
+                        <button type="button" class="btn-cancel" id="cancelEditar">Cancelar</button>
+                        <button type="submit" class="btn-save">Guardar Cambios</button>
                     </div>
-                </div>
+                </form>
+            </div>
+        </div>
 
-                <script>
-                    window.rolUsuarioPHP = "<?= $rolUsuario; ?>";
+        <script>
+            window.rolUsuarioPHP = "<?= $rolUsuario; ?>";
 
-                    document.getElementById('buscarAdmin').addEventListener('keyup', function () {
-                        const filtro = this.value.toLowerCase();
-                        const filas = document.querySelectorAll('#tablaAdmins tbody tr');
-                        filas.forEach(fila => {
-                            fila.style.display = fila.innerText.toLowerCase().includes(filtro) ? '' :
-                                'none';
-                        });
-                    });
-                </script>
-                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-                <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
-                <script src="../../js/admin/Alumnos4.js"></script>
+            // (Tu código original se queda tal cual)
+            document.getElementById('buscarAdmin').addEventListener('keyup', function () {
+                const filtro = this.value.toLowerCase();
+                const filas = document.querySelectorAll('#tablaAdmins tbody tr');
+                filas.forEach(fila => {
+                    fila.style.display = fila.innerText.toLowerCase().includes(filtro) ? '' :
+                        'none';
+                });
+            });
+
+            // ===== NUEVO: Buscador correcto para #tablaAlumnos (sin quitar el tuyo)
+            document.getElementById('buscarAdmin')?.addEventListener('keyup', function () {
+                const filtro = this.value.toLowerCase();
+                const filas = document.querySelectorAll('#tablaAlumnos tbody tr');
+                filas.forEach(fila => {
+                    fila.style.display = fila.innerText.toLowerCase().includes(filtro) ? '' : 'none';
+                });
+            });
+
+            // ===== NUEVO: Filtro estatus (recarga con ?estatus=...)
+            document.getElementById('filtroEstatus')?.addEventListener('change', function () {
+                const v = this.value || 'todos';
+                const url = new URL(window.location.href);
+                url.searchParams.set('estatus', v);
+                window.location.href = url.toString();
+            });
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
+        <script src="../../js/admin/Alumnos4.js"></script>
 </body>
 
 </html>

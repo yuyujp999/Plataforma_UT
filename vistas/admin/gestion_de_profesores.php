@@ -30,8 +30,24 @@ try {
     die("Error de conexión: " . $e->getMessage());
 }
 
-// Obtener docentes
-$stmt = $pdo->query("SELECT * FROM docentes ORDER BY id_docente ASC");
+/**
+ * Filtro de estatus (admin puede ver todos; por defecto 'todos')
+ * valores esperados: 'activo' | 'baja' | 'suspendido' | 'todos'
+ */
+$estatusFiltro = isset($_GET['estatus']) ? strtolower(trim($_GET['estatus'])) : 'todos';
+$estatusValidos = ['activo', 'baja', 'suspendido', 'todos'];
+if (!in_array($estatusFiltro, $estatusValidos, true)) {
+    $estatusFiltro = 'todos';
+}
+
+// Obtener docentes (ocultar soft-deletes)
+if ($estatusFiltro === 'todos') {
+    $stmt = $pdo->prepare("SELECT * FROM docentes WHERE deleted_at IS NULL ORDER BY id_docente ASC");
+    $stmt->execute();
+} else {
+    $stmt = $pdo->prepare("SELECT * FROM docentes WHERE deleted_at IS NULL AND estatus = :estatus ORDER BY id_docente DESC");
+    $stmt->execute([':estatus' => $estatusFiltro]);
+}
 $docentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
@@ -66,6 +82,88 @@ $docentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
             overflow-y: auto;
             z-index: 1000;
         }
+
+        /* Badge muy simple para estatus */
+        .badge-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .3px;
+        }
+
+        .st-activo {
+            background: #e6f7ef;
+            color: #0a8a4b;
+            border: 1px solid #bdebd2;
+        }
+
+        .st-baja {
+            background: #fff1f0;
+            color: #b11b1b;
+            border: 1px solid #ffc2bf;
+        }
+
+        .st-suspendido {
+            background: #fff9e6;
+            color: #8a6d0a;
+            border: 1px solid #ffe6a3;
+        }
+
+        /* Muestra puntos en contraseña en vez de hash */
+        .pwd-mask {
+            font-family: 'password';
+        }
+
+        /* === FILTRO DE ESTATUS (ADMIN) === */
+        .filtro-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #ffffff;
+            border: 1px solid #e0e6ed;
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin: 10px 0 15px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .filtro-container label {
+            font-weight: 600;
+            font-size: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+
+        }
+
+        .filtro-container i {
+            color: #00897b;
+        }
+
+        #filtroEstatus {
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+
+        #filtroEstatus:hover {
+            border-color: #00a884;
+        }
+
+        #filtroEstatus:focus {
+            border-color: #00897b;
+            box-shadow: 0 0 0 2px rgba(0, 137, 123, 0.15);
+        }
     </style>
 </head>
 
@@ -88,12 +186,7 @@ $docentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <input type="text" id="buscarDocente" placeholder="Buscar Docentes..." />
             </div>
             <div class="header-actions">
-                <div class="notification"><i class="fas fa-bell"></i>
-                    <div class="badge">3</div>
-                </div>
-                <div class="notification"><i class="fas fa-envelope"></i>
-                    <div class="badge">5</div>
-                </div>
+
                 <div class="user-profile" id="userProfile" data-nombre="<?= h($nombreCompleto) ?>"
                     data-rol="<?= h($rolUsuario) ?>">
                     <div class="profile-img"><?= h($iniciales) ?></div>
@@ -115,7 +208,23 @@ $docentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </div>
             </div>
 
-            <div class="table-card">
+            <!-- Filtro de Estatus (Admin) -->
+            <!-- Filtro de Estatus (Admin) -->
+            <div class="table-card" style="margin-top: 10px;">
+                <div class="filtro-container">
+                    <label for="filtroEstatus">
+                        <i class="fas fa-filter"></i> Estatus:
+                    </label>
+                    <select id="filtroEstatus" class="input">
+                        <option value="todos" <?= $estatusFiltro === 'todos' ? 'selected' : ''; ?>>Todos</option>
+                        <option value="activo" <?= $estatusFiltro === 'activo' ? 'selected' : ''; ?>>Activos</option>
+                        <option value="baja" <?= $estatusFiltro === 'baja' ? 'selected' : ''; ?>>Baja</option>
+                        <option value="suspendido" <?= $estatusFiltro === 'suspendido' ? 'selected' : ''; ?>>Suspendidos
+                        </option>
+                    </select>
+                </div>
+
+
                 <div class="card-title">
                     <h3><i class="fas fa-chalkboard-teacher"></i> Docentes</h3>
                 </div>
@@ -125,6 +234,7 @@ $docentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <thead>
                             <tr>
                                 <th>ID</th>
+                                <th>Estatus</th>
                                 <th>Nombre</th>
                                 <th>Apellido Paterno</th>
                                 <th>Apellido Materno</th>
@@ -154,9 +264,15 @@ $docentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         </thead>
                         <tbody id="tablaBody">
                             <?php if (!empty($docentes)): ?>
-                                <?php foreach ($docentes as $row): ?>
+                                <?php foreach ($docentes as $row):
+                                    $st = strtolower($row['estatus'] ?? 'activo');
+                                    $cls = $st === 'baja' ? 'st-baja' : ($st === 'suspendido' ? 'st-suspendido' : 'st-activo');
+                                    ?>
                                     <tr data-id="<?= h($row['id_docente'] ?? '') ?>">
                                         <td><?= h($row['id_docente'] ?? '') ?></td>
+                                        <td>
+                                            <span class="badge-status <?= $cls ?>"><?= h($st) ?></span>
+                                        </td>
                                         <td><?= h($row['nombre'] ?? '') ?></td>
                                         <td><?= h($row['apellido_paterno'] ?? '') ?></td>
                                         <td><?= h($row['apellido_materno'] ?? '') ?></td>
@@ -191,13 +307,12 @@ $docentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="26">No hay docentes registrados.</td>
+                                    <td colspan="27">No hay docentes registrados.</td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
-
 
                 <div class="pagination-container" id="paginationDocentes"></div>
             </div>
@@ -412,20 +527,27 @@ $docentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
 
-
-
     <script>
         window.rolUsuarioPHP = "<?= $rolUsuario; ?>";
 
+        // Buscador por texto
         document.getElementById('buscarDocente').addEventListener('keyup', function () {
             const filtro = this.value.toLowerCase();
             const filas = document.querySelectorAll('#tablaDocentes tbody tr');
             filas.forEach(fila => {
-                fila.style.display = fila.innerText.toLowerCase().includes(filtro) ? '' :
-                    'none';
+                fila.style.display = fila.innerText.toLowerCase().includes(filtro) ? '' : 'none';
             });
         });
+
+        // Filtro de estatus: recarga con querystring ?estatus=...
+        document.getElementById('filtroEstatus')?.addEventListener('change', function () {
+            const v = this.value || 'todos';
+            const url = new URL(window.location.href);
+            url.searchParams.set('estatus', v);
+            window.location.href = url.toString();
+        });
     </script>
+
     <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
     <script src="../../js/admin/Docentes3.js"></script>
 
