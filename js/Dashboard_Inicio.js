@@ -58,14 +58,11 @@ document.addEventListener("DOMContentLoaded", function () {
         path: "/docente/regresar_tareas.php",
       },
       {
-        icon: "fa-solid fa-comments",
-       text: "Chats",
-        path: "/Plataforma_UT/vistas/Docentes/dashboardChat.php",
-},
-
-      { icon: "fas fa-cog",
-        text: "Ajustes",
-        path: "/Plataforma_UT/vistas/Docentes/DashboardAjustes.php" },
+        icon: "fas fa-bell",
+        text: "Notificaciones",
+        path: "/docente/notificaciones.php",
+      },
+      { icon: "fas fa-cog", text: "Ajustes", path: "/docente/ajustes.php" },
     ],
 
     admin: [
