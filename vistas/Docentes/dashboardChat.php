@@ -23,6 +23,7 @@ $usuarioNombre = $nombre . ' ' . $apellido;
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
   <link rel="stylesheet" href="../../css/styleD.css">
   <link rel="stylesheet" href="../../css/docentes/dashboard_chat.css">
+  <link rel="stylesheet" href="../../css/docentes/chat_docentes.css">
 </head>
 <body>
   <div class="container">
@@ -71,7 +72,9 @@ $usuarioNombre = $nombre . ' ' . $apellido;
     </div>
   </div>
 
-  <!-- JS -->
+  <!-- JS  js para el chat-->
+   <script src="/Plataforma_UT/js/docentes/chat_docente.js"></script>
+
   <script>
     window.rolUsuarioPHP = "<?= htmlspecialchars($_SESSION['rol']); ?>";
   </script>
