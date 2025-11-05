@@ -28,6 +28,11 @@ document.addEventListener("DOMContentLoaded", function () {
         text: "Notificaciones",
         path: "/alumno/notificaciones.php",
       },
+      {
+        icon: "fas fa-bell",
+         text: "Chats",
+          path: "/Plataforma_UT/vistas/Alumnos/chatAlumno.php",
+        },
       { icon: "fas fa-cog", text: "Ajustes", path: "/alumno/ajustes.php" },
     ],
 

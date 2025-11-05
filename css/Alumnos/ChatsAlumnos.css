@@ -1,0 +1,17 @@
+.msg-actions {
+  text-align: right;
+  margin-top: 3px;
+}
+
+.delete-msg {
+  background: transparent;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.delete-msg:hover {
+  color: #d32f2f;
+}
