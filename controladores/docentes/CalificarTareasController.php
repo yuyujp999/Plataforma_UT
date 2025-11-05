@@ -5,23 +5,17 @@ class CalificarTareasController
     {
         include __DIR__ . '/../../conexion/conexion.php';
 
-        // 🔍 Buscar todas las tareas de esa asignación docente
         $sql = "
-            SELECT 
-                e.id_entrega,
-                e.fecha_entrega,
-                e.calificacion,
-                e.estado,
-                e.archivo,
-                a.id_alumno,
-                CONCAT(a.nombre, ' ', a.apellido_paterno, ' ', a.apellido_materno) AS nombre_alumno,
-                t.titulo AS titulo_tarea
-            FROM entregas_alumnos e
-            INNER JOIN tareas_materias t ON e.id_tarea = t.id_tarea
-            INNER JOIN alumnos a ON e.id_alumno = a.id_alumno
-            INNER JOIN asignaciones_docentes ad ON t.id_asignacion_docente = ad.id_asignacion_docente
-            WHERE ad.id_asignacion_docente = ?
-            ORDER BY e.fecha_entrega DESC
+        SELECT 
+            e.id_entrega, e.archivo, e.fecha_entrega,
+            e.calificacion, e.retroalimentacion, e.estado,
+            a.nombre AS nombre_alumno, a.apellido_paterno,
+            t.titulo AS titulo_tarea
+        FROM entregas_alumnos e
+        INNER JOIN tareas_materias t ON e.id_tarea = t.id_tarea
+        INNER JOIN alumnos a ON e.id_alumno = a.id_alumno
+        WHERE t.id_asignacion_docente = ?
+        ORDER BY e.fecha_entrega DESC
         ";
 
         $stmt = $conn->prepare($sql);
@@ -36,7 +30,7 @@ class CalificarTareasController
 
         $stmt = $conn->prepare("
             UPDATE entregas_alumnos
-            SET calificacion = ?, retroalimentacion = ?, estado = 'Calificado'
+            SET calificacion = ?, retroalimentacion = ?, estado = 'Calificada'
             WHERE id_entrega = ?
         ");
         $stmt->bind_param("dsi", $calificacion, $retroalimentacion, $idEntrega);
@@ -45,5 +39,22 @@ class CalificarTareasController
         return $stmt->affected_rows > 0
             ? "✅ Entrega calificada correctamente."
             : "⚠️ No se pudo actualizar la calificación.";
+    }
+
+    public static function devolverEntrega($idEntrega, $retroalimentacion)
+    {
+        include __DIR__ . '/../../conexion/conexion.php';
+
+        $stmt = $conn->prepare("
+            UPDATE entregas_alumnos
+            SET retroalimentacion = ?, estado = 'Devuelta', calificacion = NULL
+            WHERE id_entrega = ?
+        ");
+        $stmt->bind_param("si", $retroalimentacion, $idEntrega);
+        $stmt->execute();
+
+        return $stmt->affected_rows > 0
+            ? "📤 La tarea fue devuelta al alumno para corrección."
+            : "⚠️ No se pudo devolver la tarea.";
     }
 }

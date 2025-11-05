@@ -1,0 +1,390 @@
+/* ==========================================================
+   📋 DASHBOARD — TAREAS DEL ALUMNO | UT PANEL (Ángel Loza)
+   ========================================================== */
+
+/* 🔹 ENCABEZADO */
+.materia-header {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border-radius: 18px;
+  padding: 25px 32px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+  border: 1px solid rgba(200, 200, 200, 0.25);
+}
+
+.materia-header h2 {
+  color: var(--primary);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.materia-header p {
+  color: var(--text-light);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+/* ==========================================================
+   🧾 LISTA DE TAREAS — Diseño moderno y aireado
+   ========================================================== */
+
+.section-content {
+  margin-top: 25px;
+}
+
+.tareas-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tarea-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  padding: 22px 28px;
+  border-left: 6px solid var(--primary);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.tarea-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+}
+
+/* ==========================================================
+   🎨 ESTADOS — Colores ultra suaves y consistentes
+   ========================================================== */
+
+/* 🔵 Pendiente */
+.tarea-item.tarea-pendiente {
+  border-left-color: #007bff;
+  background: rgba(0, 123, 255, 0.05);
+}
+.tarea-item.tarea-pendiente .estado {
+  color: #0056b3;
+}
+
+/* 🟢 Entregada */
+.tarea-item.tarea-entregada {
+  border-left-color: #2ecc71;
+  background: rgba(46, 204, 113, 0.06);
+}
+.tarea-item.tarea-entregada .estado {
+  color: #1e7a3b;
+}
+
+/* 🟡 Fuera de tiempo */
+.tarea-item.tarea-fuera {
+  border-left-color: #f1c40f;
+  background: rgba(241, 196, 15, 0.06);
+}
+.tarea-item.tarea-fuera .estado {
+  color: #7a5b00;
+}
+
+/* 🟠 Devuelta */
+.tarea-item.tarea-devuelta {
+  border-left-color: #ff9800;
+  background: rgba(255, 152, 0, 0.06);
+}
+.tarea-item.tarea-devuelta .estado {
+  color: #a66200;
+}
+
+/* 🟢 Calificada */
+.tarea-item.tarea-calificada {
+  border-left-color: #28a745;
+  background: rgba(40, 167, 69, 0.08);
+}
+.tarea-item.tarea-calificada .estado {
+  color: #1e7035;
+}
+
+/* 🔴 Cerrada */
+.tarea-item.tarea-bloqueada {
+  border-left-color: #dc3545;
+  background: rgba(220, 53, 69, 0.06);
+}
+.tarea-item.tarea-bloqueada .estado {
+  color: #842029;
+}
+
+/* ==========================================================
+   📋 INFO — Tipografía y jerarquía visual
+   ========================================================== */
+.tarea-info h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 8px;
+}
+
+.tarea-info p {
+  color: var(--text-light);
+  margin: 4px 0;
+  font-size: 0.9rem;
+}
+
+.estado {
+  margin-top: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* ==========================================================
+   💬 RETROALIMENTACIÓN — Diseño elegante y limpio
+   ========================================================== */
+.info-docente {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-top: 15px;
+  border: 1px solid rgba(220, 220, 220, 0.4);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+  transition: 0.3s ease;
+}
+.info-docente:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.info-docente .head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.info-docente .head h4 {
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.info-docente .head .score {
+  background: #e9f7ef;
+  color: #1e7a3b;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.info-docente p {
+  color: #333;
+  font-size: 0.9rem;
+  margin-top: 4px;
+  line-height: 1.4;
+  white-space: pre-line;
+}
+
+/* ==========================================================
+   ⚙️ BOTONES — Más espaciados y consistentes
+   ========================================================== */
+.tarea-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.btn-entregar,
+.btn-editar,
+.btn-ver {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 9px 15px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.25s ease;
+}
+
+.btn-entregar {
+  background: linear-gradient(135deg, #007bff, #0064d2);
+  color: #fff;
+}
+.btn-entregar:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #0064d2, #004a99);
+}
+
+.btn-editar {
+  background: linear-gradient(135deg, #ffb703, #ff9500);
+  color: #fff;
+}
+.btn-editar:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #ff9500, #ff7b00);
+}
+
+.btn-ver {
+  background: linear-gradient(135deg, #28a745, #1e7a3b);
+  color: #fff;
+}
+.btn-ver:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #1e7a3b, #155d29);
+}
+
+/* ==========================================================
+   🪄 MODAL — Suavizado visual
+   ========================================================== */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 20, 25, 0.45);
+  backdrop-filter: blur(6px);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  padding: 32px 38px;
+  border-radius: 18px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 500px;
+  position: relative;
+  animation: fadeInUp 0.35s ease;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-size: 22px;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: 0.3s;
+}
+.close-btn:hover { color: var(--danger); }
+
+.form-group {
+  margin-bottom: 15px;
+}
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--text);
+  font-weight: 500;
+}
+.form-group input[type="text"],
+.form-group input[type="file"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  background: rgba(250, 250, 250, 0.85);
+}
+
+.btn-primary.full {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.btn-primary.full:hover {
+  background: linear-gradient(135deg, var(--secondary), var(--primary));
+  transform: translateY(-2px);
+}
+
+/* ==========================================================
+   📱 RESPONSIVE
+   ========================================================== */
+@media (max-width: 700px) {
+  .tarea-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .tarea-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+}
+/* ======================================================
+   🎨 NUEVOS ESTADOS — Mejor legibilidad y contraste
+   ====================================================== */
+
+/* 🟠 Devuelta */
+.tarea-item.tarea-devuelta {
+  border-left-color: #ff7b00;
+  background: rgba(255, 140, 0, 0.07);
+}
+.tarea-item.tarea-devuelta .estado {
+  color: #a34e00;
+  font-weight: 600;
+}
+
+/* 🟣 Enviada pero pendiente */
+.tarea-item.tarea-enviada {
+  border-left-color: #6f42c1;
+  background: rgba(111, 66, 193, 0.07);
+}
+.tarea-item.tarea-enviada .estado {
+  color: #56339e;
+  font-weight: 600;
+}
+
+/* ======================================================
+   ⚙️ NUEVO BOTÓN — Reentregar
+   ====================================================== */
+.btn-reentregar {
+  background: linear-gradient(135deg, #ff7b00, #ff9500);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 9px 15px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.25s ease;
+}
+.btn-reentregar:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #ff9500, #ff7b00);
+}
+.btn-reentregar {
+  background-color: #ff9800;
+  color: #fff;
+}
+.btn-reentregar:hover {
+  background-color: #e68900;
+}

@@ -4,29 +4,29 @@ document.addEventListener("DOMContentLoaded", function () {
       {
         icon: "fas fa-chart-pie",
         text: "Dashboard",
-        path: "/alumno/dashboard.php",
+        path: "/Plataforma_UT/vistas/Alumnos/dashboardAlumno.php",
       },
-      { icon: "fas fa-users", text: "Saiiut UTSC", path: "/alumno/saiiut.php" },
-      { icon: "fas fa-box", text: "Virtual UTSC", path: "/alumno/virtual.php" },
+      { icon: "fas fa-users", text: "Saiiut UTSC", path: "/Plataforma_UT/vistas/Alumnos/saiiut.php" },
+      { icon: "fas fa-box", text: "Virtual UTSC", path: "/Plataforma_UT/vistas/Alumnos/virtual.php" },
       {
         icon: "fas fa-graduation-cap",
         text: "Calificaciones",
-        path: "/alumno/calificaciones.php",
+        path: "/Plataforma_UT/vistas/Alumnos/calificaciones.php",
       },
       {
         icon: "fas fa-book",
-        text: "Material de Estudio",
-        path: "/alumno/material.php",
+        text: "Mis Tareas",
+        path: "/Plataforma_UT/vistas/Alumnos/dashboardTareas.php",
       },
       {
         icon: "fas fa-calendar-alt",
         text: "Calendario Académico",
-        path: "/alumno/calendario.php",
+        path: "/Plataforma_UT/vistas/Alumnos/calendario.php",
       },
       {
         icon: "fas fa-bell",
         text: "Notificaciones",
-        path: "/alumno/notificaciones.php",
+        path: "/Plataforma_UT/vistas/Alumnos/notificaciones.php",
       },
       { icon: "fas fa-cog", text: "Ajustes", path: "/alumno/ajustes.php" },
     ],
@@ -50,12 +50,12 @@ document.addEventListener("DOMContentLoaded", function () {
       {
         icon: "fas fa-tasks",
         text: "Calificar Tareas",
-        path: "/docente/calificar_tareas.php",
+        path: "/Plataforma_UT/vistas/docentes/calificar_tareas.php",
       },
       {
         icon: "fas fa-undo",
         text: "Regresar Tareas",
-        path: "/docente/regresar_tareas.php",
+        path: "/Plataforma_UT/vistas/docentes/regresar_tareas.php",
       },
       {
         icon: "fa-solid fa-comments",
