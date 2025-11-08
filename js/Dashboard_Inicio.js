@@ -6,12 +6,13 @@ document.addEventListener("DOMContentLoaded", function () {
         text: "Dashboard",
         path: "/Plataforma_UT/vistas/Alumnos/dashboardAlumno.php",
       },
-      { icon: "fas fa-users", text: "Saiiut UTSC", path: "/Plataforma_UT/vistas/Alumnos/saiiut.php" },
-      { icon: "fas fa-box", text: "Virtual UTSC", path: "/Plataforma_UT/vistas/Alumnos/virtual.php" },
+      { icon: "fas fa-users", 
+        text: "Saiiut UTSC", 
+        path: "/Plataforma_UT/vistas/Alumnos/dashboard_adeudos.php" },
       {
         icon: "fas fa-graduation-cap",
         text: "Calificaciones",
-        path: "/Plataforma_UT/vistas/Alumnos/calificaciones.php",
+        path: "/Plataforma_UT/vistas/Alumnos/dashboard_calificaciones.php",
       },
       {
         icon: "fas fa-book",
@@ -21,14 +22,11 @@ document.addEventListener("DOMContentLoaded", function () {
       {
         icon: "fas fa-calendar-alt",
         text: "Calendario Académico",
-        path: "/Plataforma_UT/vistas/Alumnos/calendario.php",
+        path: "/Plataforma_UT/vistas/Alumnos/dashboard_calendario.php",
       },
-      {
-        icon: "fas fa-bell",
-        text: "Notificaciones",
-        path: "/Plataforma_UT/vistas/Alumnos/notificaciones.php",
-      },
-      { icon: "fas fa-cog", text: "Ajustes", path: "/alumno/ajustes.php" },
+      { icon: "fas fa-cog", 
+        text: "Ajustes", 
+        path: "/Plataforma_UT/vistas/Alumnos/dashboard_ajustes.php" },
     ],
 
     docente: [
@@ -39,23 +37,13 @@ document.addEventListener("DOMContentLoaded", function () {
       },
       {
         icon: "fas fa-box",
-        text: "Virtual UTSC",
-        path: "/vistas/docentes/tareas.php",
-      },
-      {
-        icon: "fas fa-upload",
-        text: "Subir Recursos",
-        path: "/docente/subir_recursos.php",
+        text: "Proyectos y Examenes",
+        path: "/Plataforma_UT/vistas/docentes/evaluaciones.php",
       },
       {
         icon: "fas fa-tasks",
         text: "Calificar Tareas",
         path: "/Plataforma_UT/vistas/docentes/calificar_tareas.php",
-      },
-      {
-        icon: "fas fa-undo",
-        text: "Regresar Tareas",
-        path: "/Plataforma_UT/vistas/docentes/regresar_tareas.php",
       },
       {
         icon: "fa-solid fa-comments",

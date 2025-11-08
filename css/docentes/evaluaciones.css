@@ -1,0 +1,175 @@
+/* ==========================================================
+   📘 EVALUACIONES ACADÉMICAS — DOCENTES (Ángel Loza)
+   ========================================================== */
+
+.evaluaciones-header {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border-radius: 18px;
+  padding: 25px 32px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+  border: 1px solid rgba(200, 200, 200, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.evaluaciones-header h2 {
+  color: var(--primary);
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.evaluaciones-header p {
+  color: var(--text-light);
+}
+
+.btn-subir {
+  align-self: flex-start;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.btn-subir:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, var(--secondary), var(--primary));
+}
+
+/* ==========================================================
+   📚 LISTA DE EVALUACIONES
+   ========================================================== */
+.evaluaciones-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.evaluacion-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  padding: 20px 26px;
+  border-left: 6px solid var(--primary);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.evaluacion-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+}
+
+.evaluacion-info h3 {
+  font-size: 1.1rem;
+  color: var(--dark);
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.evaluacion-info p {
+  color: var(--text-light);
+  margin: 3px 0;
+  font-size: 0.9rem;
+}
+
+.evaluacion-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-ver,
+.btn-eliminar {
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 8px 14px;
+  font-weight: 500;
+  transition: 0.25s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-ver {
+  background: linear-gradient(135deg, #28a745, #1e7a3b);
+  color: #fff;
+}
+.btn-ver:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #1e7a3b, #155d29);
+}
+
+.btn-eliminar {
+  background: linear-gradient(135deg, #dc3545, #b02a37);
+  color: #fff;
+}
+.btn-eliminar:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #b02a37, #842029);
+}
+
+/* ==========================================================
+   🪄 MODAL
+   ========================================================== */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 20, 25, 0.45);
+  backdrop-filter: blur(6px);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+.modal.active {
+  display: flex;
+}
+.modal-content {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  padding: 32px 38px;
+  border-radius: 18px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 480px;
+  position: relative;
+}
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-size: 22px;
+  color: var(--text-light);
+  cursor: pointer;
+}
+.close-btn:hover {
+  color: var(--danger);
+}
+
+/* ==========================================================
+   📱 RESPONSIVE
+   ========================================================== */
+@media (max-width: 700px) {
+  .evaluacion-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .evaluacion-actions {
+    flex-direction: row;
+  }
+}

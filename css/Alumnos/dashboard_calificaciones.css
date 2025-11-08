@@ -1,0 +1,185 @@
+/* ==========================================================
+   🎓 DASHBOARD DE CALIFICACIONES — UT PANEL (Ángel Loza)
+   ========================================================== */
+
+.calificaciones-container {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 25px 32px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(200, 200, 200, 0.25);
+  transition: 0.3s ease;
+}
+
+.calificaciones-container:hover {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* ==========================================================
+   🔹 FILTRO DE MATERIAS
+   ========================================================== */
+.filter-materia {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  justify-content: flex-start;
+}
+
+.filter-btn {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.filter-btn:hover {
+  background: linear-gradient(135deg, var(--secondary), var(--primary));
+  transform: translateY(-2px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+}
+
+.filter-btn.active {
+  background: var(--success);
+  box-shadow: 0 3px 10px rgba(46, 204, 113, 0.25);
+}
+
+/* ==========================================================
+   📋 TABLA DE CALIFICACIONES
+   ========================================================== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background: rgba(255, 255, 255, 0.65);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+th, td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+th {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--dark);
+  font-weight: 600;
+}
+
+tr:hover {
+  background: rgba(0, 0, 0, 0.03);
+  cursor: pointer;
+}
+
+/* ==========================================================
+   🧾 ESTADOS DE LAS TAREAS
+   ========================================================== */
+.estado {
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.estado.calificada {
+  color: #1e7a3b;
+  background: rgba(46, 204, 113, 0.08);
+  border: 1px solid rgba(46, 204, 113, 0.2);
+}
+
+.estado.devuelta {
+  color: #b86a00;
+  background: rgba(255, 193, 7, 0.08);
+  border: 1px solid rgba(255, 193, 7, 0.2);
+}
+
+.estado.pendiente {
+  color: #555;
+  background: rgba(200, 200, 200, 0.15);
+  border: 1px solid rgba(200, 200, 200, 0.25);
+}
+
+/* ==========================================================
+   💬 MODAL DE RETROALIMENTACIÓN
+   ========================================================== */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 20, 25, 0.45);
+  backdrop-filter: blur(6px);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 32px 38px;
+  border-radius: 18px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 520px;
+  position: relative;
+  animation: fadeInUp 0.35s ease;
+}
+
+.modal-content h3 {
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.modal-content p {
+  color: #333;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 22px;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: 0.3s;
+}
+.close-btn:hover { color: var(--danger); }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================
+   🪄 ANIMACIONES Y RESPONSIVE
+   ========================================================== */
+@media (max-width: 700px) {
+  th, td {
+    padding: 10px;
+    font-size: 0.85rem;
+  }
+
+  .modal-content {
+    width: 90%;
+    padding: 25px;
+  }
+}

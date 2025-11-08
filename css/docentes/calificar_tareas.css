@@ -96,3 +96,25 @@
 .page-title p {
   color: #555;
 }
+.row-devuelta { background-color: rgba(255, 193, 7, 0.2); }
+.row-calificada { background-color: rgba(40, 167, 69, 0.15); }
+.row-fueratiempo { background-color: rgba(255, 0, 0, 0.1); }
+.row-entregada { background-color: rgba(0, 123, 255, 0.1); }
+
+.row-devuelta:hover,
+.row-calificada:hover,
+.row-fueratiempo:hover,
+.row-entregada:hover {
+  filter: brightness(1.05);
+  transition: 0.3s;
+}
+
+/* 🟣 Enviada pero pendiente */
+.tarea-item.tarea-enviada {
+  border-left-color: #6f42c1;
+  background: rgba(111, 66, 193, 0.07);
+}
+.tarea-item.tarea-enviada .estado {
+  color: #56339e;
+  font-weight: 600;
+}

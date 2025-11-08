@@ -60,13 +60,12 @@
 }
 
 /* ==========================================================
-   🎨 ESTADOS — Colores ultra suaves y consistentes
+   🎨 ESTADOS — Solo bordes de color (sin fondo)
    ========================================================== */
 
 /* 🔵 Pendiente */
 .tarea-item.tarea-pendiente {
   border-left-color: #007bff;
-  background: rgba(0, 123, 255, 0.05);
 }
 .tarea-item.tarea-pendiente .estado {
   color: #0056b3;
@@ -75,7 +74,6 @@
 /* 🟢 Entregada */
 .tarea-item.tarea-entregada {
   border-left-color: #2ecc71;
-  background: rgba(46, 204, 113, 0.06);
 }
 .tarea-item.tarea-entregada .estado {
   color: #1e7a3b;
@@ -84,7 +82,6 @@
 /* 🟡 Fuera de tiempo */
 .tarea-item.tarea-fuera {
   border-left-color: #f1c40f;
-  background: rgba(241, 196, 15, 0.06);
 }
 .tarea-item.tarea-fuera .estado {
   color: #7a5b00;
@@ -93,7 +90,6 @@
 /* 🟠 Devuelta */
 .tarea-item.tarea-devuelta {
   border-left-color: #ff9800;
-  background: rgba(255, 152, 0, 0.06);
 }
 .tarea-item.tarea-devuelta .estado {
   color: #a66200;
@@ -102,7 +98,6 @@
 /* 🟢 Calificada */
 .tarea-item.tarea-calificada {
   border-left-color: #28a745;
-  background: rgba(40, 167, 69, 0.08);
 }
 .tarea-item.tarea-calificada .estado {
   color: #1e7035;
@@ -111,7 +106,6 @@
 /* 🔴 Cerrada */
 .tarea-item.tarea-bloqueada {
   border-left-color: #dc3545;
-  background: rgba(220, 53, 69, 0.06);
 }
 .tarea-item.tarea-bloqueada .estado {
   color: #842029;
@@ -339,14 +333,14 @@
     gap: 8px;
   }
 }
+
 /* ======================================================
-   🎨 NUEVOS ESTADOS — Mejor legibilidad y contraste
+   🎨 NUEVOS ESTADOS — Solo bordes, sin fondo
    ====================================================== */
 
 /* 🟠 Devuelta */
 .tarea-item.tarea-devuelta {
   border-left-color: #ff7b00;
-  background: rgba(255, 140, 0, 0.07);
 }
 .tarea-item.tarea-devuelta .estado {
   color: #a34e00;
@@ -356,7 +350,6 @@
 /* 🟣 Enviada pero pendiente */
 .tarea-item.tarea-enviada {
   border-left-color: #6f42c1;
-  background: rgba(111, 66, 193, 0.07);
 }
 .tarea-item.tarea-enviada .estado {
   color: #56339e;
@@ -381,10 +374,4 @@
   transform: translateY(-2px);
   background: linear-gradient(135deg, #ff9500, #ff7b00);
 }
-.btn-reentregar {
-  background-color: #ff9800;
-  color: #fff;
-}
-.btn-reentregar:hover {
-  background-color: #e68900;
-}
+  

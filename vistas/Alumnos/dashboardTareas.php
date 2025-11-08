@@ -17,7 +17,6 @@ $nombre = $usuario['nombre'] ?? 'Alumno';
 $apellido = $usuario['apellido_paterno'] ?? '';
 $usuarioNombre = $nombre . ' ' . $apellido;
 
-// 🧾 Procesar entrega
 $mensajeEntrega = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['archivo_entrega'])) {
   $idTarea = intval($_POST['id_tarea'] ?? 0);
@@ -29,7 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['archivo_entrega'])) 
   }
 }
 
-// 🔍 Obtener todas las tareas del alumno
 $stmt = $conn->prepare("
   SELECT 
       t.id_tarea, t.titulo AS titulo_tarea, t.descripcion, t.fecha_entrega,
@@ -48,16 +46,8 @@ $stmt = $conn->prepare("
       ON ad.id_docente = d.id_docente
   LEFT JOIN entregas_alumnos e 
       ON e.id_tarea = t.id_tarea AND e.id_alumno = ?
-  ORDER BY 
-      CASE 
-        WHEN e.estado = 'Devuelta' THEN 1
-        WHEN e.calificacion IS NOT NULL THEN 2
-        WHEN e.fecha_entrega IS NOT NULL THEN 3
-        ELSE 4
-      END, 
-      t.fecha_entrega DESC
+  ORDER BY t.fecha_entrega DESC
 ");
-
 $stmt->bind_param("i", $idAlumno);
 $stmt->execute();
 $tareas = $stmt->get_result();
@@ -73,24 +63,59 @@ $tareas = $stmt->get_result();
   <link rel="stylesheet" href="/Plataforma_UT/css/alumnos/dashboard_tareas.css">
   <link rel="icon" href="../../img/ut_logo.png" type="image/png">
   <style>
-    .btn-reentregar {
-      background-color: #ff9800;
-      color: #fff;
+    /* --- MODAL VISTA PREVIA --- */
+    .modal-content.large {
+      width: 90%;
+      max-width: 1200px;
+      height: 95vh;
+      display: flex;
+      flex-direction: column;
     }
-    .btn-reentregar:hover {
-      background-color: #e68900;
+    .vista-container {
+      flex: 1;
+      margin-top: 10px;
+    }
+    .vista-container iframe {
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      background: #fff;
+    }
+
+    /* --- BOTONES DE FILTRO --- */
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: var(--secondary);
+      transform: translateY(-2px);
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- 🧭 Sidebar -->
+    <!-- Sidebar (NO SE MODIFICA NADA) -->
     <aside class="sidebar" id="sidebar">
       <div class="logo"><h1>UT<span>Panel</span></h1></div>
       <nav class="nav-menu" id="menu"></nav>
     </aside>
 
-    <!-- 📄 Contenido principal -->
+    <!-- Contenido principal -->
     <main class="main-content">
       <?php if (!empty($mensajeEntrega)): ?>
         <div class="alert-message"><?= htmlspecialchars($mensajeEntrega) ?></div>
@@ -99,9 +124,18 @@ $tareas = $stmt->get_result();
       <header class="materia-header">
         <div class="materia-info">
           <h2><i class="fa-solid fa-tasks"></i> Mis Tareas</h2>
-          <p>Consulta todas tus tareas, entregas y calificaciones.</p>
+          <p>Consulta y filtra tus tareas por estado.</p>
         </div>
       </header>
+
+      <!-- Barra de filtros -->
+      <div class="filter-bar">
+        <button class="filter-btn active" data-filter="all">Todas</button>
+        <button class="filter-btn" data-filter="tarea-entregada">Entregadas</button>
+        <button class="filter-btn" data-filter="tarea-pendiente">Pendientes</button>
+        <button class="filter-btn" data-filter="tarea-fuera">Fuera de tiempo</button>
+        <button class="filter-btn" data-filter="tarea-bloqueada">Cerradas</button>
+      </div>
 
       <?php if ($tareas->num_rows > 0): ?>
         <section class="section-content">
@@ -122,12 +156,12 @@ $tareas = $stmt->get_result();
                 } elseif ($t['calificacion'] !== null) {
                   $estadoClase = 'tarea-calificada';
                   $estadoTexto = '⭐ Calificada';
-                } elseif ($fueraTiempo && !$bloqueado) {
-                  $estadoClase = 'tarea-fuera';
-                  $estadoTexto = '⏰ Fuera de tiempo';
                 } elseif (!empty($t['fecha_envio'])) {
                   $estadoClase = 'tarea-entregada';
                   $estadoTexto = '✅ Entregada';
+                } elseif ($fueraTiempo) {
+                  $estadoClase = 'tarea-fuera';
+                  $estadoTexto = '⏰ Fuera de tiempo';
                 } else {
                   $estadoClase = 'tarea-pendiente';
                   $estadoTexto = '📬 Pendiente de entrega';
@@ -144,53 +178,23 @@ $tareas = $stmt->get_result();
                   <?php if ($t['calificacion'] !== null || !empty($t['retroalimentacion'])): ?>
                     <div class="info-docente">
                       <div class="head">
-                        <h4><i class="fa-solid fa-chalkboard-user"></i> Retroalimentación del docente</h4>
+                        <h4><i class="fa-solid fa-chalkboard-user"></i> Retroalimentación</h4>
                         <?php if ($t['calificacion'] !== null): ?>
                           <div class="score"><?= htmlspecialchars($t['calificacion']) ?>/100</div>
                         <?php endif; ?>
                       </div>
-                      <?php if (!empty($t['retroalimentacion'])): ?>
-                        <p><?= nl2br(htmlspecialchars($t['retroalimentacion'])) ?></p>
-                      <?php else: ?>
-                        <p style="color:#777;">Sin comentarios adicionales.</p>
-                      <?php endif; ?>
+                      <p><?= nl2br(htmlspecialchars($t['retroalimentacion'] ?? '')) ?></p>
                     </div>
                   <?php endif; ?>
                 </div>
 
                 <div class="tarea-actions">
                   <?php if (!empty($t['archivo'])): ?>
-                    <button class="btn-ver" data-archivo="/Plataforma_UT/<?= htmlspecialchars($t['archivo']) ?>">
+                    <button class="btn-ver" 
+                      data-archivo="/Plataforma_UT/<?= htmlspecialchars($t['archivo']) ?>"
+                      data-titulo="<?= htmlspecialchars($t['titulo_tarea']) ?>">
                       <i class="fa-solid fa-file"></i> Ver archivo
                     </button>
-                  <?php endif; ?>
-
-                  <?php if (!$bloqueado && $t['calificacion'] === null): ?>
-                    <?php if ($t['estado'] === 'Devuelta'): ?>
-                      <button class="btn-reentregar" 
-                        data-tarea="<?= $t['id_tarea'] ?>" 
-                        data-titulo="<?= htmlspecialchars($t['titulo_tarea']) ?>"
-                        data-materia="<?= htmlspecialchars($t['nombre_materia']) ?>"
-                        data-docente="<?= htmlspecialchars($t['nombre_docente'] . ' ' . $t['apellido_docente']) ?>">
-                        <i class="fa-solid fa-rotate-right"></i> Volver a entregar
-                      </button>
-                    <?php elseif (!empty($t['fecha_envio'])): ?>
-                      <button class="btn-editar" 
-                        data-tarea="<?= $t['id_tarea'] ?>" 
-                        data-titulo="<?= htmlspecialchars($t['titulo_tarea']) ?>"
-                        data-materia="<?= htmlspecialchars($t['nombre_materia']) ?>"
-                        data-docente="<?= htmlspecialchars($t['nombre_docente'] . ' ' . $t['apellido_docente']) ?>">
-                        <i class="fa-solid fa-pen-to-square"></i> Editar entrega
-                      </button>
-                    <?php else: ?>
-                      <button class="btn-entregar" 
-                        data-tarea="<?= $t['id_tarea'] ?>" 
-                        data-titulo="<?= htmlspecialchars($t['titulo_tarea']) ?>"
-                        data-materia="<?= htmlspecialchars($t['nombre_materia']) ?>"
-                        data-docente="<?= htmlspecialchars($t['nombre_docente'] . ' ' . $t['apellido_docente']) ?>">
-                        <i class="fa-solid fa-upload"></i> Entregar Tarea
-                      </button>
-                    <?php endif; ?>
                   <?php endif; ?>
                 </div>
               </div>
@@ -198,97 +202,79 @@ $tareas = $stmt->get_result();
           </div>
         </section>
       <?php else: ?>
-        <p class="empty">No hay tareas registradas actualmente.</p>
+        <p class="empty">No hay tareas registradas.</p>
       <?php endif; ?>
     </main>
   </div>
 
-  <!-- 🔸 MODALES -->
-  <div id="modalEntrega" class="modal">
-    <div class="modal-content">
-      <span class="close-btn">&times;</span>
-      <h3><i class="fa-solid fa-upload"></i> Entregar tarea</h3>
-      <form method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="id_tarea" id="modal_id_tarea">
-        <div class="form-group">
-          <label>Tarea:</label>
-          <input type="text" id="modal_titulo_tarea" readonly>
-        </div>
-        <div class="form-group">
-          <label>Materia:</label>
-          <input type="text" id="modal_materia_tarea" readonly>
-        </div>
-        <div class="form-group">
-          <label>Docente:</label>
-          <input type="text" id="modal_docente_tarea" readonly>
-        </div>
-        <div class="form-group">
-          <label>Archivo a subir:</label>
-          <input type="file" name="archivo_entrega" required accept=".pdf,.docx,.zip,.rar">
-        </div>
-        <button type="submit" class="btn-primary full">
-          <i class="fa-solid fa-paper-plane"></i> Enviar Entrega
-        </button>
-      </form>
-    </div>
-  </div>
-
+  <!-- MODAL DE VISTA PREVIA -->
   <div id="visorArchivo" class="modal">
     <div class="modal-content large">
       <span class="close-btn">&times;</span>
-      <iframe id="iframeArchivo" src="" width="100%" height="600px" frameborder="0"></iframe>
+      <h3 id="tituloArchivo"><i class="fa-solid fa-file"></i> Vista previa</h3>
+      <div class="vista-container">
+        <iframe id="iframeArchivo" src="" frameborder="0"></iframe>
+      </div>
     </div>
   </div>
 
-  <!-- 🧠 JS -->
+  <!-- Scripts -->
   <script>
-    let modalEntrega = document.getElementById("modalEntrega");
-    let modalVisor = document.getElementById("visorArchivo");
-    let iframeArchivo = document.getElementById("iframeArchivo");
+    window.rolUsuarioPHP = "<?= htmlspecialchars($rolUsuario, ENT_QUOTES, 'UTF-8'); ?>";
+  </script>
+  <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
+  <script src="/Plataforma_UT/js/modeToggle.js"></script>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // Filtro por estado
+    const buttons = document.querySelectorAll(".filter-btn");
+    const tareas = document.querySelectorAll(".tarea-item");
+    buttons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        buttons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const filter = btn.dataset.filter;
+        tareas.forEach(t => {
+          if (filter === "all" || t.classList.contains(filter)) {
+            t.style.display = "flex";
+          } else {
+            t.style.display = "none";
+          }
+        });
+      });
+    });
+
+    // Modal visor de archivos (PDF, Word, imágenes)
+    const visor = document.getElementById("visorArchivo");
+    const iframe = document.getElementById("iframeArchivo");
+    const tituloArchivo = document.getElementById("tituloArchivo");
 
     document.querySelectorAll(".btn-ver").forEach(btn => {
       btn.addEventListener("click", () => {
-        iframeArchivo.src = btn.dataset.archivo;
-        modalVisor.classList.add("active");
+        const archivo = btn.dataset.archivo;
+        const titulo = btn.dataset.titulo;
+        tituloArchivo.innerHTML = `<i class='fa-solid fa-file'></i> ${titulo}`;
+
+        const ext = archivo.split('.').pop().toLowerCase();
+        if (['pdf', 'jpg', 'jpeg', 'png'].includes(ext)) {
+          iframe.src = archivo;
+        } else if (ext === 'doc' || ext === 'docx') {
+          iframe.src = `https://view.officeapps.live.com/op/embed.aspx?src=${window.location.origin + archivo}`;
+        } else {
+          iframe.src = "";
+          alert("⚠️ Este tipo de archivo no se puede previsualizar.");
+        }
+
+        visor.classList.add("active");
       });
     });
 
-    document.querySelectorAll(".btn-entregar, .btn-editar, .btn-reentregar").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.getElementById("modal_id_tarea").value = btn.dataset.tarea;
-        document.getElementById("modal_titulo_tarea").value = btn.dataset.titulo;
-        document.getElementById("modal_materia_tarea").value = btn.dataset.materia;
-        document.getElementById("modal_docente_tarea").value = btn.dataset.docente;
-        modalEntrega.classList.add("active");
-      });
-    });
-
+    // Cerrar visor
     document.querySelectorAll(".close-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        btn.closest(".modal").classList.remove("active");
-        iframeArchivo.src = "";
-      });
+      btn.addEventListener("click", () => btn.closest(".modal").classList.remove("active"));
     });
-  </script>
-
-<script>
-  window.rolUsuarioPHP = "<?= htmlspecialchars($rolUsuario, ENT_QUOTES, 'UTF-8'); ?>";
-</script>
-
-<script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
-<script src="/Plataforma_UT/js/modeToggle.js"></script>
-
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const menu = document.getElementById("menu");
-    if (!menu || menu.innerHTML.trim() === "") {
-      console.warn("⚠️ Sidebar vacía — recargando Dashboard_Inicio.js");
-      const script = document.createElement("script");
-      script.src = "/Plataforma_UT/js/Dashboard_Inicio.js?v=" + Date.now();
-      script.onload = () => console.log("✅ Dashboard_Inicio.js recargado correctamente");
-      document.body.appendChild(script);
-    }
   });
-</script>
+  </script>
 </body>
 </html>
