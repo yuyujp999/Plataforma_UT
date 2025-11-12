@@ -58,9 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['archivo_entrega'])) 
     <!-- MAIN CONTENT -->
     <div class="main-content">
       <?php if (!empty($mensajeEntrega)): ?>
-        <div class="alert-message">
-          <?= htmlspecialchars($mensajeEntrega) ?>
-        </div>
+        <div class="alert-message"><?= htmlspecialchars($mensajeEntrega) ?></div>
       <?php endif; ?>
 
       <div class="materia-header">
@@ -90,53 +88,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['archivo_entrega'])) 
                   if ($diasPasados > 7) $bloqueado = true;
                 }
 
-                // 🆕 Verificar entrega del alumno
                 $idAlumno = $_SESSION['usuario']['id_alumno'] ?? 0;
                 $entrega = EntregasAlumnoController::obtenerEntregaAlumno($t['id_tarea'], $idAlumno);
+
+                // 🎨 Determinar clase visual
+                $estadoClase = $bloqueado ? 'tarea-bloqueada' :
+                               ($fueraDeTiempo ? 'tarea-fuera' :
+                               ($entrega ? 'tarea-entregada' : 'tarea-pendiente'));
               ?>
-              <div class="item-card <?= $bloqueado ? 'bloqueado' : ($fueraDeTiempo ? 'fuera-tiempo' : '') ?>">
+              <div class="item-card <?= $estadoClase ?>">
                 <h4><?= htmlspecialchars($t['titulo']) ?></h4>
                 <p><?= htmlspecialchars($t['descripcion']) ?></p>
-                <p>
-                  <strong>Entrega límite:</strong> <?= $fechaLimite ?: 'Sin fecha' ?><br>
-                  <?php if ($fueraDeTiempo && !$bloqueado): ?>
-                    <span class="tag-warning">⏰ Fuera de tiempo (aún puedes entregar)</span>
-                  <?php elseif ($bloqueado): ?>
-                    <span class="tag-danger">🚫 Entrega cerrada</span>
-                  <?php endif; ?>
-                </p>
+                <p><strong>Entrega límite:</strong> <?= $fechaLimite ?: 'Sin fecha' ?></p>
 
-                <?php if (!empty($t['archivo'])): ?>
-                  <a href="/Plataforma_UT/<?= htmlspecialchars($t['archivo']) ?>" target="_blank" class="archivo">
-                    <i class="fa-solid fa-file"></i> Ver archivo
-                  </a>
+                <?php if ($entrega): ?>
+                  <p class="tag-success">✅ Entregado el <?= date("d/m/Y H:i", strtotime($entrega['fecha_entrega'])) ?></p>
+                <?php elseif ($bloqueado): ?>
+                  <p class="tag-danger">🚫 Entrega cerrada</p>
+                <?php elseif ($fueraDeTiempo): ?>
+                  <p class="tag-warning">⏰ Fuera de tiempo (aún puedes entregar)</p>
+                <?php else: ?>
+                  <p class="tag-info">📬 Pendiente de entrega</p>
                 <?php endif; ?>
 
-                <!-- 🆕 BOTONES ACTUALIZADOS -->
+                <?php if (!empty($t['archivo'])): ?>
+                  <button class="btn-ver" data-archivo="/Plataforma_UT/<?= htmlspecialchars($t['archivo']) ?>">
+                    <i class="fa-solid fa-file"></i> Ver archivo
+                  </button>
+                <?php endif; ?>
+
                 <?php if (!$bloqueado): ?>
                   <?php if ($entrega): ?>
-                    <div class="entrega-info">
-                      <p class="entregado-ok">
-                        ✅ Entregado el <?= date("d/m/Y H:i", strtotime($entrega['fecha_entrega'])) ?><br>
-                        <small>Archivo: <?= basename($entrega['archivo']) ?></small>
-                      </p>
-                      <button class="btn-editar" 
-                              data-tarea="<?= $t['id_tarea'] ?>" 
-                              data-titulo="<?= htmlspecialchars($t['titulo']) ?>">
-                        <i class="fa-solid fa-pen-to-square"></i> Editar entrega
-                      </button>
-                    </div>
+                    <button class="btn-editar" data-tarea="<?= $t['id_tarea'] ?>" data-titulo="<?= htmlspecialchars($t['titulo']) ?>">
+                      <i class="fa-solid fa-pen-to-square"></i> Editar entrega
+                    </button>
                   <?php else: ?>
-                    <button class="btn-entregar" 
-                            data-tarea="<?= $t['id_tarea'] ?>" 
-                            data-titulo="<?= htmlspecialchars($t['titulo']) ?>">
+                    <button class="btn-entregar" data-tarea="<?= $t['id_tarea'] ?>" data-titulo="<?= htmlspecialchars($t['titulo']) ?>">
                       <i class="fa-solid fa-upload"></i> Entregar Tarea
                     </button>
                   <?php endif; ?>
-                <?php else: ?>
-                  <button class="btn-entregar" disabled>
-                    <i class="fa-solid fa-ban"></i> Entrega no disponible
-                  </button>
                 <?php endif; ?>
               </div>
             <?php endwhile; ?>
@@ -156,9 +146,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['archivo_entrega'])) 
                 <h4><?= htmlspecialchars($r['titulo']) ?></h4>
                 <p><?= htmlspecialchars($r['descripcion']) ?></p>
                 <?php if (!empty($r['archivo'])): ?>
-                  <a href="/Plataforma_UT/<?= htmlspecialchars($r['archivo']) ?>" target="_blank" class="archivo">
-                    <i class="fa-solid fa-download"></i> Descargar
-                  </a>
+                  <button class="btn-ver" data-archivo="/Plataforma_UT/<?= htmlspecialchars($r['archivo']) ?>">
+                    <i class="fa-solid fa-file"></i> Ver archivo
+                  </button>
                 <?php endif; ?>
               </div>
             <?php endwhile; ?>
@@ -192,28 +182,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['archivo_entrega'])) 
     </div>
   </div>
 
-  <!-- JS -->
+  <!-- 🔸 VISOR DE ARCHIVOS -->
+  <div id="visorArchivo" class="modal">
+    <div class="modal-content large">
+      <span class="close-btn">&times;</span>
+      <iframe id="iframeArchivo" src="" width="100%" height="600px" frameborder="0"></iframe>
+    </div>
+  </div>
+
   <script>
     window.rolUsuarioPHP = "<?= htmlspecialchars($rolUsuario, ENT_QUOTES, 'UTF-8'); ?>";
 
-    const modal = document.getElementById("modalEntrega");
-    const closeBtn = modal.querySelector(".close-btn");
-    const tituloInput = document.getElementById("modal_titulo_tarea");
-    const idInput = document.getElementById("modal_id_tarea");
+    const modalEntrega = document.getElementById("modalEntrega");
+    const modalVisor = document.getElementById("visorArchivo");
+    const iframeArchivo = document.getElementById("iframeArchivo");
 
-    // 🆕 Funciona tanto con "Entregar" como "Editar entrega"
+    // Abrir visor de archivos
+    document.querySelectorAll(".btn-ver").forEach(btn => {
+      btn.addEventListener("click", () => {
+        iframeArchivo.src = btn.dataset.archivo;
+        modalVisor.classList.add("active");
+      });
+    });
+
+    // Modal entrega (entregar/editar)
     document.querySelectorAll(".btn-entregar, .btn-editar").forEach(btn => {
       if (!btn.disabled) {
         btn.addEventListener("click", () => {
-          tituloInput.value = btn.dataset.titulo;
-          idInput.value = btn.dataset.tarea;
-          modal.classList.add("active");
+          document.getElementById("modal_titulo_tarea").value = btn.dataset.titulo;
+          document.getElementById("modal_id_tarea").value = btn.dataset.tarea;
+          modalEntrega.classList.add("active");
         });
       }
     });
 
-    closeBtn.addEventListener("click", () => modal.classList.remove("active"));
-    window.addEventListener("click", e => { if (e.target === modal) modal.classList.remove("active"); });
+    // Cerrar modales
+    document.querySelectorAll(".close-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        btn.closest(".modal").classList.remove("active");
+        iframeArchivo.src = "";
+      });
+    });
   </script>
 
   <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>

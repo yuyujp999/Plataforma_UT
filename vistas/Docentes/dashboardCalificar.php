@@ -11,12 +11,17 @@ include_once __DIR__ . "/../../controladores/docentes/CalificarTareasController.
 $idAsignacion = intval($_GET['id'] ?? 0);
 $mensaje = "";
 
-// 🧾 Calificar entrega
+// 🧾 Calificar o devolver entrega
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $idEntrega = intval($_POST['id_entrega'] ?? 0);
-  $calificacion = floatval($_POST['calificacion'] ?? 0);
   $retro = $_POST['retroalimentacion'] ?? '';
-  $mensaje = CalificarTareasController::calificarEntrega($idEntrega, $calificacion, $retro);
+
+  if (isset($_POST['accion']) && $_POST['accion'] === 'devolver') {
+    $mensaje = CalificarTareasController::devolverEntrega($idEntrega, $retro);
+  } else {
+    $calificacion = floatval($_POST['calificacion'] ?? 0);
+    $mensaje = CalificarTareasController::calificarEntrega($idEntrega, $calificacion, $retro);
+  }
 }
 
 // 📦 Obtener entregas de esa materia
@@ -32,27 +37,49 @@ $entregas = CalificarTareasController::obtenerEntregasPorMateria($idAsignacion);
   <link rel="stylesheet" href="/Plataforma_UT/css/styleD.css" />
   <link rel="stylesheet" href="/Plataforma_UT/css/darkmode.css" />
   <link rel="stylesheet" href="/Plataforma_UT/css/docentes/dashboard_calificar.css" />
+  <style>
+    /* Fila resaltada para tareas devueltas */
+    tr.devuelta-row {
+      background-color: rgba(255, 193, 7, 0.15);
+    }
+    tr.devuelta-row:hover {
+      background-color: rgba(255, 193, 7, 0.25);
+    }
+
+    /* Etiquetas de estado */
+    .tag {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+    .tag.success { background-color: rgba(40, 167, 69, 0.15); color: #218838; }
+    .tag.warning { background-color: rgba(255, 193, 7, 0.25); color: #856404; }
+    .tag.info { background-color: rgba(0, 123, 255, 0.15); color: #0056b3; }
+  </style>
 </head>
 <body>
   <div class="container">
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
+    <aside class="sidebar" id="sidebar">
       <div class="logo"><h1>UT<span>Panel</span></h1></div>
-      <div class="nav-menu" id="menu"></div>
-    </div>
+      <nav class="nav-menu" id="menu"></nav>
+    </aside>
 
     <!-- Main Content -->
-    <div class="main-content">
+    <main class="main-content">
       <?php if ($mensaje): ?>
         <div class="alert-message"><?= htmlspecialchars($mensaje) ?></div>
       <?php endif; ?>
 
-      <div class="page-title">
+      <header class="page-title">
         <h2><i class="fa-solid fa-clipboard-check"></i> Calificar Tareas</h2>
         <a href="dashboardMateria.php?id=<?= $idAsignacion ?>" class="btn-outline">
           <i class="fa-solid fa-arrow-left"></i> Volver
         </a>
-      </div>
+      </header>
 
       <div class="table-card">
         <?php if ($entregas && $entregas->num_rows > 0): ?>
@@ -64,12 +91,16 @@ $entregas = CalificarTareasController::obtenerEntregasPorMateria($idAsignacion);
                 <th>Archivo</th>
                 <th>Fecha Entrega</th>
                 <th>Calificación</th>
+                <th>Estado</th>
                 <th>Acción</th>
               </tr>
             </thead>
             <tbody>
               <?php while ($e = $entregas->fetch_assoc()): ?>
-                <tr>
+                <?php
+                  $rowClass = ($e['estado'] === 'Devuelta') ? 'devuelta-row' : '';
+                ?>
+                <tr class="<?= $rowClass ?>">
                   <td><?= htmlspecialchars($e['nombre_alumno']) ?></td>
                   <td><?= htmlspecialchars($e['titulo_tarea']) ?></td>
                   <td>
@@ -82,6 +113,15 @@ $entregas = CalificarTareasController::obtenerEntregasPorMateria($idAsignacion);
                   </td>
                   <td><?= htmlspecialchars($e['fecha_entrega']) ?></td>
                   <td><?= $e['calificacion'] !== null ? $e['calificacion'] : '—' ?></td>
+                  <td>
+                    <?php if ($e['estado'] === 'Calificada'): ?>
+                      <span class="tag success">Calificada</span>
+                    <?php elseif ($e['estado'] === 'Devuelta'): ?>
+                      <span class="tag warning"><i class="fa-solid fa-rotate-left"></i> Devuelta</span>
+                    <?php else: ?>
+                      <span class="tag info">Entregada</span>
+                    <?php endif; ?>
+                  </td>
                   <td>
                     <button class="btn-primary btn-calificar"
                             data-id="<?= $e['id_entrega'] ?>"
@@ -98,7 +138,7 @@ $entregas = CalificarTareasController::obtenerEntregasPorMateria($idAsignacion);
           <p class="empty">Aún no hay entregas registradas para esta materia.</p>
         <?php endif; ?>
       </div>
-    </div>
+    </main>
   </div>
 
   <!-- Modal Calificación -->
@@ -118,15 +158,20 @@ $entregas = CalificarTareasController::obtenerEntregasPorMateria($idAsignacion);
         </div>
         <div class="form-group">
           <label>Calificación:</label>
-          <input type="number" name="calificacion" min="0" max="100" step="0.1" required>
+          <input type="number" name="calificacion" min="0" max="100" step="0.1">
         </div>
         <div class="form-group">
           <label>Retroalimentación:</label>
           <textarea name="retroalimentacion" rows="3" placeholder="Comentarios del docente..."></textarea>
         </div>
-        <button type="submit" class="btn-primary full">
-          <i class="fa-solid fa-paper-plane"></i> Guardar Calificación
-        </button>
+        <div class="modal-buttons">
+          <button type="submit" name="accion" value="calificar" class="btn-primary full">
+            <i class="fa-solid fa-check"></i> Calificar
+          </button>
+          <button type="submit" name="accion" value="devolver" class="btn-devolver full">
+            <i class="fa-solid fa-rotate-left"></i> Devolver Tarea
+          </button>
+        </div>
       </form>
     </div>
   </div>
@@ -145,13 +190,13 @@ $entregas = CalificarTareasController::obtenerEntregasPorMateria($idAsignacion);
     </div>
   </div>
 
-  <!-- JS -->
+  <!-- 🧠 JS -->
   <script>
+    // Mantiene la sesión para Dashboard_Inicio.js
     window.rolUsuarioPHP = "<?= htmlspecialchars($_SESSION['rol'] ?? '', ENT_QUOTES, 'UTF-8'); ?>";
 
     // --- Modal Calificar ---
     const modal = document.getElementById("modalCalificar");
-    const closeBtn = modal.querySelector(".close-btn");
     const idInput = document.getElementById("modal_id_entrega");
     const alumnoInput = document.getElementById("modal_alumno");
     const tareaInput = document.getElementById("modal_tarea");
@@ -165,25 +210,24 @@ $entregas = CalificarTareasController::obtenerEntregasPorMateria($idAsignacion);
       });
     });
 
-    closeBtn.addEventListener("click", () => modal.classList.remove("active"));
-    window.addEventListener("click", e => { if (e.target === modal) modal.classList.remove("active"); });
+    document.querySelectorAll(".close-btn").forEach(btn =>
+      btn.addEventListener("click", () => btn.closest(".modal").classList.remove("active"))
+    );
 
     // --- Modal de Vista Previa ---
     const modalVista = document.getElementById("modalVista");
     const vistaIframe = document.getElementById("vistaIframe");
     const vistaNombre = document.getElementById("vistaNombre");
     const vistaError = document.getElementById("vistaError");
-    const closeVista = modalVista.querySelector(".close-btn");
 
     document.querySelectorAll(".btn-ver").forEach(btn => {
       btn.addEventListener("click", () => {
         const archivo = btn.dataset.archivo;
         const nombre = btn.dataset.nombre;
         vistaNombre.textContent = nombre;
-        
+
         const ext = nombre.split(".").pop().toLowerCase();
         const visores = ["pdf", "png", "jpg", "jpeg"];
-
         if (visores.includes(ext)) {
           vistaIframe.src = archivo;
           vistaIframe.style.display = "block";
@@ -201,12 +245,22 @@ $entregas = CalificarTareasController::obtenerEntregasPorMateria($idAsignacion);
         modalVista.classList.add("active");
       });
     });
-
-    closeVista.addEventListener("click", () => modalVista.classList.remove("active"));
-    window.addEventListener("click", e => { if (e.target === modalVista) modalVista.classList.remove("active"); });
   </script>
 
   <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
   <script src="/Plataforma_UT/js/modeToggle.js"></script>
+
+  <!-- Fallback por si la sidebar no carga -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const menu = document.getElementById("menu");
+      if (!menu || menu.innerHTML.trim() === "") {
+        console.warn("⚠️ Sidebar vacía — recargando Dashboard_Inicio.js");
+        const script = document.createElement("script");
+        script.src = "/Plataforma_UT/js/Dashboard_Inicio.js?v=" + Date.now();
+        document.body.appendChild(script);
+      }
+    });
+  </script>
 </body>
 </html>

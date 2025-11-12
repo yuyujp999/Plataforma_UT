@@ -8,7 +8,7 @@ class EntregasAlumnoController
     {
         include __DIR__ . '/../../conexion/conexion.php';
 
-        // 🗓️ Validar fecha límite
+        // 🗓️ Validar fecha límite + 7 días
         $stmtFecha = $conn->prepare("SELECT fecha_entrega FROM tareas_materias WHERE id_tarea = ?");
         $stmtFecha->bind_param("i", $idTarea);
         $stmtFecha->execute();
@@ -36,7 +36,7 @@ class EntregasAlumnoController
             return ["success" => false, "mensaje" => "❌ Error al subir el archivo. Intenta de nuevo."];
         }
 
-        // 🧩 Verificar si ya existe una entrega previa del alumno
+        // 🧩 Verificar si ya existe una entrega previa
         $stmtCheck = $conn->prepare("SELECT id_entrega FROM entregas_alumnos WHERE id_tarea = ? AND id_alumno = ?");
         $stmtCheck->bind_param("ii", $idTarea, $idAlumno);
         $stmtCheck->execute();
@@ -46,7 +46,7 @@ class EntregasAlumnoController
             // 🔁 Actualizar entrega existente
             $stmt = $conn->prepare("
                 UPDATE entregas_alumnos 
-                SET archivo = ?, fecha_entrega = NOW(), estado = 'Actualizada'
+                SET archivo = ?, fecha_entrega = NOW()
                 WHERE id_tarea = ? AND id_alumno = ?
             ");
             $stmt->bind_param("sii", $rutaRelativa, $idTarea, $idAlumno);
@@ -55,8 +55,8 @@ class EntregasAlumnoController
         } else {
             // 🆕 Nueva entrega
             $stmt = $conn->prepare("
-                INSERT INTO entregas_alumnos (id_tarea, id_alumno, archivo, fecha_entrega, estado)
-                VALUES (?, ?, ?, NOW(), 'Entregada')
+                INSERT INTO entregas_alumnos (id_tarea, id_alumno, archivo, fecha_entrega)
+                VALUES (?, ?, ?, NOW())
             ");
             $stmt->bind_param("iis", $idTarea, $idAlumno, $rutaRelativa);
             $stmt->execute();
@@ -83,7 +83,7 @@ class EntregasAlumnoController
     }
 
     /**
-     * 🧾 Obtener todas las entregas del alumno (si lo necesitas en otro módulo)
+     * 🧾 Listar todas las entregas del alumno (opcional)
      */
     public static function listarEntregasPorAlumno($idAlumno)
     {

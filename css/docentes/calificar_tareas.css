@@ -1,0 +1,120 @@
+.table-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  padding: 15px 20px;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th, .data-table td {
+  padding: 14px 12px;
+  text-align: left;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.data-table th {
+  background: var(--light);
+  font-weight: 600;
+  color: var(--dark);
+}
+
+.data-table tr:hover {
+  background: #f7fdf9;
+}
+
+.empty {
+  text-align: center;
+  padding: 20px;
+  color: #777;
+}
+
+/* Selector de materia */
+.materia-selector {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  padding: 15px 20px;
+  margin-bottom: 20px;
+}
+
+.materia-selector label {
+  font-weight: 600;
+  margin-right: 10px;
+}
+
+.materia-selector select {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.materia-selector button {
+  margin-left: 10px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.materia-selector button:hover {
+  background: var(--success);
+}
+
+/* Botones */
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.btn-primary:hover {
+  background: var(--success);
+}
+
+/* Título */
+.page-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+.page-title h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+.page-title p {
+  color: #555;
+}
+.row-devuelta { background-color: rgba(255, 193, 7, 0.2); }
+.row-calificada { background-color: rgba(40, 167, 69, 0.15); }
+.row-fueratiempo { background-color: rgba(255, 0, 0, 0.1); }
+.row-entregada { background-color: rgba(0, 123, 255, 0.1); }
+
+.row-devuelta:hover,
+.row-calificada:hover,
+.row-fueratiempo:hover,
+.row-entregada:hover {
+  filter: brightness(1.05);
+  transition: 0.3s;
+}
+
+/* 🟣 Enviada pero pendiente */
+.tarea-item.tarea-enviada {
+  border-left-color: #6f42c1;
+  background: rgba(111, 66, 193, 0.07);
+}
+.tarea-item.tarea-enviada .estado {
+  color: #56339e;
+  font-weight: 600;
+}

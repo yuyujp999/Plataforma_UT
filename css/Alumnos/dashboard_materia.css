@@ -23,6 +23,10 @@
   font-size: 0.95rem;
 }
 
+/* ======================================================
+   🎓 SECCIONES Y ESTRUCTURA GENERAL
+====================================================== */
+
 .section-content {
   margin-top: 30px;
 }
@@ -38,207 +42,10 @@
 
 .grid-items {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
-}
-
-.item-card {
-  background: #fff;
-  border-radius: 14px;
-  padding: 20px;
-  box-shadow: var(--shadow-sm);
-  transition: 0.3s;
-}
-
-.item-card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow);
-}
-
-.item-card h4 {
-  color: var(--dark);
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-.item-card p {
-  color: var(--text-light);
-  margin-bottom: 6px;
-}
-
-.item-card a.archivo {
-  display: inline-block;
-  color: var(--primary);
-  font-weight: 500;
-  text-decoration: none;
-  margin-top: 4px;
-}
-
-.item-card a.archivo:hover {
-  text-decoration: underline;
-}
-
-.empty {
-  color: var(--text-light);
-  font-style: italic;
-}
-
-/* 🧾 Modal de entrega */
-.modal {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.4);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-}
-.modal.active { display: flex; }
-
-.modal-content {
-  background: #fff;
-  padding: 25px;
-  border-radius: 14px;
-  width: 420px;
-  box-shadow: var(--shadow);
-  position: relative;
-  animation: fadeIn 0.3s ease;
-}
-.modal-content h3 {
-  color: var(--primary);
-  margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.modal-content .close-btn {
-  position: absolute;
-  top: 10px; right: 14px;
-  font-size: 20px;
-  color: var(--text-light);
-  cursor: pointer;
-}
-.modal-content .close-btn:hover { color: var(--danger); }
-
-.form-group {
-  margin-bottom: 15px;
-  display: flex;
-  flex-direction: column;
-}
-.form-group label {
-  font-weight: 500;
-  margin-bottom: 6px;
-  color: var(--text);
-}
-.form-group input[type="text"],
-.form-group input[type="file"] {
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-.btn-entregar {
-  background: var(--primary);
-  color: #fff;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-top: 8px;
-  transition: 0.3s;
-}
-.btn-entregar:hover { background: var(--secondary); }
-
-.btn-primary.full {
-  width: 100%;
-  padding: 10px;
-  font-weight: 600;
-  border: none;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  color: #fff;
-  cursor: pointer;
-  transition: 0.3s;
-}
-.btn-primary.full:hover { opacity: 0.9; }
-
-.alert-message {
-  background: linear-gradient(90deg, #e8f5e9, #c8e6c9);
-  color: #256029;
-  border-left: 5px solid #38b000;
-  padding: 12px 18px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  font-weight: 500;
-  animation: fadeIn 0.4s ease;
-}
-.alert-message.error {
-  background: linear-gradient(90deg, #fdecea, #f8d7da);
-  color: #842029;
-  border-left-color: #dc3545;
-}
-.tag-warning {
-  background: #fff3cd;
-  color: #856404;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 13px;
-  display: inline-block;
-  margin-top: 4px;
-}
-
-.tag-danger {
-  background: #f8d7da;
-  color: #842029;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 13px;
-  display: inline-block;
-  margin-top: 4px;
-}
-
-.item-card.fuera-tiempo {
-  border-left: 5px solid #ffc107;
-  background-color: #fffdf6;
-}
-
-.item-card.bloqueado {
-  opacity: 0.7;
-  border-left: 5px solid #dc3545;
-  background-color: #f8f9fa;
-}
-
-.item-card.bloqueado .btn-entregar {
-  background-color: #bbb !important;
-  cursor: not-allowed;
-}
-
-/* ======================================================
-   🎓 DASHBOARD MATERIA — ALUMNOS (UT PANEL STYLE)
-   ====================================================== */
-
-.section-content {
-  margin-top: 30px;
-}
-
-.section-content h3 {
-  font-size: 20px;
-  color: var(--dark);
-  margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.grid-items {
-  display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 22px;
 }
 
-/* ======================
-   📦 TAREAS / RECURSOS
-   ====================== */
 .item-card {
   background: #fff;
   border-radius: 14px;
@@ -254,15 +61,6 @@
   box-shadow: var(--shadow-md);
 }
 
-.item-card.bloqueado {
-  opacity: 0.6;
-  border-left-color: #b02a37;
-}
-
-.item-card.fuera-tiempo {
-  border-left-color: var(--warning);
-}
-
 .item-card h4 {
   font-size: 1.15rem;
   font-weight: 600;
@@ -276,13 +74,17 @@
   margin: 5px 0;
 }
 
+/* ======================================================
+   🧩 ARCHIVOS Y BOTONES
+====================================================== */
+
 .item-card .archivo {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   margin-top: 10px;
   background: var(--primary);
-  color: #ffffff !important;  /* ✅ texto siempre visible */
+  color: #ffffff !important;
   padding: 8px 14px;
   border-radius: 8px;
   font-size: 0.9rem;
@@ -303,14 +105,10 @@
   box-shadow: 0 6px 12px rgba(0, 100, 0, 0.25);
 }
 
+/* ======================================================
+   🟢 BOTONES DE ACCIÓN
+====================================================== */
 
-.item-card .archivo:hover {
-  background: var(--secondary);
-}
-
-/* ======================
-   🟢 BOTONES
-   ====================== */
 .btn-entregar,
 .btn-editar {
   margin-top: 14px;
@@ -352,9 +150,10 @@
   transform: translateY(-2px);
 }
 
-/* ======================
-   🟠 ESTADOS VISUALES
-   ====================== */
+/* ======================================================
+   🟠 ETIQUETAS Y ESTADOS
+====================================================== */
+
 .tag-warning {
   color: #b76e00;
   background: #fff7e0;
@@ -375,9 +174,6 @@
   font-weight: 600;
 }
 
-/* ======================
-   ✅ ENTREGA REALIZADA
-   ====================== */
 .entregado-ok {
   color: var(--success);
   font-weight: 600;
@@ -389,9 +185,53 @@
   padding: 8px 12px;
 }
 
-/* ======================
-   🪄 MODAL DE ENTREGA
-   ====================== */
+/* ======================================================
+   🟩 COLORES SEGÚN ESTADO — BARRA IZQUIERDA
+====================================================== */
+
+/* 🔵 Pendiente */
+.item-card.tarea-pendiente {
+  border-left: 6px solid var(--primary);
+  box-shadow: 0 2px 10px rgba(0, 100, 0, 0.08);
+}
+.item-card.tarea-pendiente:hover {
+  box-shadow: 0 4px 16px rgba(0, 100, 0, 0.15);
+}
+
+/* 🟢 Entregada */
+.item-card.tarea-entregada {
+  border-left: 6px solid #2ecc71;
+  box-shadow: 0 2px 10px rgba(46, 204, 113, 0.12);
+}
+.item-card.tarea-entregada:hover {
+  box-shadow: 0 4px 16px rgba(46, 204, 113, 0.25);
+}
+
+/* 🟡 Fuera de tiempo */
+.item-card.fuera-tiempo {
+  border-left: 6px solid #f1c40f;
+  box-shadow: 0 2px 10px rgba(241, 196, 15, 0.15);
+}
+.item-card.fuera-tiempo:hover {
+  box-shadow: 0 4px 16px rgba(241, 196, 15, 0.3);
+}
+
+/* 🔴 Bloqueada */
+.item-card.bloqueado {
+  border-left: 6px solid #e74c3c;
+  opacity: 0.8;
+  box-shadow: 0 2px 10px rgba(231, 76, 60, 0.12);
+}
+.item-card.bloqueado:hover {
+  box-shadow: 0 2px 10px rgba(231, 76, 60, 0.12);
+  transform: none;
+  cursor: not-allowed;
+}
+
+/* ======================================================
+   🪄 MODALES
+====================================================== */
+
 .modal {
   display: none;
   position: fixed;
@@ -402,10 +242,7 @@
   align-items: center;
   justify-content: center;
 }
-
-.modal.active {
-  display: flex;
-}
+.modal.active { display: flex; }
 
 .modal-content {
   background: #fff;
@@ -426,10 +263,7 @@
   cursor: pointer;
   transition: 0.3s;
 }
-
-.close-btn:hover {
-  color: var(--danger);
-}
+.close-btn:hover { color: var(--danger); }
 
 .modal-content h3 {
   margin-bottom: 18px;
@@ -439,17 +273,13 @@
   gap: 8px;
 }
 
-.form-group {
-  margin-bottom: 15px;
-}
-
+.form-group { margin-bottom: 15px; }
 .form-group label {
   display: block;
   margin-bottom: 6px;
   color: var(--text);
   font-weight: 500;
 }
-
 .form-group input[type="text"],
 .form-group input[type="file"] {
   width: 100%;
@@ -473,15 +303,14 @@
   cursor: pointer;
   transition: 0.3s;
 }
-
 .btn-primary.full:hover {
   background: linear-gradient(135deg, var(--secondary), var(--primary));
   transform: translateY(-2px);
 }
 
-/* ======================
+/* ======================================================
    📱 RESPONSIVE
-   ====================== */
+====================================================== */
 @media (max-width: 600px) {
   .grid-items {
     grid-template-columns: 1fr;
@@ -492,4 +321,20 @@
   .modal-content {
     margin: 0 12px;
   }
+}
+
+/* ===== Modal de vista previa ===== */
+.modal-preview {
+  max-width: 90%;
+  width: 1000px;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#visorArchivo {
+  flex: 1;
+  width: 100%;
+  border-radius: 8px;
+  background: #fff;
 }
