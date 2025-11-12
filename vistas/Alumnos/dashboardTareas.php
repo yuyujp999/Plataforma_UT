@@ -71,45 +71,56 @@ $tareas = $stmt->get_result();
       display: flex;
       flex-direction: column;
     }
-    .vista-container {
-      flex: 1;
-      margin-top: 10px;
-    }
+    .vista-container { flex: 1; margin-top: 10px; }
     .vista-container iframe {
-      width: 100%;
-      height: 100%;
-      border-radius: 10px;
-      border: 1px solid #ddd;
-      background: #fff;
+      width: 100%; height: 100%;
+      border-radius: 10px; border: 1px solid #ddd; background: #fff;
     }
 
     /* --- BOTONES DE FILTRO --- */
-    .filter-bar {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
+    .filter-bar { display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
     .filter-btn {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s ease;
+      background: var(--primary); color:#fff; border:none; padding:8px 16px;
+      border-radius:8px; font-weight:500; cursor:pointer; transition:.3s;
     }
-    .filter-btn:hover,
-    .filter-btn.active {
-      background: var(--secondary);
-      transform: translateY(-2px);
+    .filter-btn:hover, .filter-btn.active { background: var(--secondary); transform: translateY(-2px); }
+
+    /* --- ENTREGA (inline) --- */
+    .entrega-box {
+      margin-top: 12px; padding:12px; border:1px dashed var(--border, #dcdde1);
+      border-radius:10px; background: var(--card, #fff);
     }
+    .entrega-box h4 { margin:0 0 8px; font-size: 15px; }
+    .entrega-row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .entrega-row input[type="file"] {
+      background:#fff; padding:8px; border-radius:8px; border:1px solid #e5e7eb; max-width: 360px;
+    }
+    .btn-enviar {
+      background: var(--primary); color:#fff; border:none; padding:8px 14px;
+      border-radius:8px; cursor:pointer; font-weight:600; transition:.25s;
+    }
+    .btn-enviar:hover { background: var(--secondary); transform: translateY(-1px); }
+    .nota-tolerancia { font-size: 12px; opacity:.85; margin-top:6px; }
+    .pill {
+      display:inline-flex; align-items:center; gap:6px;
+      padding:4px 10px; border-radius:999px; font-size:12px; font-weight:600;
+      background:#fff3cd; color:#9a6700; border:1px solid #ffe69c;
+    }
+    .pill.blocked { background:#fde8e8; color:#b42318; border-color:#f5c2c7; }
+    .pill.ok { background:#e6fffa; color:#065f46; border-color:#99f6e4; }
+    .archivo-previo { margin-top:8px; font-size:13px; }
+    .tarea-actions { display:flex; flex-direction:column; gap:8px; }
+    .btn-ver { background:#f3f4f6; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; }
+    .alert-message {
+      margin-bottom: 16px; padding: 10px 12px; border-radius: 10px;
+      background: #ecfeff; border:1px solid #a5f3fc; color:#0e7490; font-weight:600;
+    }
+    .empty { opacity:.7; }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Sidebar (NO SE MODIFICA NADA) -->
+    <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
       <div class="logo"><h1>UT<span>Panel</span></h1></div>
       <nav class="nav-menu" id="menu"></nav>
@@ -124,7 +135,7 @@ $tareas = $stmt->get_result();
       <header class="materia-header">
         <div class="materia-info">
           <h2><i class="fa-solid fa-tasks"></i> Mis Tareas</h2>
-          <p>Consulta y filtra tus tareas por estado.</p>
+          <p>Consulta, filtra y entrega tus tareas.</p>
         </div>
       </header>
 
@@ -143,9 +154,11 @@ $tareas = $stmt->get_result();
             <?php while ($t = $tareas->fetch_assoc()): ?>
               <?php
                 $ahora = new DateTime('now', new DateTimeZone('America/Mexico_City'));
-                $fechaLimite = $t['fecha_entrega'] ? new DateTime($t['fecha_entrega']) : null;
+                $fechaLimite = !empty($t['fecha_entrega']) ? new DateTime($t['fecha_entrega'], new DateTimeZone('America/Mexico_City')) : null;
+
                 $fueraTiempo = $fechaLimite && $ahora > $fechaLimite;
-                $bloqueado = $fueraTiempo && $fechaLimite->diff($ahora)->days > 7;
+                $diasDiff = ($fechaLimite) ? (int)$fechaLimite->diff($ahora)->days : 0;
+                $bloqueado = $fueraTiempo && $diasDiff > 7;
 
                 if ($bloqueado) {
                   $estadoClase = 'tarea-bloqueada';
@@ -166,6 +179,23 @@ $tareas = $stmt->get_result();
                   $estadoClase = 'tarea-pendiente';
                   $estadoTexto = '📬 Pendiente de entrega';
                 }
+
+                // Reglas para mostrar el formulario de entrega:
+                $puedeEntregar = false;
+                // 1) No bloqueada
+                if (!$bloqueado) {
+                  // 2) Si no hay entrega previa, o si fue Devuelta
+                  $noHayEntrega = empty($t['fecha_envio']);
+                  $devuelta = ($t['estado'] === 'Devuelta');
+                  $calificada = ($t['calificacion'] !== null);
+
+                  if (($noHayEntrega || $devuelta) && !$calificada) {
+                    $puedeEntregar = true;
+                  }
+                }
+
+                $rutaArchivoTarea = !empty($t['archivo']) ? "/Plataforma_UT/".ltrim($t['archivo'], '/\\') : '';
+                $rutaEntregaAlumno = !empty($t['archivo']) ? $rutaArchivoTarea : '';
               ?>
               <div class="tarea-item <?= $estadoClase ?>">
                 <div class="tarea-info">
@@ -191,10 +221,62 @@ $tareas = $stmt->get_result();
                 <div class="tarea-actions">
                   <?php if (!empty($t['archivo'])): ?>
                     <button class="btn-ver" 
-                      data-archivo="/Plataforma_UT/<?= htmlspecialchars($t['archivo']) ?>"
+                      data-archivo="<?= htmlspecialchars($rutaArchivoTarea) ?>"
                       data-titulo="<?= htmlspecialchars($t['titulo_tarea']) ?>">
                       <i class="fa-solid fa-file"></i> Ver archivo
                     </button>
+                  <?php endif; ?>
+
+                  <!-- Archivo entregado previamente del alumno (si aplica) -->
+                  <?php if (!empty($t['fecha_envio'])): ?>
+                    <div class="archivo-previo">
+                      <i class="fa-solid fa-paperclip"></i>
+                      <strong>Mi entrega:</strong>
+                      <span><?= htmlspecialchars(date('d/m/Y H:i', strtotime($t['fecha_envio']))) ?></span>
+                      <?php if (!empty($t['archivo'])): ?>
+                        <!-- Nota: aquí mostramos el archivo de la tarea; si guardas la ruta de entrega del alumno en otra columna, cámbialo por esa ruta -->
+                      <?php endif; ?>
+                    </div>
+                  <?php endif; ?>
+
+                  <!-- Formulario de entrega (inline) -->
+                  <?php if ($puedeEntregar): ?>
+                    <div class="entrega-box">
+                      <h4><i class="fa-solid fa-upload"></i> Entregar archivo</h4>
+                      <?php if ($fueraTiempo && !$bloqueado): ?>
+                        <div class="pill"><i class="fa-regular fa-clock"></i> Se marcará como <strong>fuera de tiempo</strong>.</div>
+                      <?php else: ?>
+                        <div class="pill ok"><i class="fa-regular fa-circle-check"></i> Dentro del tiempo</div>
+                      <?php endif; ?>
+
+                      <form method="POST" enctype="multipart/form-data" class="form-entrega" onsubmit="return validarEntrega(this)">
+                        <input type="hidden" name="id_tarea" value="<?= (int)$t['id_tarea'] ?>">
+                        <div class="entrega-row">
+                          <input 
+                            type="file"
+                            name="archivo_entrega"
+                            accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.zip,.rar"
+                            required
+                          />
+                          <button type="submit" class="btn-enviar">
+                            <i class="fa-solid fa-paper-plane"></i> Enviar
+                          </button>
+                        </div>
+                        <div class="nota-tolerancia">
+                          Tamaño máx. recomendado: 20MB. Formatos: PDF, DOC(X), PPT(X), JPG/PNG, ZIP/RAR.
+                        </div>
+                      </form>
+                    </div>
+                  <?php elseif ($bloqueado): ?>
+                    <div class="entrega-box">
+                      <div class="pill blocked"><i class="fa-solid fa-ban"></i> Entrega cerrada definitivamente</div>
+                      <div class="nota-tolerancia">Pasaron más de 7 días del límite.</div>
+                    </div>
+                  <?php elseif ($t['calificacion'] !== null && $t['estado'] !== 'Devuelta'): ?>
+                    <div class="entrega-box">
+                      <div class="pill blocked"><i class="fa-solid fa-lock"></i> Tarea calificada</div>
+                      <div class="nota-tolerancia">No es posible volver a entregar.</div>
+                    </div>
                   <?php endif; ?>
                 </div>
               </div>
@@ -226,6 +308,17 @@ $tareas = $stmt->get_result();
   <script src="/Plataforma_UT/js/modeToggle.js"></script>
 
   <script>
+  function validarEntrega(form) {
+    const file = form.querySelector('input[type="file"]').files[0];
+    if (!file) { alert('Selecciona un archivo.'); return false; }
+    const maxMB = 20;
+    if (file.size > maxMB * 1024 * 1024) {
+      alert('El archivo supera ' + maxMB + 'MB.');
+      return false;
+    }
+    return true;
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
     // Filtro por estado
     const buttons = document.querySelectorAll(".filter-btn");
@@ -256,10 +349,10 @@ $tareas = $stmt->get_result();
         const titulo = btn.dataset.titulo;
         tituloArchivo.innerHTML = `<i class='fa-solid fa-file'></i> ${titulo}`;
 
-        const ext = archivo.split('.').pop().toLowerCase();
+        const ext = (archivo.split('.').pop() || '').toLowerCase();
         if (['pdf', 'jpg', 'jpeg', 'png'].includes(ext)) {
           iframe.src = archivo;
-        } else if (ext === 'doc' || ext === 'docx') {
+        } else if (ext === 'doc' || ext === 'docx' || ext === 'ppt' || ext === 'pptx') {
           iframe.src = `https://view.officeapps.live.com/op/embed.aspx?src=${window.location.origin + archivo}`;
         } else {
           iframe.src = "";
