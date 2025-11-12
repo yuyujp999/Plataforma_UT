@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 12-11-2025 a las 02:27:37
+-- Tiempo de generación: 12-11-2025 a las 02:47:25
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -683,7 +683,7 @@ INSERT INTO `entregas_alumnos` (`id_entrega`, `id_tarea`, `id_alumno`, `archivo`
 (3, 8, 132, 'uploads/entregas/entrega_690b795be3619_Seguridad informática - Glosario - Angel Loza 22624.pdf', '2025-11-05 16:20:43', NULL, NULL, 'Devuelta', 'regreso'),
 (4, 10, 132, 'uploads/entregas/entrega_690b8fc3211f5_Evi2-ADT-AALF (2).docx', '2025-11-05 17:56:19', NULL, 5.00, 'Calificada', '5'),
 (5, 9, 132, 'uploads/entregas/entrega_690bfb5d3516d_entrega_69091cfc64793_Evi2-ADT-AALF (3).docx', '2025-11-06 01:35:25', NULL, NULL, 'Entregada', NULL),
-(6, 21, 132, 'uploads/entregas/entrega_6913e1b0b6988_Act1-ADT-AALF.pdf', '2025-11-12 01:24:00', NULL, NULL, 'Devuelta', 'aun le falta');
+(6, 21, 132, 'uploads/entregas/entrega_6913e31d65f00_Act1-ADT-AALF.pdf', '2025-11-12 01:30:05', NULL, NULL, 'Devuelta', 'aun le falta');
 
 -- --------------------------------------------------------
 
@@ -779,6 +779,15 @@ CREATE TABLE `mensajesdocente` (
   `leido` tinyint(1) DEFAULT 0,
   `fecha_envio` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `mensajesdocente`
+--
+
+INSERT INTO `mensajesdocente` (`id_mensaje`, `id_chat`, `remitente`, `contenido`, `leido`, `fecha_envio`) VALUES
+(1, 1, 'alumno', 'hola', 0, '2025-11-12 01:31:58'),
+(2, 1, 'alumno', 'hola', 0, '2025-11-12 01:35:45'),
+(3, 1, 'docente', 'hljg-ilhk_LKJh', 0, '2025-11-12 01:36:27');
 
 -- --------------------------------------------------------
 
@@ -1318,7 +1327,7 @@ ALTER TABLE `mensajes`
 -- AUTO_INCREMENT de la tabla `mensajesdocente`
 --
 ALTER TABLE `mensajesdocente`
-  MODIFY `id_mensaje` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_mensaje` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `mensajes_secretarias`

@@ -24,6 +24,11 @@ document.addEventListener("DOMContentLoaded", function () {
         text: "Calendario Académico",
         path: "/Plataforma_UT/vistas/Alumnos/dashboard_calendario.php",
       },
+      {
+        icon: "fa-solid fa-comments",
+       text: "Chats",
+        path: "/Plataforma_UT/vistas/Alumnos/ChatAlumno.php",
+},
       { icon: "fas fa-cog", 
         text: "Ajustes", 
         path: "/Plataforma_UT/vistas/Alumnos/dashboard_ajustes.php" },
