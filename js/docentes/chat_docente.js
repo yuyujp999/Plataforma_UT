@@ -101,7 +101,7 @@ function cargarMensajes() {
             </div>
             <span class="hora">
               ${new Date(m.fecha_envio).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
-              ${m.leido == 1 ? '✅✅' : '✅'}
+              ${m.leido == 1 ? '✓ ✓ ' : '✓ '}
             </span>
           </div>
         </div>
@@ -176,3 +176,7 @@ function eliminarMensaje(id_mensaje) {
       });
   });
 });
+
+
+
+

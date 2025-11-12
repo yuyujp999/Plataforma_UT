@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
                       hour: "2-digit",
                       minute: "2-digit",
                     })}
-                    ${m.leido == 1 ? "✅✅" : "✅"}
+                    ${m.leido == 1 ? "✓ ✓ " : "✓ "}
                   </span>
                   <div class="msg-actions">${botonEliminar}</div>
                 </div>
@@ -168,3 +168,63 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch(err => console.error("Error al enviar:", err));
   });
 });
+
+  // 🔍 Buscar alumnos o docentes en toda la base
+  const buscador = document.getElementById("buscadorChat");
+  const resultados = document.querySelector(".search-results");
+
+  if (buscador) {
+    buscador.addEventListener("input", () => {
+      const texto = buscador.value.trim();
+
+      if (texto.length < 2) {
+        resultados.style.display = "none";
+        return;
+      }
+
+      fetch(`/Plataforma_UT/api/chat_alumno.php?action=buscar_usuarios&query=${encodeURIComponent(texto)}`)
+        .then(res => res.json())
+        .then(usuarios => {
+          if (!usuarios.length) {
+            resultados.innerHTML = "<p class='placeholder'>No se encontraron resultados.</p>";
+            resultados.style.display = "block";
+            return;
+          }
+
+          resultados.innerHTML = usuarios.map(u => `
+            <div class="result" data-id="${u.id_usuario}" data-rol="${u.rol}">
+              <i class="${u.rol === 'docente' ? 'fa-solid fa-user-tie' : 'fa-solid fa-user-graduate'}"></i>
+              ${u.nombre}
+            </div>
+          `).join("");
+          resultados.style.display = "block";
+
+          document.querySelectorAll(".result").forEach(r => {
+            r.addEventListener("click", () => {
+              crearOabrirChat(r.dataset.id, r.dataset.rol, r.textContent.trim());
+            });
+          });
+        })
+        .catch(err => console.error("Error en búsqueda:", err));
+    });
+  }
+
+  // 📨 Crear o abrir chat nuevo con un usuario
+  function crearOabrirChat(idUsuario, rol, nombre) {
+    fetch("/Plataforma_UT/api/chat_alumno.php?action=crear_chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `id_usuario=${encodeURIComponent(idUsuario)}&rol=${encodeURIComponent(rol)}`
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "ok") {
+          resultados.style.display = "none";
+          buscador.value = "";
+          abrirChat(data.id_chat, nombre);
+        } else {
+          console.error("Error al crear chat:", data);
+        }
+      })
+      .catch(err => console.error("Error al crear chat:", err));
+  }

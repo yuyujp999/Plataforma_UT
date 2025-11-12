@@ -135,5 +135,54 @@ public function eliminarMensaje($id_mensaje)
   return $stmt->execute(['id_mensaje' => $id_mensaje]);
 }
 
+// mensajes no leidos 
+public function contarMensajesNoLeidos($idUsuario, $tipoUsuario)
+{
+    global $pdo;
+
+    // Determina si buscar por id_docente o id_alumno
+    $campoDestino = ($tipoUsuario === 'docente') ? 'id_docente' : 'id_alumno';
+
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*) AS total
+        FROM mensajesDocente
+        INNER JOIN chats ON mensajesDocente.id_chat = chats.id_chat
+        WHERE mensajesDocente.leido = 0
+          AND mensajesDocente.remitente != :tipoUsuario
+          AND chats.$campoDestino = :idUsuario
+    ");
+    $stmt->execute([
+        ':idUsuario' => $idUsuario,
+        ':tipoUsuario' => $tipoUsuario
+    ]);
+    $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    return $resultado ? intval($resultado['total']) : 0;
+}
+
+
+
+
+
+
+public function obtenerChatsDocente($idDocente) {
+    global $pdo;
+
+    $stmt = $pdo->prepare("
+        SELECT 
+            c.id_chat,
+            a.nombre AS alumno,
+            COUNT(CASE WHEN m.leido = 0 AND m.remitente = 'alumno' THEN 1 END) AS no_leidos
+        FROM chats c
+        INNER JOIN alumnos a ON a.id_alumno = c.id_alumno
+        LEFT JOIN mensajesDocente m ON m.id_chat = c.id_chat
+        WHERE c.id_docente = :idDocente
+        GROUP BY c.id_chat, a.nombre
+        ORDER BY no_leidos DESC, a.nombre ASC
+    ");
+    $stmt->execute([':idDocente' => $idDocente]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 }
 ?>
+

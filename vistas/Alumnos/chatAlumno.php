@@ -72,12 +72,26 @@ $rolUsuario = $_SESSION['rol'] ?? '';
   <!-- 🔹 Panel del chat -->
   <div class="chat-dashboard">
     <!-- Sidebar de docentes -->
-    <div class="chat-sidebar">
-      <h3><i class="fa-solid fa-user-tie"></i> Conversaciones</h3>
-      <div class="chat-list">
-        <p class="placeholder">Cargando docentes...</p>
-      </div>
-    </div>
+     <div class="chat-sidebar">
+  <h3><i class="fa-solid fa-comments"></i> Chats</h3>
+
+  <!-- 🔍 Buscador global -->
+  <div class="chat-search">
+    <input type="text" id="buscadorChat" placeholder="Buscar alumno o docente...">
+    <i class="fa-solid fa-search"></i>
+  </div>
+
+  <!-- 🔹 Resultados de búsqueda -->
+  <div class="search-results" style="display:none;">
+    <p class="placeholder">Escribe para buscar...</p>
+  </div>
+
+  <!-- 🔹 Lista de chats existentes -->
+  <div class="chat-list">
+    <p class="placeholder">Cargando conversaciones...</p>
+  </div>
+</div>
+
 
     <!-- Área principal del chat -->
     <div class="chat-main">

@@ -1,17 +1,339 @@
-.msg-actions {
-  text-align: right;
-  margin-top: 3px;
+/* =======================================================
+   🖤 CHAT ALUMNOS — DISEÑO SIMPLE PARA FONDO OSCURO
+   Colores: blanco, gris, negro
+   ======================================================= */
+
+.main-content {
+  padding: 20px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.delete-msg {
-  background: transparent;
-  border: none;
-  color: #888;
-  cursor: pointer;
+/* ===== ENCABEZADO ===== */
+.materia-navbar {
+  background: #1e1e1e;
+  border-radius: 10px;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+}
+
+.materia-navbar h2 {
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+.materia-navbar p {
+  color: #ccc;
   font-size: 0.9rem;
-  transition: color 0.2s;
 }
 
-.delete-msg:hover {
-  color: #d32f2f;
+.user-info {
+  font-weight: 500;
+  color: #ccc;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
+
+/* ===== CONTENEDOR GENERAL ===== */
+.chat-dashboard {
+  display: grid;
+  grid-template-columns: 30% 1fr;
+  gap: 20px;
+  height: calc(100vh - 200px);
+}
+
+/* ===== SIDEBAR ===== */
+.chat-sidebar {
+  background: #1a1a1a;
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+}
+
+.chat-sidebar h3 {
+  font-size: 1rem;
+  color: #fff;
+  border-bottom: 1px solid #333;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+
+.chat-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.chat {
+  background: #222;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+  color: #eee;
+}
+
+.chat:hover {
+  background: #2b2b2b;
+  border-color: #444;
+}
+
+/* ===== PANEL PRINCIPAL ===== */
+.chat-main {
+  background: #1a1a1a;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+}
+
+/* ===== CABECERA DEL CHAT ===== */
+.chat-header {
+  background: #1f1f1f;
+  color: #fff;
+  font-weight: 600;
+  padding: 15px 20px;
+  border-bottom: 1px solid #333;
+  border-radius: 10px 10px 0 0;
+}
+
+/* ===== CUERPO DEL CHAT ===== */
+.chat-body {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background: #121212;
+}
+
+.mensaje {
+  display: flex;
+  margin-bottom: 12px;
+}
+
+.msg-left {
+  justify-content: flex-start;
+}
+.msg-right {
+  justify-content: flex-end;
+}
+
+.msg-content {
+  max-width: 70%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.msg-left .msg-content {
+  background: #2b2b2b;
+  color: #eee;
+}
+.msg-right .msg-content {
+  background: #496651;
+  color: #fffdfd;
+}
+
+.msg-content .nombre-remitente {
+  display: block;
+  font-weight: 600;
+  color: #bbb;
+  margin-bottom: 3px;
+}
+
+.msg-content .hora {
+  display: block;
+  text-align: right;
+  color: #777;
+  font-size: 0.75rem;
+  margin-top: 4px;
+}
+
+/* ===== INPUT MENSAJE ===== */
+.chat-input {
+  background: #1f1f1f;
+  border-top: 1px solid #333;
+  display: flex;
+  padding: 10px 15px;
+  border-radius: 0 0 10px 10px;
+}
+
+.chat-input input {
+  flex: 1;
+  background: #2b2b2b;
+  border: 1px solid #333;
+  border-radius: 25px;
+  padding: 10px 15px;
+  color: #fff;
+  outline: none;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.chat-input input:focus {
+  border-color: #555;
+  background: #333;
+}
+
+.chat-input button {
+  background: #444;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.chat-input button:hover {
+  background: #666;
+  transform: scale(1.05);
+}
+
+/* ===== PLACEHOLDER ===== */
+.placeholder {
+  color: #888;
+  text-align: center;
+  padding: 40px 10px;
+  font-size: 0.9rem;
+}
+
+/* ===== PANEL PRINCIPAL ===== */
+.chat-main {
+  background: #1a1a1a;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+  height: 75vh; /* 🔹 define una altura estable del panel */
+  overflow: hidden; /* evita que toda el área tenga scroll */
+}
+
+/* ===== CUERPO DEL CHAT ===== */
+.chat-body {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto; /* 🔹 solo el cuerpo tendrá scroll */
+  background: #121212;
+  scroll-behavior: smooth; /* 🔹 movimiento suave */
+  max-height: 100%;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #444 #1a1a1a; /* Firefox */
+}
+
+/* ===== Scrollbar (Chrome, Edge, Safari) ===== */
+.chat-body::-webkit-scrollbar {
+  width: 6px;
+}
+.chat-body::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 6px;
+}
+.chat-body::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+.chat-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #1b1b1b;
+  padding: 10px;
+  border-top: 1px solid #333;
+  position: relative;
+}
+
+.chat-input input {
+  flex: 1;
+  background: #2b2b2b;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  outline: none;
+}
+
+.chat-input button {
+  background: #2b2b2b;
+  border: none;
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.chat-input button:hover {
+  background: #3b3b3b;
+}
+
+/* Panel de emojis */
+.emoji-panel {
+  position: absolute;
+  bottom: 55px;
+  left: 10px;
+  background: #2b2b2b;
+  border: 1px solid #444;
+  border-radius: 10px;
+  padding: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  max-width: 250px;
+  z-index: 10;
+}
+
+.emoji-panel span {
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.hidden {
+  display: none;
+}
+
+.badgeMenu {
+  background-color: red;
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 10px;
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  display: none;
+}
+.menu-item {
+  position: relative;
+}
+
+
+.badgeMenu {
+  background: #ff3b3b;
+  color: white;
+  font-size: 0.75rem;
+  border-radius: 50%;
+  padding: 3px 7px;
+  margin-left: 8px;
+  position: relative;
+  top: -5px;
+  font-weight: bold;
+  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+

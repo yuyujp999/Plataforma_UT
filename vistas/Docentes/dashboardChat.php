@@ -5,6 +5,9 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'docente') {
   header('Location: /Plataforma_UT/inicio.php');
   exit;
 }
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 
 include_once __DIR__ . "/../../conexion/conexion.php";
 include_once __DIR__ . "/../../controladores/docentes/ChatController.php";
@@ -44,6 +47,8 @@ $usuarioNombre = $nombre . ' ' . $apellido;
         <div class="user-info">
           <i class="fa-solid fa-user-tie"></i>
           <span><?= htmlspecialchars($usuarioNombre) ?></span>
+          <span id="badgeChat" class="badgeMenu" style="display:inline-block;">1</span>
+
         </div>
       </div>
 
@@ -55,6 +60,12 @@ $usuarioNombre = $nombre . ' ' . $apellido;
             <p class="placeholder">Aún no hay conversaciones.</p>
           </div>
         </div>
+
+
+
+
+
+
 
         <div class="chat-main">
           <div class="chat-header">
@@ -71,13 +82,23 @@ $usuarioNombre = $nombre . ' ' . $apellido;
       </div>
     </div>
   </div>
+<script>
+  document.addEventListener("click", e => {
+  const grupo = e.target.closest(".chat-group");
+  if (grupo) grupo.classList.toggle("active");
+});
 
+ </script>
   <!-- JS  js para el chat-->
    <script src="/Plataforma_UT/js/docentes/chat_docente.js"></script>
 
   <script>
     window.rolUsuarioPHP = "<?= htmlspecialchars($_SESSION['rol']); ?>";
   </script>
+
+
+
+
   <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
 </body>
 </html>

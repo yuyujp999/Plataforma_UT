@@ -61,6 +61,34 @@ case 'eliminar_mensaje':
   echo json_encode(['status' => $ok ? 'ok' : 'error']);
   break;
 
+    // 🔹 Contar mensajes no leídos
+    case 'mensajes_no_leidos':
+  header('Content-Type: application/json; charset=utf-8');
+  if (!isset($_SESSION['usuario']['id_docente'])) {
+    echo json_encode(['error' => 'Sesión inválida', 'no_leidos' => 0]);
+    exit;
+  }
+
+  $idUsuario = intval($_SESSION['usuario']['id_docente']);
+  $tipoUsuario = 'docente';
+  $noLeidos = $chat->contarMensajesNoLeidos($idUsuario, $tipoUsuario);
+
+  echo json_encode(['no_leidos' => $noLeidos]);
+  break;
+
+  case 'listar_chats':
+  $idUsuario = intval($_SESSION['usuario']['id_docente'] ?? 0);
+  if ($idUsuario > 0) {
+    $chats = $chat->obtenerChatsDocente($idUsuario);
+    echo json_encode(['chats' => $chats]);
+  } else {
+    echo json_encode(['chats' => []]);
+  }
+  break;
+
+
+
+
 
   default:
     echo json_encode(['error' => 'Acción no válida']);
