@@ -24,9 +24,12 @@ document.addEventListener("DOMContentLoaded", function () {
         text: "Calendario Académico",
         path: "/Plataforma_UT/vistas/Alumnos/dashboard_calendario.php",
       },
-      { icon: "fas fa-cog", 
-        text: "Ajustes", 
-        path: "/Plataforma_UT/vistas/Alumnos/dashboard_ajustes.php" },
+      {
+        icon: "fas fa-bell",
+        text: "Notificaciones",
+        path: "/alumno/notificaciones.php",
+      },
+      { icon: "fas fa-cog", text: "Ajustes", path: "/alumno/ajustes.php" },
     ],
 
     docente: [
@@ -238,7 +241,14 @@ document.addEventListener("DOMContentLoaded", function () {
     items.forEach((item) => {
       const div = document.createElement("div");
       div.classList.add("nav-item");
-      div.innerHTML = `<i class="${item.icon}"></i><span>${item.text}</span>`;
+      //div.innerHTML = `<i class="${item.icon}"></i><span>${item.text}</span>`; esto lo cambie para el badge
+
+      div.innerHTML = `
+  <i class="${item.icon}"></i>
+  <span>${item.text}</span>
+  ${item.badgeId ? '<span id="' + item.badgeId + '" class="badgeMenu" style="display:none;">0</span>' : ''}
+`;
+
       div.style.cursor = "pointer";
       div.addEventListener("click", () => (window.location.href = item.path));
       sectionDiv.appendChild(div);
@@ -321,3 +331,98 @@ function toggleMenu() {
 
 if (hamburger) hamburger.addEventListener("click", toggleMenu);
 if (overlay) overlay.addEventListener("click", toggleMenu);
+
+ //const navMenu = document.getElementById("menu");
+// === funcionamiento de los msj sin ver  ===
+ //menuItems.forEach(item => {
+ // const li = document.createElement("li");
+ // li.classList.add("menu-item");
+ // li.innerHTML = `
+  //  <a href="${item.path}" id="${item.badgeId ? 'menuChat' : ''}">
+  //    <i class="${item.icon}"></i>
+  //    <span>${item.text}</span>
+ //     ${item.badgeId ? '<span id="badgeChat" class="badgeMenu" style="display:none;">0</span>' : ''}
+//    </a>
+ // `;
+ // navMenu.appendChild(li);
+//});
+
+
+//document.addEventListener("DOMContentLoaded", () => {
+  //const badgeChat = document.getElementById("badgeChat");
+  //if (!badgeChat) return;
+
+  //function actualizarNotificacionesChat() {
+  //  fetch("/Plataforma_UT/api/chat_alumno.php?action=mensajes_no_leidos")
+    //  .then(res => res.json())
+      //.then(data => {
+       // if (data.total_no_leidos > 0) {
+         // badgeChat.textContent = data.total_no_leidos;
+          //badgeChat.style.display = "inline-block";
+        //} else {
+          //badgeChat.style.display = "none";
+        //}
+      //})
+      //.catch(err => console.error("Error al obtener notificaciones:", err));
+ // }
+
+  //actualizarNotificacionesChat();
+  //setInterval(actualizarNotificacionesChat, 5000);
+//});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const badge = document.getElementById("badgeChat");
+  if (!badge) return;
+
+  async function actualizarNotificacionesChat() {
+    try {
+      const response = await fetch("/Plataforma_UT/api/chat_docente.php?action=mensajes_no_leidos");
+      const data = await response.json();
+
+      if (data.no_leidos > 0) {
+        badge.textContent = data.no_leidos;
+        badge.style.display = "inline-block";
+      } else {
+        badge.style.display = "none";
+      }
+    } catch (err) {
+      console.error("Error al obtener notificaciones:", err);
+    }
+  }
+
+  actualizarNotificacionesChat();
+  setInterval(actualizarNotificacionesChat, 10000);
+});
+
+  // --- Inicializar actualizador de badge SOLO después de renderizar el menú ---
+  (function initBadgeAfterMenu() {
+    // función que actualiza el badge usando la API del docente
+    async function actualizarNotificacionesChatDocente() {
+      const badge = document.getElementById("badgeChat");
+      if (!badge) return; // si por alguna razón no existe, salir silenciosamente
+
+      try {
+        const res = await fetch("/Plataforma_UT/api/chat_docente.php?action=mensajes_no_leidos", { cache: "no-store" });
+        const data = await res.json();
+        const total = parseInt(data.no_leidos || data.no_leidos === 0 ? data.no_leidos : (data.no_leidos ?? data.noLeidos ?? 0), 10);
+
+        if (total > 0) {
+          badge.textContent = total;
+          badge.style.display = "inline-block";
+        } else {
+          badge.style.display = "none";
+        }
+      } catch (err) {
+        console.error("Error al obtener notificaciones (badge):", err);
+      }
+    }
+
+    // Solo arrancar si el usuario actual es docente (evita llamadas innecesarias)
+    if (window.rolUsuarioPHP === "docente") {
+      // llamada inicial (espera 300 ms para dar tiempo a renderizado por si acaso)
+      setTimeout(actualizarNotificacionesChatDocente, 300);
+      // intervalo
+      setInterval(actualizarNotificacionesChatDocente, 10000);
+    }
+  })();
+
