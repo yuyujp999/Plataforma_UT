@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-11-2025 a las 00:38:52
+-- Tiempo de generación: 12-11-2025 a las 02:47:25
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -558,6 +558,27 @@ INSERT INTO `cat_nombre_profesor_materia_grupo` (`id_nombre_profesor_materia_gru
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `chats`
+--
+
+CREATE TABLE `chats` (
+  `id_chat` int(11) NOT NULL,
+  `id_docente` int(11) NOT NULL,
+  `id_alumno` int(11) NOT NULL,
+  `id_grupo` int(11) DEFAULT NULL,
+  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `chats`
+--
+
+INSERT INTO `chats` (`id_chat`, `id_docente`, `id_alumno`, `id_grupo`, `fecha_creacion`) VALUES
+(1, 16, 132, 15, '2025-11-12 01:26:09');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `ciclos_escolares`
 --
 
@@ -661,7 +682,8 @@ INSERT INTO `entregas_alumnos` (`id_entrega`, `id_tarea`, `id_alumno`, `archivo`
 (2, 7, 132, 'uploads/entregas/entrega_69091cfc64793_Evi2-ADT-AALF (3).docx', '2025-11-03 21:22:04', '2025-11-03 17:41:16', 10.00, 'Entregada', 'excelente trabajo'),
 (3, 8, 132, 'uploads/entregas/entrega_690b795be3619_Seguridad informática - Glosario - Angel Loza 22624.pdf', '2025-11-05 16:20:43', NULL, NULL, 'Devuelta', 'regreso'),
 (4, 10, 132, 'uploads/entregas/entrega_690b8fc3211f5_Evi2-ADT-AALF (2).docx', '2025-11-05 17:56:19', NULL, 5.00, 'Calificada', '5'),
-(5, 9, 132, 'uploads/entregas/entrega_690bfb5d3516d_entrega_69091cfc64793_Evi2-ADT-AALF (3).docx', '2025-11-06 01:35:25', NULL, NULL, 'Entregada', NULL);
+(5, 9, 132, 'uploads/entregas/entrega_690bfb5d3516d_entrega_69091cfc64793_Evi2-ADT-AALF (3).docx', '2025-11-06 01:35:25', NULL, NULL, 'Entregada', NULL),
+(6, 21, 132, 'uploads/entregas/entrega_6913e31d65f00_Act1-ADT-AALF.pdf', '2025-11-12 01:30:05', NULL, NULL, 'Devuelta', 'aun le falta');
 
 -- --------------------------------------------------------
 
@@ -742,6 +764,30 @@ INSERT INTO `mensajes` (`id_mensaje`, `id_admin`, `titulo`, `cuerpo`, `prioridad
 (3, 2, 'PRUEBA 3', 'DSJDHS', 'alta', '2025-11-01 17:36:47'),
 (4, 2, 'PRUEBA 4', 'SDSJD', 'normal', '2025-11-01 18:08:22'),
 (5, 2, 'Mensaje de prueba', 'Semana 8 - Prueba', 'alta', '2025-11-02 12:19:52');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `mensajesdocente`
+--
+
+CREATE TABLE `mensajesdocente` (
+  `id_mensaje` int(11) NOT NULL,
+  `id_chat` int(11) NOT NULL,
+  `remitente` enum('docente','alumno') NOT NULL,
+  `contenido` text NOT NULL,
+  `leido` tinyint(1) DEFAULT 0,
+  `fecha_envio` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `mensajesdocente`
+--
+
+INSERT INTO `mensajesdocente` (`id_mensaje`, `id_chat`, `remitente`, `contenido`, `leido`, `fecha_envio`) VALUES
+(1, 1, 'alumno', 'hola', 0, '2025-11-12 01:31:58'),
+(2, 1, 'alumno', 'hola', 0, '2025-11-12 01:35:45'),
+(3, 1, 'docente', 'hljg-ilhk_LKJh', 0, '2025-11-12 01:36:27');
 
 -- --------------------------------------------------------
 
@@ -944,7 +990,11 @@ INSERT INTO `tareas_materias` (`id_tarea`, `id_asignacion_docente`, `titulo`, `d
 (9, 17, 'pruebaaaa', '', NULL, '2025-11-20', '2025-11-04 01:11:08'),
 (10, 13, 'ejemplo 2 de devuelto', '', NULL, '2025-12-10', '2025-11-05 16:25:12'),
 (16, 16, 'Proyecto prueba 2', '', NULL, '2025-11-07', '2025-11-07 00:51:52'),
-(17, 16, 'adasd', '', NULL, '2025-11-10', '2025-11-07 00:52:08');
+(17, 16, 'adasd', '', NULL, '2025-11-10', '2025-11-07 00:52:08'),
+(18, 15, 'ejemplo a tiempo', '', NULL, '2025-11-20', '2025-11-11 15:18:22'),
+(19, 15, 'ejemplo fuera de tiempo ', '', NULL, '2025-11-10', '2025-11-11 15:19:11'),
+(20, 15, 'ejemplo de entrega cerrada', '', NULL, '2025-10-01', '2025-11-11 15:20:29'),
+(21, 16, 'Ejemplo de devolución', '', NULL, '2025-11-25', '2025-11-12 01:08:26');
 
 --
 -- Índices para tablas volcadas
@@ -1048,6 +1098,13 @@ ALTER TABLE `cat_nombre_profesor_materia_grupo`
   ADD PRIMARY KEY (`id_nombre_profesor_materia_grupo`);
 
 --
+-- Indices de la tabla `chats`
+--
+ALTER TABLE `chats`
+  ADD PRIMARY KEY (`id_chat`),
+  ADD UNIQUE KEY `unique_chat` (`id_docente`,`id_alumno`);
+
+--
 -- Indices de la tabla `ciclos_escolares`
 --
 ALTER TABLE `ciclos_escolares`
@@ -1093,6 +1150,13 @@ ALTER TABLE `materias`
 ALTER TABLE `mensajes`
   ADD PRIMARY KEY (`id_mensaje`),
   ADD KEY `idx_admin` (`id_admin`);
+
+--
+-- Indices de la tabla `mensajesdocente`
+--
+ALTER TABLE `mensajesdocente`
+  ADD PRIMARY KEY (`id_mensaje`),
+  ADD KEY `id_chat` (`id_chat`);
 
 --
 -- Indices de la tabla `mensajes_secretarias`
@@ -1218,6 +1282,12 @@ ALTER TABLE `cat_nombre_profesor_materia_grupo`
   MODIFY `id_nombre_profesor_materia_grupo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
+-- AUTO_INCREMENT de la tabla `chats`
+--
+ALTER TABLE `chats`
+  MODIFY `id_chat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT de la tabla `ciclos_escolares`
 --
 ALTER TABLE `ciclos_escolares`
@@ -1233,7 +1303,7 @@ ALTER TABLE `docentes`
 -- AUTO_INCREMENT de la tabla `entregas_alumnos`
 --
 ALTER TABLE `entregas_alumnos`
-  MODIFY `id_entrega` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_entrega` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `grupos`
@@ -1252,6 +1322,12 @@ ALTER TABLE `materias`
 --
 ALTER TABLE `mensajes`
   MODIFY `id_mensaje` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT de la tabla `mensajesdocente`
+--
+ALTER TABLE `mensajesdocente`
+  MODIFY `id_mensaje` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `mensajes_secretarias`
@@ -1287,7 +1363,7 @@ ALTER TABLE `semestres`
 -- AUTO_INCREMENT de la tabla `tareas_materias`
 --
 ALTER TABLE `tareas_materias`
-  MODIFY `id_tarea` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id_tarea` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- Restricciones para tablas volcadas
@@ -1355,6 +1431,12 @@ ALTER TABLE `grupos`
 --
 ALTER TABLE `mensajes`
   ADD CONSTRAINT `fk_mensajes_admin` FOREIGN KEY (`id_admin`) REFERENCES `administradores` (`id_admin`) ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `mensajesdocente`
+--
+ALTER TABLE `mensajesdocente`
+  ADD CONSTRAINT `mensajesdocente_ibfk_1` FOREIGN KEY (`id_chat`) REFERENCES `chats` (`id_chat`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `mensajes_secretarias`

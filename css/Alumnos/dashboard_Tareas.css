@@ -27,7 +27,7 @@
 }
 
 /* ==========================================================
-   🧾 LISTA DE TAREAS — Diseño moderno y aireado
+   🧾 LISTA DE TAREAS
    ========================================================== */
 
 .section-content {
@@ -134,7 +134,7 @@
 }
 
 /* ==========================================================
-   💬 RETROALIMENTACIÓN — Diseño elegante y limpio
+   💬 RETROALIMENTACIÓN
    ========================================================== */
 .info-docente {
   background: rgba(255, 255, 255, 0.85);
@@ -181,7 +181,7 @@
 }
 
 /* ==========================================================
-   ⚙️ BOTONES — Más espaciados y consistentes
+   ⚙️ BOTONES
    ========================================================== */
 .tarea-actions {
   display: flex;
@@ -190,13 +190,30 @@
   align-items: flex-end;
 }
 
-.btn-entregar,
-.btn-editar,
+/* ✅ VER ARCHIVO */
 .btn-ver {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  background: linear-gradient(135deg, #28a745, #1e7a3b);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 9px 15px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 6px rgba(40, 167, 69, 0.3);
+}
+.btn-ver:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #1e7a3b, #155d29);
+  box-shadow: 0 4px 10px rgba(40, 167, 69, 0.4);
+}
+
+/* ENVIAR / ENTREGAR */
+.btn-entregar,
+.btn-enviar {
+  background: linear-gradient(135deg, #007bff, #0064d2);
+  color: #fff;
   border: none;
   border-radius: 10px;
   cursor: pointer;
@@ -205,36 +222,116 @@
   font-size: 0.9rem;
   transition: all 0.25s ease;
 }
-
-.btn-entregar {
-  background: linear-gradient(135deg, #007bff, #0064d2);
-  color: #fff;
-}
-.btn-entregar:hover {
+.btn-entregar:hover,
+.btn-enviar:hover {
   transform: translateY(-2px);
   background: linear-gradient(135deg, #0064d2, #004a99);
 }
 
-.btn-editar {
+/* REENTREGAR */
+.btn-reentregar {
   background: linear-gradient(135deg, #ffb703, #ff9500);
   color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 9px 15px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.25s ease;
 }
-.btn-editar:hover {
+.btn-reentregar:hover {
   transform: translateY(-2px);
   background: linear-gradient(135deg, #ff9500, #ff7b00);
 }
 
-.btn-ver {
-  background: linear-gradient(135deg, #28a745, #1e7a3b);
-  color: #fff;
+/* ==========================================================
+   🧰 BLOQUE DE ENTREGA
+   ========================================================== */
+.entrega-box {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px dashed var(--border, #dcdde1);
+  border-radius: 10px;
+  background: var(--card, #fff);
 }
-.btn-ver:hover {
-  transform: translateY(-2px);
-  background: linear-gradient(135deg, #1e7a3b, #155d29);
+.entrega-box h4 {
+  margin: 0 0 8px;
+  font-size: 15px;
+}
+.entrega-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.entrega-row input[type="file"] {
+  background: #fff;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  max-width: 360px;
+}
+.nota-tolerancia {
+  font-size: 12px;
+  opacity: 0.85;
+  margin-top: 6px;
+}
+.archivo-previo {
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #fff3cd;
+  color: #9a6700;
+  border: 1px solid #ffe69c;
+}
+.pill.ok {
+  background: #e6fffa;
+  color: #065f46;
+  border-color: #99f6e4;
+}
+.pill.blocked {
+  background: #fde8e8;
+  color: #b42318;
+  border-color: #f5c2c7;
 }
 
 /* ==========================================================
-   🪄 MODAL — Suavizado visual
+   🔎 FILTROS
+   ========================================================== */
+.filter-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.filter-btn {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.filter-btn:hover,
+.filter-btn.active {
+  background: var(--secondary);
+  transform: translateY(-2px);
+}
+
+/* ==========================================================
+   🪄 MODAL
    ========================================================== */
 .modal {
   display: none;
@@ -263,9 +360,35 @@
   animation: fadeInUp 0.35s ease;
 }
 
+.modal-content.large {
+  width: 90%;
+  max-width: 1200px;
+  height: 95vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.vista-container {
+  flex: 1;
+  margin-top: 10px;
+}
+.vista-container iframe {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background: #fff;
+}
+
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(15px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .close-btn {
@@ -277,44 +400,8 @@
   cursor: pointer;
   transition: 0.3s;
 }
-.close-btn:hover { color: var(--danger); }
-
-.form-group {
-  margin-bottom: 15px;
-}
-.form-group label {
-  display: block;
-  margin-bottom: 6px;
-  color: var(--text);
-  font-weight: 500;
-}
-.form-group input[type="text"],
-.form-group input[type="file"] {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  background: rgba(250, 250, 250, 0.85);
-}
-
-.btn-primary.full {
-  width: 100%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 10px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  transition: 0.3s;
-}
-.btn-primary.full:hover {
-  background: linear-gradient(135deg, var(--secondary), var(--primary));
-  transform: translateY(-2px);
+.close-btn:hover {
+  color: var(--danger);
 }
 
 /* ==========================================================
@@ -334,44 +421,18 @@
   }
 }
 
-/* ======================================================
-   🎨 NUEVOS ESTADOS — Solo bordes, sin fondo
-   ====================================================== */
-
-/* 🟠 Devuelta */
-.tarea-item.tarea-devuelta {
-  border-left-color: #ff7b00;
-}
-.tarea-item.tarea-devuelta .estado {
-  color: #a34e00;
-  font-weight: 600;
-}
-
-/* 🟣 Enviada pero pendiente */
-.tarea-item.tarea-enviada {
-  border-left-color: #6f42c1;
-}
-.tarea-item.tarea-enviada .estado {
-  color: #56339e;
-  font-weight: 600;
-}
-
-/* ======================================================
-   ⚙️ NUEVO BOTÓN — Reentregar
-   ====================================================== */
-.btn-reentregar {
-  background: linear-gradient(135deg, #ff7b00, #ff9500);
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  padding: 9px 15px;
-  font-weight: 500;
-  font-size: 0.9rem;
+/* 🔧 FIX: visibilidad del botón "Ver archivo" */
+.btn-ver {
+  background: linear-gradient(135deg, #28a745, #1e7a3b) !important;
+  color: #fff !important;
+  opacity: 1 !important;
+  filter: none !important;
+  box-shadow: 0 2px 6px rgba(40, 167, 69, 0.3);
   transition: all 0.25s ease;
 }
-.btn-reentregar:hover {
+.btn-ver:hover {
   transform: translateY(-2px);
-  background: linear-gradient(135deg, #ff9500, #ff7b00);
+  background: linear-gradient(135deg, #1e7a3b, #155d29) !important;
+  box-shadow: 0 4px 10px rgba(40, 167, 69, 0.4);
 }
-  
+

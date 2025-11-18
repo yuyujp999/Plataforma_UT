@@ -27,10 +27,20 @@ document.addEventListener("DOMContentLoaded", function () {
         path: "/Plataforma_UT/vistas/Alumnos/dashboard_calendario.php",
       },
       {
+<<<<<<< HEAD
         icon: "fas fa-cog",
         text: "Ajustes",
         path: "/Plataforma_UT/vistas/Alumnos/dashboard_ajustes.php",
       },
+=======
+        icon: "fa-solid fa-comments",
+       text: "Chats",
+        path: "/Plataforma_UT/vistas/Alumnos/ChatAlumno.php",
+},
+      { icon: "fas fa-cog", 
+        text: "Ajustes", 
+        path: "/Plataforma_UT/vistas/Alumnos/dashboard_ajustes.php" },
+>>>>>>> d8c4327fa39f9fa78d2456765900a9d6b1244661
     ],
 
     docente: [
