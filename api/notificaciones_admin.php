@@ -39,10 +39,7 @@ function tipoValido($t, $fb = 'movimiento')
 $accion = input('accion', 'counts');
 $tipo = input('tipo', null);
 
-/* ====== COUNTS ======
-   bell:  # de movimientos NO leídos
-   mail:  total historial (todos los tipos y estados)
-*/
+/* ===== COUNTS ===== */
 if ($accion === 'counts') {
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM notificaciones WHERE para_rol='admin' AND tipo='movimiento' AND leido=0");
     $stmt->execute();
@@ -56,12 +53,9 @@ if ($accion === 'counts') {
     exit;
 }
 
-/* ====== ULTIMAS_NO_LEIDAS (campana) ======
-   Solo movimientos no leídos.
-*/
+/* ===== ULTIMAS_NO_LEIDAS ===== */
 if ($accion === 'ultimas_no_leidas') {
     $limit = max(1, min(100, (int) input('limit', 10)));
-
     $sql = "
         SELECT n.id, n.tipo, n.titulo, n.detalle, n.accion, n.recurso,
                n.created_at, n.leido, n.actor_id
@@ -77,13 +71,9 @@ if ($accion === 'ultimas_no_leidas') {
     exit;
 }
 
-/* ====== HISTORIAL (sobre) ======
-   Trae TODO (leídos/no leídos, ambos tipos),
-   con nombre de la secretaria si existe actor_id.
-*/
+/* ===== HISTORIAL ===== */
 if ($accion === 'historial') {
     $limit = max(1, min(200, (int) input('limit', 50)));
-
     $sql = "
         SELECT 
             n.id, n.tipo, n.titulo, n.detalle, n.accion, n.recurso,
@@ -102,9 +92,7 @@ if ($accion === 'historial') {
     exit;
 }
 
-/* ====== MARCAR_LEIDAS (campana) ======
-   Marca todos los movimientos no leídos como leídos.
-*/
+/* ===== MARCAR_LEIDAS ===== */
 if ($accion === 'marcar_leidas') {
     $pdo->prepare("
         UPDATE notificaciones
@@ -115,7 +103,7 @@ if ($accion === 'marcar_leidas') {
     exit;
 }
 
-/* ====== ELIMINAR (uno) ====== */
+/* ===== ELIMINAR (uno) ===== */
 if ($accion === 'eliminar') {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         http_response_code(405);
@@ -134,10 +122,7 @@ if ($accion === 'eliminar') {
     exit;
 }
 
-/* ====== ELIMINAR_TODAS (historial) ======
-   Si tipo='todos' borra todo el historial del admin.
-   Si se manda 'movimiento' o 'mensaje', borra solo ese tipo.
-*/
+/* ===== ELIMINAR_TODAS ===== */
 if ($accion === 'eliminar_todas') {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         http_response_code(405);
@@ -154,6 +139,42 @@ if ($accion === 'eliminar_todas') {
         $st->execute([':t' => $tipo]);
     }
     echo json_encode(['status' => 'ok']);
+    exit;
+}
+
+/* ===== NUEVO: RESPUESTAS_MENSAJE =====
+   Devuelve respuestas que mandaron secretarías respecto a un mensaje
+   Buscamos en notificaciones: para_rol='admin', accion='respuesta', recurso='mensaje'
+   y acotamos por título "Respuesta a: {titulo}".
+*/
+if ($accion === 'respuestas_mensaje') {
+    $titulo = trim((string) input('titulo', ''));
+    $limit = max(1, min(200, (int) input('limit', 100)));
+
+    $condTitulo = "";
+    $params = [];
+    if ($titulo !== '') {
+        $condTitulo = " AND n.titulo LIKE :t ";
+        // así: "Respuesta a: {titulo}%"
+        $params[':t'] = 'Respuesta a: ' . $titulo . '%';
+    }
+
+    $sql = "
+        SELECT n.id, n.detalle, n.created_at,
+               TRIM(CONCAT(COALESCE(s.nombre,''),' ',COALESCE(s.apellido_paterno,''))) AS secretaria_nombre
+        FROM notificaciones n
+        LEFT JOIN secretarias s ON s.id_secretaria = n.actor_id
+        WHERE n.para_rol='admin' AND n.accion='respuesta' AND n.recurso='mensaje'
+        $condTitulo
+        ORDER BY n.id DESC
+        LIMIT :lim
+    ";
+    $st = $pdo->prepare($sql);
+    foreach ($params as $k => $v)
+        $st->bindValue($k, $v, PDO::PARAM_STR);
+    $st->bindValue(':lim', $limit, PDO::PARAM_INT);
+    $st->execute();
+    echo json_encode(['status' => 'ok', 'items' => $st->fetchAll(PDO::FETCH_ASSOC)]);
     exit;
 }
 

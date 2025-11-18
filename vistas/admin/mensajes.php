@@ -39,7 +39,7 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="icon" href="../../img/ut_logo.png" sizes="32x32" type="image/png">
 
-    <!-- Estilos mínimos para chips/enlaces -->
+    <!-- Estilos mínimos para chips/enlaces + respuestas -->
     <style>
         .modal-overlay {
             z-index: 3000;
@@ -104,7 +104,6 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
             color: #b21515;
         }
 
-        /* Solo nombre (sin chip) para la destinataria seleccionada en detalle */
         .destinataria-badge {
             font-weight: 700;
             color: #2c3e35;
@@ -122,9 +121,41 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
             font-weight: 600;
         }
 
-        /* Modo edición para mostrar el bloque de destinataria */
         #modalDetalle.is-editing #editarDestinatariasBlock {
             display: block !important;
+        }
+
+        /* Respuestas */
+        #cardRespuestas .reply-item {
+            padding: 10px 12px;
+            border-bottom: 1px solid #eef2f5;
+        }
+
+        #cardRespuestas .reply-item:last-child {
+            border-bottom: none;
+        }
+
+        #cardRespuestas .reply-head {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            font-weight: 700;
+        }
+
+        #cardRespuestas .reply-meta {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        #cardRespuestas .reply-text {
+            margin-top: 6px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        #cardRespuestas .empty {
+            padding: 12px;
+            color: #7b8b9a;
         }
     </style>
 </head>
@@ -298,7 +329,7 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
                     <input type="text" id="detalleFecha" readonly />
                 </div>
 
-                <!-- Tabla de destinatarias (siempre visible) -->
+                <!-- Tabla de destinatarias -->
                 <div style="grid-column:1 / span 2;">
                     <div class="table-card" style="margin:0;">
                         <div class="table-scroll-wrapper">
@@ -319,22 +350,25 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
                     </div>
                 </div>
 
-                <!-- Editor de DESTINATARIA (SIMPLE: una sola o TODAS) -->
+                <!-- NUEVO: Respuestas de secretarías -->
+                <div class="table-card" id="cardRespuestas" style="grid-column:1 / span 2; display:none;">
+                    <div class="table-scroll-wrapper">
+                        <div class="table-header">
+                            <h3><i class="fas fa-comments"></i> Respuestas de secretarías</h3>
+                        </div>
+                        <div id="listaRespuestas">
+                            <!-- items renderizados por JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Editor de DESTINATARIA (una o todas) -->
                 <div style="grid-column:1 / span 2; display:none;" id="editarDestinatariasBlock">
                     <label for="selEditarSecretarias">Editar destinataria</label>
-                    <!-- IMPORTANTE: sin "multiple" para que sea UNA sola (o TODAS) -->
                     <select id="selEditarSecretarias"></select>
-
-                    <small id="contadorEditarSecretarias" style="display:block; margin-top:6px; opacity:.75;">
-                        0 seleccionadas
-                    </small>
-
-                    <!-- Nota visible cuando se eligió "todas" -->
-                    <div id="notaTodas" class="nota-todas">
-                        🟢 Mensaje para <strong>todas las secretarías</strong>.
-                    </div>
-
-                    <!-- Vista colapsada: SOLO nombre (o "todas") + enlace Cambiar -->
+                    <small id="contadorEditarSecretarias" style="display:block; margin-top:6px; opacity:.75;">0
+                        seleccionadas</small>
+                    <div id="notaTodas" class="nota-todas">🟢 Mensaje para <strong>todas las secretarías</strong>.</div>
                     <div id="resumenEditarSeleccion" class="chips-row" style="display:none; margin-top:8px;">
                         <span class="destinataria-badge" id="destinatariaSeleccionadaTexto">—</span>
                         <span id="editarSeleccionDetalle" class="chip-link" tabindex="0">Cambiar destinataria</span>
@@ -344,11 +378,7 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
 
             <div class="actions" style="justify-content:flex-start; gap:10px;">
                 <button type="button" class="btn-cancel" id="cerrarDetalleBtn">Cerrar</button>
-
-                <!-- Guardar cambios generales (incluye destinataria) -->
-                <button type="button" class="btn-save btn-save-edit" id="btnGuardarCambios">
-                    Guardar cambios
-                </button>
+                <button type="button" class="btn-save btn-save-edit" id="btnGuardarCambios">Guardar cambios</button>
             </div>
         </div>
     </div>
@@ -369,9 +399,84 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
         window.addEventListener("load", () => {
             document.querySelectorAll('.modal textarea').forEach(autoResize);
         });
+
+        // ======= NUEVO: Cargar respuestas en el detalle =======
+        const API_NOTI = "/Plataforma_UT/api/notificaciones_admin.php";
+
+        function escapeHTML(s) {
+            return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        async function cargarRespuestasMensaje(titulo) {
+            const card = document.getElementById('cardRespuestas');
+            const cont = document.getElementById('listaRespuestas');
+            cont.innerHTML = '';
+            card.style.display = 'none';
+
+            if (!titulo) {
+                return;
+            }
+
+            try {
+                const url = `${API_NOTI}?accion=respuestas_mensaje&titulo=${encodeURIComponent(titulo)}&limit=100`;
+                const r = await fetch(url, {
+                    cache: 'no-store'
+                });
+                const d = await r.json();
+                if (d.status === 'ok') {
+                    if (d.items && d.items.length) {
+                        d.items.forEach(it => {
+                            const nombre = escapeHTML(it.secretaria_nombre || 'Secretaría');
+                            const fecha = escapeHTML(new Date(it.created_at).toLocaleString());
+                            const texto = escapeHTML(it.detalle || '');
+                            const item = document.createElement('div');
+                            item.className = 'reply-item';
+                            item.innerHTML = `
+                                <div class="reply-head"><i class="fas fa-reply"></i> <span>${nombre}</span></div>
+                                <div class="reply-meta">${fecha}</div>
+                                <div class="reply-text">${texto}</div>
+                            `;
+                            cont.appendChild(item);
+                        });
+                        card.style.display = 'block';
+                    } else {
+                        cont.innerHTML = `<div class="empty">Sin respuestas de secretarías.</div>`;
+                        card.style.display = 'block';
+                    }
+                } else {
+                    cont.innerHTML = `<div class="empty" style="color:#c00">Error al cargar respuestas.</div>`;
+                    card.style.display = 'block';
+                }
+            } catch (_e) {
+                cont.innerHTML = `<div class="empty" style="color:#c00">Error al cargar respuestas.</div>`;
+                card.style.display = 'block';
+            }
+        }
+
+        // Lo exponemos por si tu Mensajes.js quiere llamarlo explícitamente
+        window.cargarRespuestasMensaje = cargarRespuestasMensaje;
+
+        // Auto-carga cuando el modal se abre y cambia el título (por si no quieres tocar Mensajes.js)
+        (function autoHook() {
+            let lastTitle = '';
+            setInterval(() => {
+                const overlay = document.getElementById('overlayDetalle');
+                const visible = overlay && (getComputedStyle(overlay).display !== 'none');
+                if (!visible) {
+                    lastTitle = '';
+                    return;
+                }
+                const t = (document.getElementById('detalleTitulo')?.value || '').trim();
+                if (t && t !== lastTitle) {
+                    lastTitle = t;
+                    cargarRespuestasMensaje(t);
+                }
+            }, 800);
+        })();
     </script>
 
-    <!-- Scripts -->
+    <!-- Scripts base -->
     <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
     <script src="../../js/admin/Mensajes.js"></script>
 </body>

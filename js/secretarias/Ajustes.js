@@ -22,7 +22,17 @@ function alertAndReload(
   });
 }
 
-/* ========= Ajustes de usuario ========= */
+/* ========= Aplicar modo oscuro según localStorage (global en esta página) ========= */
+document.addEventListener("DOMContentLoaded", () => {
+  const isDark = localStorage.getItem("ut_dark_mode") === "1";
+  if (isDark) {
+    document.body.classList.add("dark-mode");
+  } else {
+    document.body.classList.remove("dark-mode");
+  }
+});
+
+/* ========= Ajustes de usuario (nombre) ========= */
 document.addEventListener("DOMContentLoaded", () => {
   const btnAjuste = document.querySelector(".btn-ajuste");
   const modal = document.getElementById("modalUsuario");
@@ -35,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
     btnAjuste.addEventListener("click", () => {
       modal.style.display = "flex";
 
-      fetch("../../controladores/admin/controller_ajustes.php", {
+      fetch("../../controladores/secretarias/controller_ajustes.php", {
         method: "POST",
         body: new URLSearchParams({ accion: "getDatos" }),
       })
@@ -100,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const formData = new FormData(form);
       formData.append("accion", "updateUsuario");
 
-      fetch("../../controladores/admin/controller_ajustes.php", {
+      fetch("../../controladores/secretarias/controller_ajustes.php", {
         method: "POST",
         body: formData,
       })
@@ -113,6 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 {
                   icon: "success",
                   title: "Datos actualizados",
+                  text: "Se actualizó el nombre de la secretaría",
                   timer: 1500,
                   showConfirmButton: false,
                 },
@@ -204,7 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
     formData.append("actual", actual);
     formData.append("nueva", nueva);
 
-    fetch("../../controladores/admin/controller_ajustes.php", {
+    fetch("../../controladores/secretarias/controller_ajustes.php", {
       method: "POST",
       body: formData,
     })
@@ -223,7 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
               },
               modalPassword
             );
-            formPassword.reset(); // por si el reload no ocurre (navegador antiguo)
+            formPassword.reset();
           } else {
             alertAndReload(
               {
@@ -260,6 +271,31 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+/* ========= Modo oscuro: switch simple ========= */
+document.addEventListener("DOMContentLoaded", () => {
+  const toggle = document.getElementById("toggleDarkMode");
+  if (!toggle) return;
+
+  // Sincronizar estado del toggle con localStorage
+  const isDark = localStorage.getItem("ut_dark_mode") === "1";
+  if (isDark) {
+    toggle.checked = true;
+  } else {
+    toggle.checked = false;
+  }
+
+  // Cambiar estado al hacer click
+  toggle.addEventListener("change", () => {
+    if (toggle.checked) {
+      document.body.classList.add("dark-mode");
+      localStorage.setItem("ut_dark_mode", "1");
+    } else {
+      document.body.classList.remove("dark-mode");
+      localStorage.setItem("ut_dark_mode", "0");
+    }
+  });
+});
+
 /* ========= Eliminar cuenta ========= */
 document.addEventListener("DOMContentLoaded", () => {
   const btnEliminar = document.querySelector(".btn-eliminar");
@@ -281,7 +317,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const formData = new FormData();
       formData.append("accion", "eliminarCuenta");
 
-      fetch("../../controladores/admin/controller_ajustes.php", {
+      fetch("../../controladores/secretarias/controller_ajustes.php", {
         method: "POST",
         body: formData,
       })
@@ -290,7 +326,6 @@ document.addEventListener("DOMContentLoaded", () => {
           try {
             const data = JSON.parse(text);
             if (data.status === "success") {
-              // En eliminar cuenta mantenemos la redirección
               Swal.fire({
                 icon: "success",
                 title: "Cuenta eliminada",
@@ -302,14 +337,13 @@ document.addEventListener("DOMContentLoaded", () => {
                   "http://localhost/Plataforma_UT/inicio.php";
               });
             } else {
-              // Si falla: cerrar cualquier modal que tuvieras y luego recargar
               alertAndReload(
                 {
                   icon: "error",
                   title: "Error",
                   text: data.message || "No se pudo eliminar la cuenta.",
                 },
-                document.getElementById("modalUsuario") // por si estaba abierto
+                document.getElementById("modalUsuario")
               );
             }
           } catch (err) {

@@ -7,13 +7,14 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Redirigir si no hay sesión
-if (!isset($_SESSION['rol'])) {
+if (!isset($_SESSION['rol']) || !isset($_SESSION['usuario'])) {
     header('Location: /Plataforma_UT/inicio.php');
     exit;
 }
 
 $rolUsuario = $_SESSION['rol'] ?? '';
 $usuarioSesion = $_SESSION['usuario'] ?? [];
+
 $nombreCompleto = trim(($usuarioSesion['nombre'] ?? '') . ' ' . ($usuarioSesion['apellido_paterno'] ?? ''));
 $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($usuarioSesion['apellido_paterno'] ?? '', 0, 1));
 
@@ -31,34 +32,40 @@ try {
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ajustes</title>
+    <title>Ajustes | Secretarías</title>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet" />
-    <link rel="stylesheet" href="../../css/admin/admin.css" />
+
+    <!-- CSS global de la plataforma y estilos del panel -->
     <link rel="stylesheet" href="/Plataforma_UT/css/styleD.css" />
+    <link rel="stylesheet" href="../../css/admin/admin.css" />
     <link rel="stylesheet" href="../../css/admin/adminModal.css" />
     <link rel="stylesheet" href="../../css/admin/profesoresModal.css" />
     <link rel="stylesheet" href="../../css/admin/ajustes1.css" />
     <link rel="stylesheet" href="../../css/admin/profesores.css" />
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="icon" href="../../img/ut_logo.png" sizes="32x32" type="image/png">
+
+    <style>
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 280px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+    </style>
 </head>
-<style>
-    .sidebar {
-        position: fixed;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 280px;
-        overflow-y: auto;
-        z-index: 1000
-    }
-</style>
 
 <body>
     <div class="container">
+        <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="overlay" id="overlay"></div>
             <div class="logo">
@@ -69,6 +76,7 @@ try {
             </div>
         </div>
 
+        <!-- Header -->
         <div class="header">
             <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
             <div class="search-bar">
@@ -78,7 +86,7 @@ try {
             <div class="header-actions">
                 <div class="user-profile" id="userProfile" data-nombre="<?= htmlspecialchars($nombreCompleto) ?>"
                     data-rol="<?= htmlspecialchars($rolUsuario) ?>">
-                    <div class="profile-img"><?= $iniciales ?></div>
+                    <div class="profile-img"><?= htmlspecialchars($iniciales) ?></div>
                     <div class="user-info">
                         <div class="user-name"><?= htmlspecialchars($nombreCompleto ?: 'Usuario') ?></div>
                         <div class="user-role"><?= htmlspecialchars($rolUsuario ?: 'Rol') ?></div>
@@ -87,12 +95,13 @@ try {
             </div>
         </div>
 
+        <!-- Main -->
         <div class="main-content">
             <div class="page-title">
                 <div class="title">Ajustes</div>
             </div>
 
-            <!-- === SECCIÓN AJUSTES EN CARDS === -->
+            <!-- === SECCIÓN AJUSTES EN CARDS (igual que admin, pero para secretaría) === -->
             <div class="ajustes-container">
 
                 <!-- Cambiar nombre de usuario -->
@@ -108,8 +117,6 @@ try {
                     <p>¿Quieres cambiar tu contraseña? Mantén tu cuenta siempre protegida.</p>
                     <button class="btn-contraseña" id="btnCambiarPassword">Cambiar contraseña</button>
                 </section>
-
-
 
                 <!-- Eliminar cuenta -->
                 <section class="ajuste-item eliminar">
@@ -186,9 +193,11 @@ try {
         window.rolUsuarioPHP = "<?= $rolUsuario; ?>";
     </script>
 
+    <!-- JS del dashboard (el mismo que usas en el panel de secretaría) -->
     <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
-    <script src="../../js/admin/AsignacionesAlumnos.js"></script>
-    <script src="../../js/admin/Ajustes8.js"></script>
+    <!-- Si tienes JS específicos para ajustes de secretaría, ponlos aquí -->
+
+    <script src="../../js/secretarias/Ajustes.js"></script>
 
 </body>
 

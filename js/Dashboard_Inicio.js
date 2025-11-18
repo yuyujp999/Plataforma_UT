@@ -6,9 +6,11 @@ document.addEventListener("DOMContentLoaded", function () {
         text: "Dashboard",
         path: "/Plataforma_UT/vistas/Alumnos/dashboardAlumno.php",
       },
-      { icon: "fas fa-users", 
-        text: "Saiiut UTSC", 
-        path: "/Plataforma_UT/vistas/Alumnos/dashboard_adeudos.php" },
+      {
+        icon: "fas fa-users",
+        text: "Saiiut UTSC",
+        path: "/Plataforma_UT/vistas/Alumnos/dashboard_adeudos.php",
+      },
       {
         icon: "fas fa-graduation-cap",
         text: "Calificaciones",
@@ -24,9 +26,11 @@ document.addEventListener("DOMContentLoaded", function () {
         text: "Calendario Académico",
         path: "/Plataforma_UT/vistas/Alumnos/dashboard_calendario.php",
       },
-      { icon: "fas fa-cog", 
-        text: "Ajustes", 
-        path: "/Plataforma_UT/vistas/Alumnos/dashboard_ajustes.php" },
+      {
+        icon: "fas fa-cog",
+        text: "Ajustes",
+        path: "/Plataforma_UT/vistas/Alumnos/dashboard_ajustes.php",
+      },
     ],
 
     docente: [
@@ -47,13 +51,14 @@ document.addEventListener("DOMContentLoaded", function () {
       },
       {
         icon: "fa-solid fa-comments",
-       text: "Chats",
+        text: "Chats",
         path: "/Plataforma_UT/vistas/Docentes/dashboardChat.php",
-},
-
-      { icon: "fas fa-cog",
+      },
+      {
+        icon: "fas fa-cog",
         text: "Ajustes",
-        path: "/Plataforma_UT/vistas/Docentes/DashboardAjustes.php" },
+        path: "/Plataforma_UT/vistas/Docentes/DashboardAjustes.php",
+      },
     ],
 
     admin: [
@@ -92,7 +97,6 @@ document.addEventListener("DOMContentLoaded", function () {
         text: "Semestres",
         path: "/Plataforma_UT/vistas/admin/gestion_de_semestres.php",
       },
-      // NUEVO
       {
         icon: "fas fa-calendar-check",
         text: "Ciclo Escolar",
@@ -102,6 +106,12 @@ document.addEventListener("DOMContentLoaded", function () {
         icon: "fas fa-users",
         text: "Grupos",
         path: "/Plataforma_UT/vistas/admin/gestion_de_grupos.php",
+      },
+      // NUEVO: Aulas (ADMIN)
+      {
+        icon: "fas fa-door-open",
+        text: "Aulas",
+        path: "/Plataforma_UT/vistas/admin/gestion_de_aulas.php",
       },
       {
         icon: "fas fa-book",
@@ -161,7 +171,6 @@ document.addEventListener("DOMContentLoaded", function () {
         text: "Semestres",
         path: "/Plataforma_UT/vistas/secretarias/gestion_de_semestres.php",
       },
-
       {
         icon: "fas fa-calendar-check",
         text: "Ciclo Escolar",
@@ -171,6 +180,12 @@ document.addEventListener("DOMContentLoaded", function () {
         icon: "fas fa-users",
         text: "Grupos",
         path: "/Plataforma_UT/vistas/secretarias/gestion_de_grupos.php",
+      },
+      // NUEVO: Aulas (SECRETARÍA)
+      {
+        icon: "fas fa-door-open",
+        text: "Aulas",
+        path: "/Plataforma_UT/vistas/secretarias/gestion_de_aulas.php",
       },
       {
         icon: "fas fa-book",
@@ -193,19 +208,14 @@ document.addEventListener("DOMContentLoaded", function () {
         path: "/Plataforma_UT/vistas/secretarias/gestion_de_asignaciones_alumno.php",
       },
       {
-        icon: "fas fa-file-excel",
-        text: "Importar Listas",
-        path: "/Plataforma_UT/vistas/secretarias/importar_listas.php",
+        icon: "fas fa-clock",
+        text: "Horarios",
+        path: "/Plataforma_UT/vistas/secretarias/horarios.php",
       },
       {
         icon: "fas fa-dollar-sign",
         text: "Adeudos y Pagos",
         path: "/Plataforma_UT/vistas/secretarias/adeudos_pagos.php",
-      },
-      {
-        icon: "fas fa-file-alt",
-        text: "Reportes Acad./Financieros",
-        path: "/Plataforma_UT/vistas/secretarias/reportes.php",
       },
       {
         icon: "fas fa-bell",
@@ -255,23 +265,23 @@ document.addEventListener("DOMContentLoaded", function () {
     renderSeccion("Menú", menuConfig.admin.slice(0, 1));
     // Gestión de Usuarios: Administradores, Secretarías, Docentes, Alumnos
     renderSeccion("Gestión de Usuarios", menuConfig.admin.slice(1, 5));
-    // Gestión Académica: Carreras -> Asignar Alumno (incluye Ciclo Escolar)
-    renderSeccion("Gestión Académica", menuConfig.admin.slice(5, 13));
-    // Configuraciones: Notificaciones, Ajustes
-    renderSeccion("Configuraciones", menuConfig.admin.slice(13));
+    // Gestión Académica: Carreras -> Asignar Alumno (incluye Ciclo Escolar, Grupos, Aulas, etc.)
+    renderSeccion("Gestión Académica", menuConfig.admin.slice(5, 14));
+    // Configuraciones: Mensajes, Ajustes
+    renderSeccion("Configuraciones", menuConfig.admin.slice(14));
   } else if (rolUsuario === "secretaria") {
     // Menú principal
     renderSeccion("Menú", menuConfig.secretaria.slice(0, 1)); // Dashboard
     // Gestión de Usuarios: Docentes, Alumnos
     renderSeccion("Gestión de Usuarios", menuConfig.secretaria.slice(1, 3));
-    // Gestión Académica: Carreras -> Asignar Alumno (incluye Ciclo Escolar)
-    renderSeccion("Gestión Académica", menuConfig.secretaria.slice(3, 11));
-    // Operativa: Importar Listas, Adeudos y Pagos, Reportes
-    renderSeccion("Gestión Operativa", menuConfig.secretaria.slice(11, 14));
+    // Gestión Académica: Carreras -> Asignar Alumno (incluye Ciclo Escolar, Grupos, Aulas, etc.)
+    renderSeccion("Gestión Académica", menuConfig.secretaria.slice(3, 12));
+    // Gestión Operativa: Horarios, Adeudos y Pagos
+    renderSeccion("Gestión Operativa", menuConfig.secretaria.slice(12, 14));
     // Configuraciones: Notificaciones, Ajustes
     renderSeccion("Configuraciones", menuConfig.secretaria.slice(14));
   } else {
-    // Otros roles
+    // Otros roles (alumno, docente, etc.)
     renderSeccion("Menú", menuConfig[rolUsuario] || []);
   }
 
