@@ -56,416 +56,416 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
 
     <!-- ===== Estilos específicos + NUEVO DISEÑO DE SECCIONES ===== -->
     <style>
-    /* Contenedor del botón en la cabecera del dropdown de mensajes */
-    .notif-dropdown .notif-head .notif-actions {
-        display: flex;
-        align-items: center;
-        gap: .5rem;
-    }
-
-    /* Botón "Eliminar todo" */
-    .notif-dropdown .notif-head .notif-actions #mailDelAll {
-        display: inline-flex;
-        align-items: center;
-        gap: .5rem;
-        padding: .5rem .9rem;
-        font-size: .85rem;
-        font-weight: 600;
-        border-radius: 12px;
-        border: 1px solid #ef4444;
-        color: #b91c1c;
-        background: linear-gradient(180deg, #ffffff 0%, #fff5f5 100%);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, .08), inset 0 1px 0 rgba(255, 255, 255, .6);
-        cursor: pointer;
-        transition: all .15s ease;
-        white-space: nowrap;
-    }
-
-    .notif-dropdown .notif-head .notif-actions #mailDelAll:hover {
-        color: #ffffff;
-        background: #ef4444;
-        border-color: #ef4444;
-        box-shadow: 0 6px 14px rgba(239, 68, 68, .25);
-        transform: translateY(-1px);
-    }
-
-    .notif-dropdown .notif-head .notif-actions #mailDelAll:active {
-        transform: translateY(0);
-        box-shadow: inset 0 2px 6px rgba(0, 0, 0, .15);
-    }
-
-    .notif-dropdown .notif-head .notif-actions #mailDelAll i {
-        margin-right: .15rem;
-    }
-
-    /* === Badge notificaciones === */
-
-    .header .notification {
-        position: relative;
-    }
-
-    .header .notification .badge {
-        position: absolute;
-        top: -6px;
-        right: -6px;
-        width: 22px;
-        height: 22px;
-        border-radius: 50%;
-        background: #f43f5e;
-        color: #ffffff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 12px;
-        line-height: 1;
-        padding: 0;
-    }
-
-    .header .notification .badge span {
-        position: relative;
-        top: 1px;
-        left: 1px;
-    }
-
-    /* ========= NUEVO DISEÑO PARA LAS SECCIONES DEL DASHBOARD ========= */
-
-    .section-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        margin-bottom: 0.75rem;
-        color: #0f172a;
-        display: flex;
-        align-items: center;
-        gap: .5rem;
-    }
-
-    .section-title i {
-        font-size: 1rem;
-        opacity: .8;
-    }
-
-    /* Panel de tareas rápidas */
-    .quick-actions {
-        margin-top: 2rem;
-    }
-
-    .quick-actions-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 1rem;
-    }
-
-    .quick-action {
-        border: none;
-        outline: none;
-        border-radius: 18px;
-        padding: 1rem 1.1rem;
-        display: flex;
-        align-items: center;
-        gap: .75rem;
-        font-size: .9rem;
-        font-weight: 500;
-        background: linear-gradient(135deg, #f9fafb 0%, #eef2ff 100%);
-        box-shadow: 0 10px 30px rgba(15, 23, 42, .05);
-        cursor: pointer;
-        transition: all .18s ease;
-        text-align: left;
-    }
-
-    .quick-action i {
-        font-size: 1.3rem;
-        padding: .6rem;
-        border-radius: 999px;
-        background: #ffffff;
-        box-shadow: 0 4px 12px rgba(15, 23, 42, .06);
-    }
-
-    .quick-action span {
-        flex: 1;
-    }
-
-    .quick-action small {
-        display: block;
-        font-size: .75rem;
-        color: #6b7280;
-        margin-top: .15rem;
-    }
-
-    .quick-action:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 14px 34px rgba(79, 70, 229, .18);
-        background: linear-gradient(135deg, #eef2ff 0%, #e0f2fe 100%);
-    }
-
-    .quick-action:active {
-        transform: translateY(0);
-        box-shadow: 0 6px 14px rgba(15, 23, 42, .16);
-    }
-
-    /* Grid principal: Actividad reciente + Próximos eventos académicos */
-    .dashboard-grid {
-        margin-top: 2rem;
-        display: grid;
-        grid-template-columns: 2fr 1.4fr;
-        gap: 1.5rem;
-    }
-
-    .dashboard-col {
-        min-width: 0;
-    }
-
-    @media(max-width: 992px) {
-        .dashboard-grid {
-            grid-template-columns: 1fr;
+        /* Contenedor del botón en la cabecera del dropdown de mensajes */
+        .notif-dropdown .notif-head .notif-actions {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
         }
-    }
 
-    /* Actividad reciente */
-    .activity-list {
-        background: #ffffff;
-        border-radius: 18px;
-        padding: 1rem 1.1rem;
-        box-shadow: 0 10px 30px rgba(15, 23, 42, .06);
-        max-height: 360px;
-        overflow: auto;
-    }
+        /* Botón "Eliminar todo" */
+        .notif-dropdown .notif-head .notif-actions #mailDelAll {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .5rem .9rem;
+            font-size: .85rem;
+            font-weight: 600;
+            border-radius: 12px;
+            border: 1px solid #ef4444;
+            color: #b91c1c;
+            background: linear-gradient(180deg, #ffffff 0%, #fff5f5 100%);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, .08), inset 0 1px 0 rgba(255, 255, 255, .6);
+            cursor: pointer;
+            transition: all .15s ease;
+            white-space: nowrap;
+        }
 
-    .activity-item {
-        display: flex;
-        gap: .8rem;
-        padding: .55rem 0.2rem;
-        border-bottom: 1px dashed #e5e7eb;
-    }
+        .notif-dropdown .notif-head .notif-actions #mailDelAll:hover {
+            color: #ffffff;
+            background: #ef4444;
+            border-color: #ef4444;
+            box-shadow: 0 6px 14px rgba(239, 68, 68, .25);
+            transform: translateY(-1px);
+        }
 
-    .activity-item:last-child {
-        border-bottom: none;
-    }
+        .notif-dropdown .notif-head .notif-actions #mailDelAll:active {
+            transform: translateY(0);
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, .15);
+        }
 
-    .activity-icon {
-        width: 36px;
-        height: 36px;
-        border-radius: 999px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: .9rem;
-    }
+        .notif-dropdown .notif-head .notif-actions #mailDelAll i {
+            margin-right: .15rem;
+        }
 
-    .activity-icon.success {
-        background: #ecfdf3;
-        color: #166534;
-    }
+        /* === Badge notificaciones === */
 
-    .activity-icon.info {
-        background: #eff6ff;
-        color: #1d4ed8;
-    }
+        .header .notification {
+            position: relative;
+        }
 
-    .activity-icon.warn {
-        background: #fffbeb;
-        color: #92400e;
-    }
+        .header .notification .badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #f43f5e;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+            line-height: 1;
+            padding: 0;
+        }
 
-    .activity-icon.danger {
-        background: #fef2f2;
-        color: #b91c1c;
-    }
+        .header .notification .badge span {
+            position: relative;
+            top: 1px;
+            left: 1px;
+        }
 
-    .activity-body {
-        flex: 1;
-        min-width: 0;
-    }
+        /* ========= NUEVO DISEÑO PARA LAS SECCIONES DEL DASHBOARD ========= */
 
-    .activity-title {
-        font-size: .88rem;
-        font-weight: 600;
-        color: #111827;
-        margin-bottom: .1rem;
-    }
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
 
-    .activity-text {
-        font-size: .78rem;
-        color: #6b7280;
-        margin-bottom: .15rem;
-    }
+        .section-title i {
+            font-size: 1rem;
+            opacity: .8;
+        }
 
-    .activity-meta {
-        font-size: .72rem;
-        color: #9ca3af;
-        display: flex;
-        flex-wrap: wrap;
-        gap: .4rem;
-        align-items: center;
-    }
+        /* Panel de tareas rápidas */
+        .quick-actions {
+            margin-top: 2rem;
+        }
 
-    .activity-pill {
-        padding: 0.05rem .45rem;
-        border-radius: 999px;
-        font-size: .68rem;
-        font-weight: 600;
-    }
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+        }
 
-    .activity-pill.success {
-        background: #dcfce7;
-        color: #166534;
-    }
+        .quick-action {
+            border: none;
+            outline: none;
+            border-radius: 18px;
+            padding: 1rem 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            font-size: .9rem;
+            font-weight: 500;
+            background: linear-gradient(135deg, #f9fafb 0%, #eef2ff 100%);
+            box-shadow: 0 10px 30px rgba(15, 23, 42, .05);
+            cursor: pointer;
+            transition: all .18s ease;
+            text-align: left;
+        }
 
-    .activity-pill.info {
-        background: #dbeafe;
-        color: #1d4ed8;
-    }
+        .quick-action i {
+            font-size: 1.3rem;
+            padding: .6rem;
+            border-radius: 999px;
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, .06);
+        }
 
-    .activity-pill.warn {
-        background: #fef3c7;
-        color: #92400e;
-    }
+        .quick-action span {
+            flex: 1;
+        }
 
-    .activity-pill.danger {
-        background: #fee2e2;
-        color: #b91c1c;
-    }
+        .quick-action small {
+            display: block;
+            font-size: .75rem;
+            color: #6b7280;
+            margin-top: .15rem;
+        }
 
-    .activity-empty {
-        font-size: .85rem;
-        color: #6b7280;
-        text-align: center;
-        padding: 1.4rem .5rem;
-    }
+        .quick-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 34px rgba(79, 70, 229, .18);
+            background: linear-gradient(135deg, #eef2ff 0%, #e0f2fe 100%);
+        }
 
-    .activity-empty.error {
-        color: #b91c1c;
-    }
+        .quick-action:active {
+            transform: translateY(0);
+            box-shadow: 0 6px 14px rgba(15, 23, 42, .16);
+        }
 
-    /* Tarjeta base (reutilizada) */
-    .cycle-card {
-        background: radial-gradient(circle at top left, #e0f2fe 0%, #eef2ff 35%, #ffffff 100%);
-        border-radius: 18px;
-        padding: 1.2rem 1.3rem;
-        box-shadow: 0 10px 30px rgba(15, 23, 42, .06);
-        display: flex;
-        flex-direction: column;
-        gap: .8rem;
-    }
+        /* Grid principal: Actividad reciente + Próximos eventos académicos */
+        .dashboard-grid {
+            margin-top: 2rem;
+            display: grid;
+            grid-template-columns: 2fr 1.4fr;
+            gap: 1.5rem;
+        }
 
-    .cycle-name {
-        font-size: 1rem;
-        font-weight: 600;
-        color: #111827;
-    }
+        .dashboard-col {
+            min-width: 0;
+        }
 
-    /* ===== Próximos eventos académicos ===== */
+        @media(max-width: 992px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
 
-    .events-list {
-        display: flex;
-        flex-direction: column;
-        gap: .6rem;
-        margin-top: .2rem;
-    }
+        /* Actividad reciente */
+        .activity-list {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 1rem 1.1rem;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, .06);
+            max-height: 360px;
+            overflow: auto;
+        }
 
-    .event-item {
-        display: flex;
-        align-items: center;
-        gap: .75rem;
-        padding: .45rem .5rem;
-        border-radius: 12px;
-        background: rgba(255, 255, 255, .7);
-    }
+        .activity-item {
+            display: flex;
+            gap: .8rem;
+            padding: .55rem 0.2rem;
+            border-bottom: 1px dashed #e5e7eb;
+        }
 
-    .event-date {
-        width: 46px;
-        min-width: 46px;
-        height: 46px;
-        border-radius: 14px;
-        background: #0f172a;
-        color: #ffffff;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        line-height: 1.1;
-    }
+        .activity-item:last-child {
+            border-bottom: none;
+        }
 
-    .event-day {
-        font-size: 1.05rem;
-    }
+        .activity-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .9rem;
+        }
 
-    .event-month {
-        font-size: .7rem;
-        letter-spacing: .06em;
-        text-transform: uppercase;
-        opacity: .85;
-    }
+        .activity-icon.success {
+            background: #ecfdf3;
+            color: #166534;
+        }
 
-    .event-info {
-        flex: 1;
-        min-width: 0;
-    }
+        .activity-icon.info {
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
 
-    .event-title {
-        font-size: .9rem;
-        font-weight: 600;
-        color: #111827;
-    }
+        .activity-icon.warn {
+            background: #fffbeb;
+            color: #92400e;
+        }
 
-    .event-meta {
-        font-size: .75rem;
-        color: #6b7280;
-        margin-top: .05rem;
-    }
+        .activity-icon.danger {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
 
-    .event-tag {
-        padding: .18rem .6rem;
-        border-radius: 999px;
-        font-size: .7rem;
-        font-weight: 600;
-        white-space: nowrap;
-    }
+        .activity-body {
+            flex: 1;
+            min-width: 0;
+        }
 
-    .event-tag.start {
-        background: #bbf7d0;
-        color: #166534;
-    }
+        .activity-title {
+            font-size: .88rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: .1rem;
+        }
 
-    .event-tag.partial {
-        background: #dbeafe;
-        color: #1d4ed8;
-    }
+        .activity-text {
+            font-size: .78rem;
+            color: #6b7280;
+            margin-bottom: .15rem;
+        }
 
-    .event-tag.vacaciones {
-        background: #fef3c7;
-        color: #92400e;
-    }
+        .activity-meta {
+            font-size: .72rem;
+            color: #9ca3af;
+            display: flex;
+            flex-wrap: wrap;
+            gap: .4rem;
+            align-items: center;
+        }
 
-    .event-tag.fin {
-        background: #fee2e2;
-        color: #b91c1c;
-    }
+        .activity-pill {
+            padding: 0.05rem .45rem;
+            border-radius: 999px;
+            font-size: .68rem;
+            font-weight: 600;
+        }
 
-    .events-link {
-        margin-top: .6rem;
-        font-size: .78rem;
-        display: inline-flex;
-        align-items: center;
-        gap: .35rem;
-        color: #2563eb;
-        text-decoration: none;
-        font-weight: 500;
-    }
+        .activity-pill.success {
+            background: #dcfce7;
+            color: #166534;
+        }
 
-    .events-link i {
-        font-size: .8rem;
-    }
+        .activity-pill.info {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
 
-    .events-link:hover {
-        text-decoration: underline;
-    }
+        .activity-pill.warn {
+            background: #fef3c7;
+            color: #92400e;
+        }
 
-    /* Utilidad para el buscador (ocultar elementos) */
-    .is-hidden {
-        display: none !important;
-    }
+        .activity-pill.danger {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .activity-empty {
+            font-size: .85rem;
+            color: #6b7280;
+            text-align: center;
+            padding: 1.4rem .5rem;
+        }
+
+        .activity-empty.error {
+            color: #b91c1c;
+        }
+
+        /* Tarjeta base (reutilizada) */
+        .cycle-card {
+            background: radial-gradient(circle at top left, #e0f2fe 0%, #eef2ff 35%, #ffffff 100%);
+            border-radius: 18px;
+            padding: 1.2rem 1.3rem;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, .06);
+            display: flex;
+            flex-direction: column;
+            gap: .8rem;
+        }
+
+        .cycle-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        /* ===== Próximos eventos académicos ===== */
+
+        .events-list {
+            display: flex;
+            flex-direction: column;
+            gap: .6rem;
+            margin-top: .2rem;
+        }
+
+        .event-item {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            padding: .45rem .5rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .7);
+        }
+
+        .event-date {
+            width: 46px;
+            min-width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            background: #0f172a;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        .event-day {
+            font-size: 1.05rem;
+        }
+
+        .event-month {
+            font-size: .7rem;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            opacity: .85;
+        }
+
+        .event-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .event-title {
+            font-size: .9rem;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .event-meta {
+            font-size: .75rem;
+            color: #6b7280;
+            margin-top: .05rem;
+        }
+
+        .event-tag {
+            padding: .18rem .6rem;
+            border-radius: 999px;
+            font-size: .7rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .event-tag.start {
+            background: #bbf7d0;
+            color: #166534;
+        }
+
+        .event-tag.partial {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .event-tag.vacaciones {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .event-tag.fin {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .events-link {
+            margin-top: .6rem;
+            font-size: .78rem;
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .events-link i {
+            font-size: .8rem;
+        }
+
+        .events-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Utilidad para el buscador (ocultar elementos) */
+        .is-hidden {
+            display: none !important;
+        }
     </style>
 </head>
 
@@ -700,105 +700,105 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
             </div>
 
             <script>
-            window.rolUsuarioPHP = "<?= $rolUsuario; ?>";
+                window.rolUsuarioPHP = "<?= $rolUsuario; ?>";
             </script>
             <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
 
             <!-- ===== JS Notificaciones / Mensajes + ACTIVIDAD RECIENTE ===== -->
             <script>
-            (function() {
-                const bellWrap = document.getElementById('notifBell');
-                const mailWrap = document.getElementById('notifMail');
-                const bellBadge = bellWrap?.querySelector('.badge');
-                const mailBadge = mailWrap?.querySelector('.badge');
+                (function () {
+                    const bellWrap = document.getElementById('notifBell');
+                    const mailWrap = document.getElementById('notifMail');
+                    const bellBadge = bellWrap?.querySelector('.badge');
+                    const mailBadge = mailWrap?.querySelector('.badge');
 
-                const API_BASE = '/Plataforma_UT/api/notificaciones_admin.php';
-                const AUTO_MARK_ON_OPEN = true;
+                    const API_BASE = '/Plataforma_UT/api/notificaciones_admin.php';
+                    const AUTO_MARK_ON_OPEN = true;
 
-                function setBadge(el, value) {
-                    const n = Number(value) || 0;
-                    if (!el) return;
+                    function setBadge(el, value) {
+                        const n = Number(value) || 0;
+                        if (!el) return;
 
-                    if (n > 0) {
-                        el.innerHTML = `<span>${n}</span>`;
-                        el.style.display = 'flex';
-                    } else {
-                        el.innerHTML = `<span>0</span>`;
-                        el.style.display = 'none';
-                    }
-                }
-
-                async function fetchCounts() {
-                    try {
-                        const res = await fetch(`${API_BASE}?accion=counts`, {
-                            cache: 'no-store'
-                        });
-                        if (!res.ok) throw new Error();
-                        const d = await res.json();
-                        if (d.status === 'ok') {
-                            setBadge(bellBadge, d.bell);
-                            setBadge(mailBadge, d.mail);
+                        if (n > 0) {
+                            el.innerHTML = `<span>${n}</span>`;
+                            el.style.display = 'flex';
+                        } else {
+                            el.innerHTML = `<span>0</span>`;
+                            el.style.display = 'none';
                         }
-                    } catch {}
-                }
-
-                fetchCounts();
-                let timer = setInterval(fetchCounts, 5000);
-                document.addEventListener('visibilitychange', () => {
-                    if (document.hidden) {
-                        clearInterval(timer);
-                    } else {
-                        fetchCounts();
-                        timer = setInterval(fetchCounts, 5000);
                     }
-                });
 
-                function pickIconClass(a = '') {
-                    a = String(a).toLowerCase();
-                    if (a.includes('baja') || a.includes('eliminar')) return 'danger';
-                    if (a.includes('suspens')) return 'warn';
-                    if (a.includes('editar') || a.includes('actualiz') || a.includes('reactivar')) return 'info';
-                    return 'success';
-                }
+                    async function fetchCounts() {
+                        try {
+                            const res = await fetch(`${API_BASE}?accion=counts`, {
+                                cache: 'no-store'
+                            });
+                            if (!res.ok) throw new Error();
+                            const d = await res.json();
+                            if (d.status === 'ok') {
+                                setBadge(bellBadge, d.bell);
+                                setBadge(mailBadge, d.mail);
+                            }
+                        } catch { }
+                    }
 
-                function pickIcon(a = '') {
-                    a = String(a).toLowerCase();
-                    if (a.includes('baja') || a.includes('eliminar')) return 'fa-user-minus';
-                    if (a.includes('suspens')) return 'fa-circle-pause';
-                    if (a.includes('editar') || a.includes('actualiz') || a.includes('reactivar')) return 'fa-pen';
-                    return 'fa-check-circle';
-                }
+                    fetchCounts();
+                    let timer = setInterval(fetchCounts, 5000);
+                    document.addEventListener('visibilitychange', () => {
+                        if (document.hidden) {
+                            clearInterval(timer);
+                        } else {
+                            fetchCounts();
+                            timer = setInterval(fetchCounts, 5000);
+                        }
+                    });
 
-                function escapeHtml(s) {
-                    return String(s).replace(/&/g, '&amp;')
-                        .replace(/</g, '&lt;')
-                        .replace(/>/g, '&gt;')
-                        .replace(/"/g, '&quot;')
-                        .replace(/'/g, '&#39;');
-                }
+                    function pickIconClass(a = '') {
+                        a = String(a).toLowerCase();
+                        if (a.includes('baja') || a.includes('eliminar')) return 'danger';
+                        if (a.includes('suspens')) return 'warn';
+                        if (a.includes('editar') || a.includes('actualiz') || a.includes('reactivar')) return 'info';
+                        return 'success';
+                    }
 
-                let dropdownBell = null,
-                    dropdownMail = null;
+                    function pickIcon(a = '') {
+                        a = String(a).toLowerCase();
+                        if (a.includes('baja') || a.includes('eliminar')) return 'fa-user-minus';
+                        if (a.includes('suspens')) return 'fa-circle-pause';
+                        if (a.includes('editar') || a.includes('actualiz') || a.includes('reactivar')) return 'fa-pen';
+                        return 'fa-check-circle';
+                    }
 
-                /* ======== ACTIVIDAD RECIENTE ======== */
-                const actividadReciente = document.getElementById('actividadReciente');
+                    function escapeHtml(s) {
+                        return String(s).replace(/&/g, '&amp;')
+                            .replace(/</g, '&lt;')
+                            .replace(/>/g, '&gt;')
+                            .replace(/"/g, '&quot;')
+                            .replace(/'/g, '&#39;');
+                    }
 
-                async function cargarActividadReciente() {
-                    if (!actividadReciente) return;
-                    try {
-                        const r = await fetch(`${API_BASE}?accion=historial&limit=5`, {
-                            cache: 'no-store'
-                        });
-                        const d = await r.json();
-                        if (d.status === 'ok' && d.items.length) {
-                            actividadReciente.innerHTML = '';
-                            d.items.forEach(n => {
-                                const isMsg = (n.tipo === 'mensaje');
-                                const pillClass = isMsg ? 'info' : pickIconClass(n.accion);
-                                const icon = isMsg ? 'fa-envelope-open-text' : pickIcon(n.accion);
-                                const item = document.createElement('div');
-                                item.className = 'activity-item';
-                                item.innerHTML = `
+                    let dropdownBell = null,
+                        dropdownMail = null;
+
+                    /* ======== ACTIVIDAD RECIENTE ======== */
+                    const actividadReciente = document.getElementById('actividadReciente');
+
+                    async function cargarActividadReciente() {
+                        if (!actividadReciente) return;
+                        try {
+                            const r = await fetch(`${API_BASE}?accion=historial&limit=5`, {
+                                cache: 'no-store'
+                            });
+                            const d = await r.json();
+                            if (d.status === 'ok' && d.items.length) {
+                                actividadReciente.innerHTML = '';
+                                d.items.forEach(n => {
+                                    const isMsg = (n.tipo === 'mensaje');
+                                    const pillClass = isMsg ? 'info' : pickIconClass(n.accion);
+                                    const icon = isMsg ? 'fa-envelope-open-text' : pickIcon(n.accion);
+                                    const item = document.createElement('div');
+                                    item.className = 'activity-item';
+                                    item.innerHTML = `
                                         <div class="activity-icon ${pillClass}">
                                             <i class="fas ${icon}"></i>
                                         </div>
@@ -814,36 +814,36 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
                                                 <span>· ${new Date(n.created_at).toLocaleString()}</span>
                                             </div>
                                         </div>`;
-                                actividadReciente.appendChild(item);
-                            });
-                        } else {
+                                    actividadReciente.appendChild(item);
+                                });
+                            } else {
+                                actividadReciente.innerHTML =
+                                    '<div class="activity-empty">Sin actividad reciente.</div>';
+                            }
+                        } catch (e) {
                             actividadReciente.innerHTML =
-                                '<div class="activity-empty">Sin actividad reciente.</div>';
+                                '<div class="activity-empty error">No se pudo cargar la actividad.</div>';
                         }
-                    } catch (e) {
-                        actividadReciente.innerHTML =
-                            '<div class="activity-empty error">No se pudo cargar la actividad.</div>';
                     }
-                }
 
-                cargarActividadReciente();
-                setInterval(cargarActividadReciente, 15000);
+                    cargarActividadReciente();
+                    setInterval(cargarActividadReciente, 15000);
 
-                /* ===== CAMPANA: solo NO leídas ===== */
-                bellWrap?.addEventListener('click', async (e) => {
-                    e.stopPropagation();
-                    if (dropdownMail) dropdownMail.style.display = 'none';
+                    /* ===== CAMPANA: solo NO leídas ===== */
+                    bellWrap?.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        if (dropdownMail) dropdownMail.style.display = 'none';
 
-                    if (!dropdownBell) {
-                        dropdownBell = document.createElement('div');
-                        dropdownBell.className = 'notif-dropdown';
-                        document.body.appendChild(dropdownBell);
-                    }
-                    const rect = bellWrap.getBoundingClientRect();
-                    dropdownBell.style.top = (rect.bottom + 12) + 'px';
-                    dropdownBell.style.right = (window.innerWidth - rect.right + 12) + 'px';
+                        if (!dropdownBell) {
+                            dropdownBell = document.createElement('div');
+                            dropdownBell.className = 'notif-dropdown';
+                            document.body.appendChild(dropdownBell);
+                        }
+                        const rect = bellWrap.getBoundingClientRect();
+                        dropdownBell.style.top = (rect.bottom + 12) + 'px';
+                        dropdownBell.style.right = (window.innerWidth - rect.right + 12) + 'px';
 
-                    dropdownBell.innerHTML = `
+                        dropdownBell.innerHTML = `
       <div class="notif-head">
         <span>Notificaciones</span>
         <div class="notif-actions">
@@ -851,18 +851,18 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
         </div>
       </div>`;
 
-                    try {
-                        const r = await fetch(`${API_BASE}?accion=ultimas_no_leidas&limit=10`, {
-                            cache: 'no-store'
-                        });
-                        const d = await r.json();
-                        if (d.status === 'ok' && d.items.length) {
-                            d.items.forEach(n => {
-                                const icoClass = pickIconClass(n.accion);
-                                const ico = pickIcon(n.accion);
-                                const item = document.createElement('div');
-                                item.className = 'notif-item unread';
-                                item.innerHTML = `
+                        try {
+                            const r = await fetch(`${API_BASE}?accion=ultimas_no_leidas&limit=10`, {
+                                cache: 'no-store'
+                            });
+                            const d = await r.json();
+                            if (d.status === 'ok' && d.items.length) {
+                                d.items.forEach(n => {
+                                    const icoClass = pickIconClass(n.accion);
+                                    const ico = pickIcon(n.accion);
+                                    const item = document.createElement('div');
+                                    item.className = 'notif-item unread';
+                                    item.innerHTML = `
             <div class="notif-ico ${icoClass}"><i class="fas ${ico}"></i></div>
             <div>
               <div class="notif-title">${escapeHtml(n.titulo || '')}</div>
@@ -876,66 +876,66 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
             <button class="notif-del" data-id="${n.id}" title="Eliminar">
               <i class="fas fa-trash"></i>
             </button>`;
-                                dropdownBell.appendChild(item);
-                            });
-                            dropdownBell.innerHTML += `
+                                    dropdownBell.appendChild(item);
+                                });
+                                dropdownBell.innerHTML += `
           <div class="notif-foot">
             <a href="#" class="notif-link" id="openMailAll" role="button">Ver historial</a>
           </div>`;
-                        } else {
-                            dropdownBell.innerHTML += `
+                            } else {
+                                dropdownBell.innerHTML += `
           <div class="notif-empty"><strong>Sin notificaciones</strong>
           <div>No hay movimientos nuevos.</div></div>`;
+                            }
+                        } catch {
+                            dropdownBell.innerHTML +=
+                                `<div class="notif-empty" style="color:#c00">Error cargando</div>`;
                         }
-                    } catch {
-                        dropdownBell.innerHTML +=
-                            `<div class="notif-empty" style="color:#c00">Error cargando</div>`;
-                    }
 
-                    dropdownBell.querySelector('#bellMarkAll')?.addEventListener('click', async () => {
-                        await fetch(`${API_BASE}?accion=marcar_leidas`, {
-                            method: 'POST'
+                        dropdownBell.querySelector('#bellMarkAll')?.addEventListener('click', async () => {
+                            await fetch(`${API_BASE}?accion=marcar_leidas`, {
+                                method: 'POST'
+                            });
+                            setBadge(bellBadge, 0);
+                            dropdownBell.querySelectorAll('.notif-item').forEach(el => el
+                                .remove());
+                            dropdownBell.querySelector('.notif-foot')?.remove();
+                            fetchCounts();
+                            cargarActividadReciente();
                         });
-                        setBadge(bellBadge, 0);
-                        dropdownBell.querySelectorAll('.notif-item').forEach(el => el
-                            .remove());
-                        dropdownBell.querySelector('.notif-foot')?.remove();
-                        fetchCounts();
-                        cargarActividadReciente();
+
+                        dropdownBell.querySelector('#openMailAll')?.addEventListener('click', (ev) => {
+                            ev.preventDefault();
+                            dropdownBell.style.display = 'none';
+                            openMailDropdown(100);
+                        });
+
+                        dropdownBell.style.display = (dropdownBell.style.display === 'none' || !dropdownBell
+                            .style.display) ? 'block' : 'none';
+
+                        if (AUTO_MARK_ON_OPEN) {
+                            await fetch(`${API_BASE}?accion=marcar_leidas`, {
+                                method: 'POST'
+                            });
+                            setBadge(bellBadge, 0);
+                            fetchCounts();
+                            cargarActividadReciente();
+                        }
                     });
 
-                    dropdownBell.querySelector('#openMailAll')?.addEventListener('click', (ev) => {
-                        ev.preventDefault();
-                        dropdownBell.style.display = 'none';
-                        openMailDropdown(100);
-                    });
+                    /* ===== SOBRE: historial completo ===== */
+                    async function openMailDropdown(limit = 50) {
+                        if (dropdownBell) dropdownBell.style.display = 'none';
+                        if (!dropdownMail) {
+                            dropdownMail = document.createElement('div');
+                            dropdownMail.className = 'notif-dropdown';
+                            document.body.appendChild(dropdownMail);
+                        }
+                        const rect = mailWrap.getBoundingClientRect();
+                        dropdownMail.style.top = (rect.bottom + 12) + 'px';
+                        dropdownMail.style.right = (window.innerWidth - rect.right + 12) + 'px';
 
-                    dropdownBell.style.display = (dropdownBell.style.display === 'none' || !dropdownBell
-                        .style.display) ? 'block' : 'none';
-
-                    if (AUTO_MARK_ON_OPEN) {
-                        await fetch(`${API_BASE}?accion=marcar_leidas`, {
-                            method: 'POST'
-                        });
-                        setBadge(bellBadge, 0);
-                        fetchCounts();
-                        cargarActividadReciente();
-                    }
-                });
-
-                /* ===== SOBRE: historial completo ===== */
-                async function openMailDropdown(limit = 50) {
-                    if (dropdownBell) dropdownBell.style.display = 'none';
-                    if (!dropdownMail) {
-                        dropdownMail = document.createElement('div');
-                        dropdownMail.className = 'notif-dropdown';
-                        document.body.appendChild(dropdownMail);
-                    }
-                    const rect = mailWrap.getBoundingClientRect();
-                    dropdownMail.style.top = (rect.bottom + 12) + 'px';
-                    dropdownMail.style.right = (window.innerWidth - rect.right + 12) + 'px';
-
-                    dropdownMail.innerHTML = `
+                        dropdownMail.innerHTML = `
       <div class="notif-head">
         <span>Mensajes</span>
         <div class="notif-actions">
@@ -943,20 +943,20 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
         </div>
       </div>`;
 
-                    try {
-                        const r = await fetch(`${API_BASE}?accion=historial&limit=${limit}`, {
-                            cache: 'no-store'
-                        });
-                        const d = await r.json();
-                        if (d.status === 'ok' && d.items.length) {
-                            d.items.forEach(n => {
-                                const isMsg = (n.tipo === 'mensaje');
-                                const pillClass = isMsg ? 'info' : pickIconClass(n.accion);
-                                const icon = isMsg ? 'fa-envelope-open-text' : pickIcon(n.accion);
-                                const secretaria = n.secretaria_nombre || '';
-                                const item = document.createElement('div');
-                                item.className = 'notif-item';
-                                item.innerHTML = `
+                        try {
+                            const r = await fetch(`${API_BASE}?accion=historial&limit=${limit}`, {
+                                cache: 'no-store'
+                            });
+                            const d = await r.json();
+                            if (d.status === 'ok' && d.items.length) {
+                                d.items.forEach(n => {
+                                    const isMsg = (n.tipo === 'mensaje');
+                                    const pillClass = isMsg ? 'info' : pickIconClass(n.accion);
+                                    const icon = isMsg ? 'fa-envelope-open-text' : pickIcon(n.accion);
+                                    const secretaria = n.secretaria_nombre || '';
+                                    const item = document.createElement('div');
+                                    item.className = 'notif-item';
+                                    item.innerHTML = `
             <div class="notif-ico ${pillClass}"><i class="fas ${icon}"></i></div>
             <div>
               <div class="notif-title">${escapeHtml(n.titulo || '')}</div>
@@ -971,171 +971,173 @@ $iniciales = strtoupper(substr($usuarioSesion['nombre'] ?? 'U', 0, 1) . substr($
             <button class="notif-del" data-id="${n.id}" title="Eliminar">
               <i class="fas fa-trash"></i>
             </button>`;
-                                dropdownMail.appendChild(item);
+                                    dropdownMail.appendChild(item);
+                                });
+                                dropdownMail.innerHTML +=
+                                    `<div class="notif-foot"><a href="#" class="notif-link" id="closeMail">Cerrar</a></div>`;
+                            } else {
+                                dropdownMail.innerHTML +=
+                                    `<div class="notif-empty"><strong>Sin mensajes</strong><div>No hay actividades registradas.</div></div>`;
+                            }
+                        } catch {
+                            dropdownMail.innerHTML +=
+                                `<div class="notif-empty" style="color:#c00">Error cargando</div>`;
+                        }
+
+                        dropdownMail.querySelector('#mailDelAll')?.addEventListener('click', async () => {
+                            const fd = new FormData();
+                            fd.append('accion', 'eliminar_todas');
+                            fd.append('tipo', 'todos');
+                            await fetch(API_BASE, {
+                                method: 'POST',
+                                body: fd
                             });
                             dropdownMail.innerHTML +=
-                                `<div class="notif-foot"><a href="#" class="notif-link" id="closeMail">Cerrar</a></div>`;
-                        } else {
-                            dropdownMail.innerHTML +=
-                                `<div class="notif-empty"><strong>Sin mensajes</strong><div>No hay actividades registradas.</div></div>`;
-                        }
-                    } catch {
-                        dropdownMail.innerHTML +=
-                            `<div class="notif-empty" style="color:#c00">Error cargando</div>`;
+                                `<div class="notif-empty"><strong>Sin mensajes</strong></div>`;
+                            setBadge(mailBadge, 0);
+                            fetchCounts();
+                            cargarActividadReciente();
+                        });
+
+                        dropdownMail.querySelector('#closeMail')?.addEventListener('click', (ev) => {
+                            ev.preventDefault();
+                            dropdownMail.style.display = 'none';
+                        });
+
+                        dropdownMail.style.display = (dropdownMail.style.display === 'none' || !dropdownMail.style
+                            .display) ? 'block' : 'none';
                     }
 
-                    dropdownMail.querySelector('#mailDelAll')?.addEventListener('click', async () => {
+                    mailWrap?.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        openMailDropdown(50);
+                    });
+
+                    document.addEventListener('click', async (ev) => {
+                        const btn = ev.target.closest('.notif-del');
+                        if (!btn) return;
+                        const id = btn.dataset.id;
+                        if (!id) return;
                         const fd = new FormData();
-                        fd.append('accion', 'eliminar_todas');
-                        fd.append('tipo', 'todos');
+                        fd.append('accion', 'eliminar');
+                        fd.append('id', id);
                         await fetch(API_BASE, {
                             method: 'POST',
                             body: fd
                         });
-                        dropdownMail.innerHTML +=
-                            `<div class="notif-empty"><strong>Sin mensajes</strong></div>`;
-                        setBadge(mailBadge, 0);
+                        btn.closest('.notif-item')?.remove();
                         fetchCounts();
                         cargarActividadReciente();
                     });
 
-                    dropdownMail.querySelector('#closeMail')?.addEventListener('click', (ev) => {
-                        ev.preventDefault();
-                        dropdownMail.style.display = 'none';
+                    document.addEventListener('click', () => {
+                        document.querySelectorAll('.notif-dropdown').forEach(dd => dd.style.display = 'none');
                     });
-
-                    dropdownMail.style.display = (dropdownMail.style.display === 'none' || !dropdownMail.style
-                        .display) ? 'block' : 'none';
-                }
-
-                mailWrap?.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    openMailDropdown(50);
-                });
-
-                document.addEventListener('click', async (ev) => {
-                    const btn = ev.target.closest('.notif-del');
-                    if (!btn) return;
-                    const id = btn.dataset.id;
-                    if (!id) return;
-                    const fd = new FormData();
-                    fd.append('accion', 'eliminar');
-                    fd.append('id', id);
-                    await fetch(API_BASE, {
-                        method: 'POST',
-                        body: fd
-                    });
-                    btn.closest('.notif-item')?.remove();
-                    fetchCounts();
-                    cargarActividadReciente();
-                });
-
-                document.addEventListener('click', () => {
-                    document.querySelectorAll('.notif-dropdown').forEach(dd => dd.style.display = 'none');
-                });
-            })();
+                })();
             </script>
 
             <!-- ===== JS BUSCADOR GLOBAL & PANEL DE TAREAS RÁPIDAS ===== -->
             <script>
-            // Buscador global
-            (function() {
-                const input = document.getElementById('globalSearch');
-                const icon = document.querySelector('.search-bar i');
-                const menu = document.getElementById('menu');
-                if (!input || !menu) return;
+                // Buscador global
+                (function () {
+                    const input = document.getElementById('globalSearch');
+                    const icon = document.querySelector('.search-bar i');
+                    const menu = document.getElementById('menu');
+                    if (!input || !menu) return;
 
-                const normalizar = (t) =>
-                    t.toLowerCase()
-                    .normalize("NFD")
-                    .replace(/[\u0300-\u036f]/g, "");
+                    const normalizar = (t) =>
+                        t.toLowerCase()
+                            .normalize("NFD")
+                            .replace(/[\u0300-\u036f]/g, "");
 
-                function ejecutarBusqueda() {
-                    const term = normalizar(input.value.trim());
-                    if (!term) return;
+                    function ejecutarBusqueda() {
+                        const term = normalizar(input.value.trim());
+                        if (!term) return;
 
-                    const items = menu.querySelectorAll('a, button, .menu-item');
-                    for (const el of items) {
-                        const texto = normalizar(el.textContent || '');
-                        if (texto.includes(term)) {
-                            const clickable = (el.tagName === 'A' || el.tagName === 'BUTTON') ?
-                                el :
-                                el.querySelector('a, button');
-                            if (clickable) {
-                                clickable.click();
+                        const items = menu.querySelectorAll('a, button, .menu-item');
+                        for (const el of items) {
+                            const texto = normalizar(el.textContent || '');
+                            if (texto.includes(term)) {
+                                const clickable = (el.tagName === 'A' || el.tagName === 'BUTTON') ?
+                                    el :
+                                    el.querySelector('a, button');
+                                if (clickable) {
+                                    clickable.click();
+                                    return;
+                                }
+                            }
+                        }
+
+                        const quickButtons = document.querySelectorAll('.quick-action');
+                        for (const btn of quickButtons) {
+                            const texto = normalizar(btn.textContent || '');
+                            if (texto.includes(term)) {
+                                const url = btn.dataset.url;
+                                if (url) {
+                                    window.location.href = url;
+                                } else {
+                                    btn.click();
+                                }
                                 return;
                             }
                         }
                     }
 
-                    const quickButtons = document.querySelectorAll('.quick-action');
-                    for (const btn of quickButtons) {
-                        const texto = normalizar(btn.textContent || '');
-                        if (texto.includes(term)) {
+                    input.addEventListener('input', () => {
+                        const term = normalizar(input.value.trim());
+                        const items = menu.querySelectorAll('a, button, .menu-item');
+                        items.forEach(el => {
+                            const texto = normalizar(el.textContent || '');
+                            const match = !term || texto.includes(term);
+                            const cont = el.closest('li, .menu-item, a');
+                            if (cont) cont.classList.toggle('is-hidden', !match);
+                        });
+                    });
+
+                    input.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            ejecutarBusqueda();
+                        }
+                    });
+
+                    icon?.addEventListener('click', ejecutarBusqueda);
+                })();
+
+                // Panel de tareas rápidas
+                (function () {
+                    const menu = document.getElementById('menu');
+                    const buttons = document.querySelectorAll('.quick-action');
+                    if (!buttons.length) return;
+
+                    function irAlMenu(label) {
+                        if (!menu) return;
+                        const objetivo = (label || '').toLowerCase();
+                        const items = menu.querySelectorAll('a, button, .menu-item');
+                        for (const el of items) {
+                            const texto = (el.textContent || '').toLowerCase();
+                            if (texto.includes(objetivo)) {
+                                el.click();
+                                break;
+                            }
+                        }
+                    }
+
+                    buttons.forEach(btn => {
+                        btn.addEventListener('click', () => {
                             const url = btn.dataset.url;
                             if (url) {
                                 window.location.href = url;
-                            } else {
-                                btn.click();
+                                return;
                             }
-                            return;
-                        }
-                    }
-                }
-
-                input.addEventListener('input', () => {
-                    const term = normalizar(input.value.trim());
-                    const items = menu.querySelectorAll('a, button, .menu-item');
-                    items.forEach(el => {
-                        const texto = normalizar(el.textContent || '');
-                        const match = !term || texto.includes(term);
-                        const cont = el.closest('li, .menu-item, a');
-                        if (cont) cont.classList.toggle('is-hidden', !match);
+                            const target = btn.dataset.target || '';
+                            irAlMenu(target);
+                        });
                     });
-                });
-
-                input.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') {
-                        ejecutarBusqueda();
-                    }
-                });
-
-                icon?.addEventListener('click', ejecutarBusqueda);
-            })();
-
-            // Panel de tareas rápidas
-            (function() {
-                const menu = document.getElementById('menu');
-                const buttons = document.querySelectorAll('.quick-action');
-                if (!buttons.length) return;
-
-                function irAlMenu(label) {
-                    if (!menu) return;
-                    const objetivo = (label || '').toLowerCase();
-                    const items = menu.querySelectorAll('a, button, .menu-item');
-                    for (const el of items) {
-                        const texto = (el.textContent || '').toLowerCase();
-                        if (texto.includes(objetivo)) {
-                            el.click();
-                            break;
-                        }
-                    }
-                }
-
-                buttons.forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const url = btn.dataset.url;
-                        if (url) {
-                            window.location.href = url;
-                            return;
-                        }
-                        const target = btn.dataset.target || '';
-                        irAlMenu(target);
-                    });
-                });
-            })();
+                })();
             </script>
-
+            <script>
+                window.rolUsuarioPHP = "<?= $rolUsuario; ?>";
+            </script>
         </div>
     </div>
 </body>
