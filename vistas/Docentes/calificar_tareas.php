@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 }
 
-// 📦 Obtener todas las entregas del docente
+// 📦 Entregas (ya oculta 'Calificada' desde el controlador)
 $entregas = CalificarTareasController::obtenerTodasLasEntregasDocente($idDocente);
 ?>
 <!DOCTYPE html>
@@ -76,32 +76,50 @@ $entregas = CalificarTareasController::obtenerTodasLasEntregasDocente($idDocente
             <tbody>
               <?php while ($e = $entregas->fetch_assoc()): ?>
                 <?php
-                  // Calcular si fue fuera de tiempo o después de devolución
+                  // ⏰ Etiqueta de fuera de tiempo
                   $estadoExtra = '';
+                  $fueraTiempo = false;
                   if (!empty($e['fecha_envio']) && !empty($e['fecha_limite'])) {
                     $limite = new DateTime($e['fecha_limite']);
                     $envio = new DateTime($e['fecha_envio']);
                     if ($envio > $limite) {
+                      $fueraTiempo = true;
                       $estadoExtra = ' (⏰ fuera de tiempo)';
                     }
                   }
-                  if ($e['estado'] === 'Devuelta') {
+
+                  // 🎨 Badges por estado
+                  $estado = $e['estado'] ?? '—';
+                  if ($estado === 'Devuelta') {
                     $estadoClase = 'tag warning';
-                  } elseif ($e['estado'] === 'Calificada') {
-                    $estadoClase = 'tag success';
-                  } else {
+                    $rowClass    = 'row-devuelta';
+                  } elseif ($estado === 'Reentregada') {
+                    $estadoClase = 'tag info-strong';
+                    $rowClass    = 'row-reentregada';
+                  } elseif ($estado === 'Entregada' || $estado === null || $estado === '') {
                     $estadoClase = 'tag info';
+                    $rowClass    = 'row-entregada';
+                  } else {
+                    $estadoClase = 'tag';
+                    $rowClass    = '';
                   }
+
+                  // Si es fuera de tiempo, añadimos clase de fila
+                  if ($fueraTiempo) {
+                    $rowClass .= ($rowClass ? ' ' : '') . 'row-fueratiempo';
+                  }
+
+                  $archivoHref = !empty($e['archivo']) ? '/Plataforma_UT/'.ltrim($e['archivo'], '/\\') : '';
                 ?>
-                <tr>
+                <tr class="<?= htmlspecialchars($rowClass) ?>">
                   <td><?= htmlspecialchars($e['nombre_materia'] ?? '—') ?></td>
                   <td><?= htmlspecialchars($e['titulo_tarea'] ?? '—') ?></td>
                   <td><?= htmlspecialchars(($e['nombre_alumno'] ?? '') . ' ' . ($e['apellido_paterno'] ?? '')) ?></td>
                   <td>
-                    <?php if (!empty($e['archivo'])): ?>
+                    <?php if (!empty($archivoHref)): ?>
                       <button class="btn-sm btn-ver"
-                        data-archivo="/Plataforma_UT/<?= htmlspecialchars($e['archivo']) ?>"
-                        data-nombre="<?= basename($e['archivo']) ?>">
+                        data-archivo="<?= htmlspecialchars($archivoHref) ?>"
+                        data-nombre="<?= htmlspecialchars(basename($archivoHref)) ?>">
                         <i class="fa-solid fa-eye"></i> Ver
                       </button>
                     <?php else: ?>
@@ -110,12 +128,12 @@ $entregas = CalificarTareasController::obtenerTodasLasEntregasDocente($idDocente
                   </td>
                   <td><?= htmlspecialchars($e['fecha_limite'] ?? '—') ?></td>
                   <td><?= htmlspecialchars($e['fecha_envio'] ?? '—') ?></td>
-                  <td><span class="<?= $estadoClase ?>"><?= htmlspecialchars($e['estado'] . $estadoExtra) ?></span></td>
+                  <td><span class="<?= $estadoClase ?>"><?= htmlspecialchars(($estado ?: '—') . $estadoExtra) ?></span></td>
                   <td><?= $e['calificacion'] !== null ? htmlspecialchars($e['calificacion']) : '—' ?></td>
                   <td>
-                    <?php if ($e['estado'] !== 'Calificada'): ?>
+                    <?php if ($estado !== 'Calificada'): ?>
                       <button class="btn-primary btn-calificar"
-                        data-id="<?= $e['id_entrega'] ?>"
+                        data-id="<?= (int)$e['id_entrega'] ?>"
                         data-alumno="<?= htmlspecialchars(($e['nombre_alumno'] ?? '') . ' ' . ($e['apellido_paterno'] ?? '')) ?>"
                         data-tarea="<?= htmlspecialchars($e['titulo_tarea'] ?? '') ?>">
                         <i class="fa-solid fa-pen"></i> Calificar
@@ -140,7 +158,7 @@ $entregas = CalificarTareasController::obtenerTodasLasEntregasDocente($idDocente
     <div class="modal-content">
       <span class="close-btn">&times;</span>
       <h3><i class="fa-solid fa-pen"></i> Calificar entrega</h3>
-      <form method="POST">
+      <form method="POST" id="formCalificar">
         <input type="hidden" name="id_entrega" id="modal_id_entrega">
         <div class="form-group">
           <label>Alumno:</label>
@@ -199,7 +217,7 @@ $entregas = CalificarTareasController::obtenerTodasLasEntregasDocente($idDocente
       });
     });
 
-    // Cerrar modal
+    // Cerrar modales
     document.querySelectorAll(".close-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         btn.closest(".modal").classList.remove("active");
@@ -215,6 +233,12 @@ $entregas = CalificarTareasController::obtenerTodasLasEntregasDocente($idDocente
         nombre.textContent = btn.dataset.nombre;
         document.getElementById("modalVista").classList.add("active");
       });
+    });
+
+    // Pequeño UX: deshabilita botones al enviar (evita doble submit)
+    document.getElementById('formCalificar')?.addEventListener('submit', (e) => {
+      const buttons = e.target.querySelectorAll('button[type="submit"]');
+      buttons.forEach(b => b.disabled = true);
     });
   </script>
 

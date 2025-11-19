@@ -11,7 +11,12 @@ include_once __DIR__ . "/../../controladores/alumnos/MateriasAlumnoController.ph
 include_once __DIR__ . "/../../controladores/alumnos/EntregasAlumnoController.php";
 
 $idAlumno = $_SESSION['usuario']['id_alumno'] ?? 0;
-$rolUsuario = $_SESSION['rol'];
+
+// 🔹 Rol crudo desde la sesión
+$rolUsuarioSesion = $_SESSION['rol'] ?? 'alumno';
+// 🔹 Formato que usa el JS (todo en minúsculas: admin, docente, secretaria, alumno)
+$rolUsuarioJs = strtolower($rolUsuarioSesion);
+
 $usuario = $_SESSION['usuario'] ?? [];
 $nombre = $usuario['nombre'] ?? 'Alumno';
 $apellido = $usuario['apellido_paterno'] ?? '';
@@ -110,12 +115,25 @@ $tareas = $stmt->get_result();
     .pill.ok { background:#e6fffa; color:#065f46; border-color:#99f6e4; }
     .archivo-previo { margin-top:8px; font-size:13px; }
     .tarea-actions { display:flex; flex-direction:column; gap:8px; }
-    .btn-ver { background:#f3f4f6; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; }
+
+    /* ✅ Ver archivo VERDE desde inicio (sin quedar blanco) */
+    .btn-ver {
+      display:inline-flex; align-items:center; gap:8px;
+      background: linear-gradient(135deg, #28a745, #1e7a3b);
+      color:#fff; border:none; padding:8px 12px; border-radius:10px; cursor:pointer;
+      font-weight:600; transition:.25s; box-shadow:0 2px 6px rgba(30,122,59,.25);
+    }
+    .btn-ver:hover { transform: translateY(-2px); background: linear-gradient(135deg, #1e7a3b, #155d29); box-shadow:0 4px 10px rgba(30,122,59,.35); }
+
     .alert-message {
       margin-bottom: 16px; padding: 10px 12px; border-radius: 10px;
       background: #ecfeff; border:1px solid #a5f3fc; color:#0e7490; font-weight:600;
     }
     .empty { opacity:.7; }
+
+    /* ♻️ Re-entregada (visual en tarjeta) */
+    .tarea-item.tarea-reentregada { border-left-color:#17a2b8; }
+    .tarea-item.tarea-reentregada .estado { color:#11707f; font-weight:600; }
   </style>
 </head>
 <body>
@@ -143,6 +161,7 @@ $tareas = $stmt->get_result();
       <div class="filter-bar">
         <button class="filter-btn active" data-filter="all">Todas</button>
         <button class="filter-btn" data-filter="tarea-entregada">Entregadas</button>
+        <button class="filter-btn" data-filter="tarea-reentregada">Re-entregadas</button>
         <button class="filter-btn" data-filter="tarea-pendiente">Pendientes</button>
         <button class="filter-btn" data-filter="tarea-fuera">Fuera de tiempo</button>
         <button class="filter-btn" data-filter="tarea-bloqueada">Cerradas</button>
@@ -166,6 +185,9 @@ $tareas = $stmt->get_result();
                 } elseif ($t['estado'] === 'Devuelta') {
                   $estadoClase = 'tarea-devuelta';
                   $estadoTexto = '🔄 Devuelta para corrección';
+                } elseif ($t['estado'] === 'Reentregada') {
+                  $estadoClase = 'tarea-reentregada';
+                  $estadoTexto = '♻️ Re-entregada (en revisión)';
                 } elseif ($t['calificacion'] !== null) {
                   $estadoClase = 'tarea-calificada';
                   $estadoTexto = '⭐ Calificada';
@@ -182,20 +204,18 @@ $tareas = $stmt->get_result();
 
                 // Reglas para mostrar el formulario de entrega:
                 $puedeEntregar = false;
-                // 1) No bloqueada
                 if (!$bloqueado) {
-                  // 2) Si no hay entrega previa, o si fue Devuelta
                   $noHayEntrega = empty($t['fecha_envio']);
                   $devuelta = ($t['estado'] === 'Devuelta');
                   $calificada = ($t['calificacion'] !== null);
-
+                  // Permite entregar si no hay entrega o fue devuelta; si ya reentregó, espera calificación
                   if (($noHayEntrega || $devuelta) && !$calificada) {
                     $puedeEntregar = true;
                   }
                 }
 
-                $rutaArchivoTarea = !empty($t['archivo']) ? "/Plataforma_UT/".ltrim($t['archivo'], '/\\') : '';
-                $rutaEntregaAlumno = !empty($t['archivo']) ? $rutaArchivoTarea : '';
+                // Ruta del archivo de la ENTREGA del alumno (e.archivo)
+                $rutaEntregaAlumno = !empty($t['archivo']) ? "/Plataforma_UT/".ltrim($t['archivo'], '/\\') : '';
               ?>
               <div class="tarea-item <?= $estadoClase ?>">
                 <div class="tarea-info">
@@ -219,23 +239,20 @@ $tareas = $stmt->get_result();
                 </div>
 
                 <div class="tarea-actions">
-                  <?php if (!empty($t['archivo'])): ?>
+                  <?php if (!empty($rutaEntregaAlumno)): ?>
                     <button class="btn-ver" 
-                      data-archivo="<?= htmlspecialchars($rutaArchivoTarea) ?>"
-                      data-titulo="<?= htmlspecialchars($t['titulo_tarea']) ?>">
+                      data-archivo="<?= htmlspecialchars($rutaEntregaAlumno) ?>"
+                      data-titulo="<?= htmlspecialchars('Entrega: ' . $t['titulo_tarea']) ?>">
                       <i class="fa-solid fa-file"></i> Ver archivo
                     </button>
                   <?php endif; ?>
 
-                  <!-- Archivo entregado previamente del alumno (si aplica) -->
+                  <!-- Info de la entrega previa (si existe) -->
                   <?php if (!empty($t['fecha_envio'])): ?>
                     <div class="archivo-previo">
                       <i class="fa-solid fa-paperclip"></i>
                       <strong>Mi entrega:</strong>
                       <span><?= htmlspecialchars(date('d/m/Y H:i', strtotime($t['fecha_envio']))) ?></span>
-                      <?php if (!empty($t['archivo'])): ?>
-                        <!-- Nota: aquí mostramos el archivo de la tarea; si guardas la ruta de entrega del alumno en otra columna, cámbialo por esa ruta -->
-                      <?php endif; ?>
                     </div>
                   <?php endif; ?>
 
@@ -302,7 +319,8 @@ $tareas = $stmt->get_result();
 
   <!-- Scripts -->
   <script>
-    window.rolUsuarioPHP = "<?= htmlspecialchars($rolUsuario, ENT_QUOTES, 'UTF-8'); ?>";
+    // 👇 Aquí se manda el rol en minúsculas para que coincida con menuConfig (admin, docente, alumno, secretaria)
+    window.rolUsuarioPHP = "<?= htmlspecialchars($rolUsuarioJs, ENT_QUOTES, 'UTF-8'); ?>";
   </script>
   <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
   <script src="/Plataforma_UT/js/modeToggle.js"></script>
@@ -338,7 +356,7 @@ $tareas = $stmt->get_result();
       });
     });
 
-    // Modal visor de archivos (PDF, Word, imágenes)
+    // Modal visor de archivos (PDF, Office, imágenes)
     const visor = document.getElementById("visorArchivo");
     const iframe = document.getElementById("iframeArchivo");
     const tituloArchivo = document.getElementById("tituloArchivo");
@@ -352,7 +370,7 @@ $tareas = $stmt->get_result();
         const ext = (archivo.split('.').pop() || '').toLowerCase();
         if (['pdf', 'jpg', 'jpeg', 'png'].includes(ext)) {
           iframe.src = archivo;
-        } else if (ext === 'doc' || ext === 'docx' || ext === 'ppt' || ext === 'pptx') {
+        } else if (['doc','docx','ppt','pptx'].includes(ext)) {
           iframe.src = `https://view.officeapps.live.com/op/embed.aspx?src=${window.location.origin + archivo}`;
         } else {
           iframe.src = "";

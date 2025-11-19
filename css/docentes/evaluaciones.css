@@ -1,175 +1,99 @@
-/* ==========================================================
-   📘 EVALUACIONES ACADÉMICAS — DOCENTES (Ángel Loza)
-   ========================================================== */
-
-.evaluaciones-header {
-  background: rgba(255, 255, 255, 0.85);
+/* ============== Encabezado ============== */
+.evaluaciones-header{
+  display:flex; align-items:center; justify-content:space-between;
+  background: rgba(255,255,255,.85);
   backdrop-filter: blur(10px);
-  border-radius: 18px;
-  padding: 25px 32px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
-  margin-bottom: 30px;
-  border: 1px solid rgba(200, 200, 200, 0.25);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  border:1px solid rgba(200,200,200,.25);
+  border-radius:18px; padding:18px 22px; margin-bottom:18px;
+  box-shadow:0 8px 25px rgba(0,0,0,.05);
 }
+.evaluaciones-header h2{ font-size:1.5rem; font-weight:800; color:var(--primary); margin:0 0 6px; }
+.evaluaciones-header p{ color:var(--text-light); margin:0; }
+.btn-subir{
+  background: linear-gradient(135deg, var(--primary), var(--success));
+  color:#fff; border:none; border-radius:10px; padding:10px 14px; cursor:pointer; font-weight:700;
+  box-shadow: 0 3px 10px rgba(16,185,129,.25); transition:.25s;
+}
+.btn-subir:hover{ transform: translateY(-2px); filter: brightness(1.02); }
 
-.evaluaciones-header h2 {
-  color: var(--primary);
-  font-size: 1.6rem;
-  font-weight: 700;
+/* ============== Lista ============== */
+.evaluaciones-section{ margin-top:10px; }
+.evaluaciones-lista{ display:flex; flex-direction:column; gap:14px; }
+.evaluacion-item{
+  display:flex; justify-content:space-between; gap:12px; align-items:flex-start;
+  background: rgba(255,255,255,.8);
+  border:1px solid rgba(0,0,0,.05);
+  border-left:6px solid var(--primary);
+  border-radius:16px; padding:16px 18px;
+  box-shadow:0 6px 18px rgba(0,0,0,.05);
 }
+.evaluacion-item.is-closed{ border-left-color:#dc3545; }
+.evaluacion-info h3{ margin:0 0 8px; font-size:1.1rem; font-weight:800; color:var(--dark); display:flex; gap:8px; align-items:center; }
+.evaluacion-info p{ margin:4px 0; color:var(--text-light); }
+.evaluacion-info .desc{ color:#333; white-space:pre-line; }
 
-.evaluaciones-header p {
-  color: var(--text-light);
-}
+/* Badges */
+.badge{ display:inline-block; padding:4px 10px; border-radius:999px; font-size:.8rem; font-weight:800; margin-left:8px; }
+.badge-ok{ background:#e9f7ef; color:#1e7a3b; border:1px solid #c9efda; }
+.badge-danger{ background:#fde8e8; color:#b42318; border:1px solid #f5c2c7; }
 
-.btn-subir {
-  align-self: flex-start;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  padding: 10px 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.3s;
-}
-.btn-subir:hover {
-  transform: translateY(-2px);
-  background: linear-gradient(135deg, var(--secondary), var(--primary));
-}
-
-/* ==========================================================
-   📚 LISTA DE EVALUACIONES
-   ========================================================== */
-.evaluaciones-lista {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.evaluacion-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(8px);
-  border-radius: 16px;
-  padding: 20px 26px;
-  border-left: 6px solid var(--primary);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-}
-
-.evaluacion-item:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
-}
-
-.evaluacion-info h3 {
-  font-size: 1.1rem;
-  color: var(--dark);
-  font-weight: 600;
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.evaluacion-info p {
-  color: var(--text-light);
-  margin: 3px 0;
-  font-size: 0.9rem;
-}
-
-.evaluacion-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.btn-ver,
-.btn-eliminar {
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  padding: 8px 14px;
-  font-weight: 500;
-  transition: 0.25s;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.btn-ver {
+/* Acciones */
+.evaluacion-actions{ display:flex; gap:8px; align-items:center; }
+.evaluacion-actions .btn-ver{
   background: linear-gradient(135deg, #28a745, #1e7a3b);
-  color: #fff;
+  color:#fff; border:none; border-radius:10px; padding:8px 12px; cursor:pointer; font-weight:700;
+  box-shadow:0 2px 6px rgba(40,167,69,.3); text-decoration:none; display:inline-flex; align-items:center; gap:8px;
 }
-.btn-ver:hover {
-  transform: translateY(-2px);
-  background: linear-gradient(135deg, #1e7a3b, #155d29);
+.evaluacion-actions .btn-ver:hover{ transform:translateY(-2px); background:linear-gradient(135deg, #1e7a3b, #155d29); }
+.evaluacion-actions .btn-editar{
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color:#fff; border:none; border-radius:10px; padding:8px 12px; cursor:pointer; font-weight:700;
+  box-shadow:0 2px 6px rgba(37,99,235,.3); display:inline-flex; gap:8px; align-items:center;
+}
+.evaluacion-actions .btn-editar:hover{ transform:translateY(-2px); }
+.evaluacion-actions .btn-eliminar{
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color:#fff; border:none; border-radius:10px; padding:8px 12px; cursor:pointer; font-weight:700;
+  box-shadow:0 2px 6px rgba(220,38,38,.3); display:inline-flex; gap:8px; align-items:center;
+}
+.evaluacion-actions .btn-eliminar:hover{ transform:translateY(-2px); }
+
+/* ============== Modal ============== */
+.modal{ display:none; position:fixed; inset:0; background:rgba(10,20,25,.45); backdrop-filter:blur(6px); z-index:9999; align-items:center; justify-content:center; }
+.modal.active{ display:flex; }
+.modal-content{
+  width:100%; max-width:560px; background:rgba(255,255,255,.95); border-radius:16px; padding:24px 28px;
+  border:1px solid rgba(200,200,200,.25); box-shadow:0 10px 35px rgba(0,0,0,.15); position:relative;
+}
+.close-btn{ position:absolute; top:10px; right:14px; font-size:22px; color:var(--text-light); cursor:pointer; }
+.close-btn:hover{ color:var(--danger); }
+
+.form-group{ margin-bottom:12px; }
+.form-group label{ display:block; margin-bottom:6px; font-weight:700; color:var(--dark); }
+.form-group input[type="text"],
+.form-group input[type="datetime-local"],
+.form-group input[type="file"],
+.form-group select,
+.form-group textarea{
+  width:100%; padding:10px 12px; border-radius:10px; border:1px solid #e5e7eb; background:#fff; font-size:.95rem;
+}
+.form-group textarea{ min-height:90px; resize:vertical; }
+
+.btn-primary.full{
+  width:100%; display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  background: linear-gradient(135deg, var(--primary), var(--success));
+  color:#fff; border:none; border-radius:12px; padding:10px 14px; cursor:pointer; font-weight:800; margin-top:6px;
+  box-shadow:0 3px 10px rgba(16,185,129,.25);
+}
+.btn-primary.full:hover{ transform:translateY(-2px); }
+
+.alert-message{
+  margin-bottom:16px; padding:10px 12px; border-radius:10px;
+  background:#ecfeff; border:1px solid #a5f3fc; color:#0e7490; font-weight:600;
 }
 
-.btn-eliminar {
-  background: linear-gradient(135deg, #dc3545, #b02a37);
-  color: #fff;
-}
-.btn-eliminar:hover {
-  transform: translateY(-2px);
-  background: linear-gradient(135deg, #b02a37, #842029);
-}
-
-/* ==========================================================
-   🪄 MODAL
-   ========================================================== */
-.modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(10, 20, 25, 0.45);
-  backdrop-filter: blur(6px);
-  z-index: 9999;
-  align-items: center;
-  justify-content: center;
-}
-.modal.active {
-  display: flex;
-}
-.modal-content {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(10px);
-  padding: 32px 38px;
-  border-radius: 18px;
-  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.15);
-  width: 100%;
-  max-width: 480px;
-  position: relative;
-}
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 14px;
-  font-size: 22px;
-  color: var(--text-light);
-  cursor: pointer;
-}
-.close-btn:hover {
-  color: var(--danger);
-}
-
-/* ==========================================================
-   📱 RESPONSIVE
-   ========================================================== */
-@media (max-width: 700px) {
-  .evaluacion-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-  .evaluacion-actions {
-    flex-direction: row;
-  }
+/* Responsive */
+@media (max-width: 720px){
+  .evaluacion-item{ flex-direction:column; }
+  .evaluacion-actions{ flex-wrap:wrap; }
 }
