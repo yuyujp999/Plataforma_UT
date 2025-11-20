@@ -1,0 +1,531 @@
+/* ==========================================================
+   📘 EXÁMENES DOCENTE | UT PANEL
+   ========================================================== */
+
+/* Encabezado */
+.evaluaciones-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 18px 22px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.05);
+}
+
+.evaluaciones-header h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+
+.evaluaciones-header p {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--text-light);
+}
+
+/* Botón principal */
+.btn-subir {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+}
+.btn-subir i {
+  font-size: 0.95rem;
+}
+.btn-subir:hover {
+  transform: translateY(-1px);
+  background: var(--success, #16a34a);
+  box-shadow: 0 12px 30px rgba(22, 163, 74, 0.4);
+}
+
+/* ==========================================================
+   LISTA DE EXÁMENES
+   ========================================================== */
+
+.evaluaciones-section {
+  margin-top: 10px;
+}
+
+.evaluaciones-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.evaluacion-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 14px;
+  padding: 14px 18px;
+  border-left: 5px solid var(--primary);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+  transition: all 0.25s ease;
+}
+
+.evaluacion-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.1);
+}
+
+.evaluacion-item.is-closed {
+  opacity: 0.9;
+  border-left-color: #ef4444;
+}
+
+.evaluacion-info h3 {
+  margin: 0 0 6px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--dark);
+}
+.evaluacion-info h3 i {
+  margin-right: 6px;
+}
+
+.evaluacion-info p {
+  margin: 2px 0;
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+.evaluacion-info p.desc {
+  margin-top: 6px;
+  color: #374151;
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  margin-left: 6px;
+}
+.badge-ok {
+  background: #dcfce7;
+  color: #166534;
+}
+.badge-danger {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Acciones */
+.evaluacion-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+
+/* Botones secundarios */
+.btn-ver,
+.btn-eliminar {
+  border-radius: 999px;
+  border: none;
+  padding: 7px 14px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-ver {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #fff;
+  box-shadow: 0 3px 8px rgba(34, 197, 94, 0.4);
+}
+.btn-ver:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, #16a34a, #15803d);
+}
+
+.btn-eliminar {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.btn-eliminar:hover {
+  background: #fecaca;
+}
+
+/* Mensaje vacío */
+.empty {
+  margin-top: 20px;
+  padding: 18px;
+  text-align: center;
+  border-radius: 12px;
+  background: rgba(248, 250, 252, 0.85);
+  border: 1px dashed #d4d4d8;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+.empty i {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 1.2rem;
+}
+
+/* ==========================================================
+   MODAL EXAMEN (GRANDE Y CÓMODO)
+   ========================================================== */
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 18px;
+  box-shadow: 0 20px 70px rgba(15, 23, 42, 0.45);
+  padding: 22px 26px;
+  position: relative;
+  animation: fadeInUp 0.32s ease-out;
+}
+
+/* ⬆️ Modal grande para el constructor de exámenes */
+.modal-examen-large {
+  width: 96%;
+  max-width: 1200px;
+  max-height: 96vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Título del modal */
+.modal-examen-large h3 {
+  margin: 0 0 10px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Layout interno: dos columnas flexibles */
+.form-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.4fr);
+  gap: 16px;
+  margin-top: 10px;
+  /* Permitir scroll interno sin que el modal se salga de la pantalla */
+  overflow: hidden;
+}
+
+.form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Que todo lo scrolleable vaya dentro, no el body */
+.modal-examen-large form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.modal-examen-large form > .form-columns {
+  flex: 1;
+  min-height: 0;
+}
+.modal-examen-large .preguntas-column {
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* Columnas anidadas */
+.form-two {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+/* Campos generales */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.88rem;
+}
+.form-group label {
+  font-weight: 600;
+  color: #111827;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  padding: 8px 10px;
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  background: #f9fafb;
+}
+.form-group textarea {
+  resize: vertical;
+  min-height: 70px;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.25);
+  background: #ffffff;
+}
+
+/* Columna de preguntas */
+.preguntas-column {
+  background: #f9fafb;
+  border-radius: 14px;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+}
+
+.preguntas-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.preguntas-header h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111827;
+}
+.helper-text {
+  margin: 0 0 8px;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* Botón pequeño */
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 0.78rem;
+  border-radius: 999px;
+}
+
+/* Lista de preguntas dentro del modal */
+#questionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+/* Tarjeta de pregunta */
+.question-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+}
+
+.question-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.question-title {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* Botón icono */
+.btn-icon {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+.btn-icon:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+  transform: translateY(-1px);
+}
+
+/* Bloque de opciones */
+.opciones-wrapper {
+  margin-top: 8px;
+  padding: 8px;
+  border-radius: 10px;
+  background: #f9fafb;
+  border: 1px dashed #d4d4d8;
+}
+
+.opciones-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.q-opciones-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.opcion-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  gap: 6px;
+  align-items: center;
+}
+.opcion-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #4b5563;
+}
+.input-opcion {
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  padding: 6px 9px;
+  font-size: 0.85rem;
+  background: #ffffff;
+}
+.radio-correcta {
+  font-size: 0.8rem;
+  color: #16a34a;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Hint */
+.hint {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* Lista vacía de preguntas */
+.empty-questions {
+  padding: 12px;
+  text-align: center;
+  font-size: 0.82rem;
+  border-radius: 10px;
+  background: #ecfeff;
+  border: 1px dashed #7dd3fc;
+  color: #0e7490;
+}
+.empty-questions i {
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* Botón submit general */
+.btn-primary.full {
+  width: 100%;
+  border-radius: 999px;
+  padding: 10px 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+/* Cerrar modal */
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-size: 20px;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: color 0.2s, transform 0.2s;
+}
+.close-btn:hover {
+  color: #ef4444;
+  transform: scale(1.05);
+}
+
+/* Animación apertura */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+
+@media (max-width: 1024px) {
+  .modal-examen-large {
+    width: 98%;
+    max-width: 980px;
+  }
+  .form-columns {
+    grid-template-columns: 1fr;
+  }
+  .preguntas-column {
+    max-height: 40vh;
+  }
+}
+
+@media (max-width: 700px) {
+  .evaluacion-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .evaluacion-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  .modal-examen-large {
+    padding: 18px 16px;
+  }
+}

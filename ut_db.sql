@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 12-11-2025 a las 02:47:25
+-- Tiempo de generación: 20-11-2025 a las 01:47:52
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -688,6 +688,133 @@ INSERT INTO `entregas_alumnos` (`id_entrega`, `id_tarea`, `id_alumno`, `archivo`
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `entregas_evaluaciones_alumnos`
+--
+
+CREATE TABLE `entregas_evaluaciones_alumnos` (
+  `id_entrega` int(11) NOT NULL,
+  `id_evaluacion` int(11) NOT NULL,
+  `id_alumno` int(11) NOT NULL,
+  `archivo` varchar(255) NOT NULL,
+  `fecha_entrega` datetime NOT NULL DEFAULT current_timestamp(),
+  `estado` enum('Entregada','Devuelta','Reentregada','Calificada') DEFAULT 'Entregada',
+  `calificacion` decimal(5,2) DEFAULT NULL,
+  `retroalimentacion` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `evaluaciones_docente`
+--
+
+CREATE TABLE `evaluaciones_docente` (
+  `id_evaluacion` int(11) NOT NULL,
+  `id_docente` int(11) NOT NULL,
+  `id_asignacion_docente` int(11) DEFAULT NULL,
+  `titulo` varchar(200) NOT NULL,
+  `tipo` enum('Examen','Proyecto Final','Otro') NOT NULL DEFAULT 'Proyecto Final',
+  `descripcion` text DEFAULT NULL,
+  `archivo` varchar(255) DEFAULT NULL,
+  `fecha_publicacion` datetime NOT NULL DEFAULT current_timestamp(),
+  `fecha_cierre` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `evaluaciones_docente`
+--
+
+INSERT INTO `evaluaciones_docente` (`id_evaluacion`, `id_docente`, `id_asignacion_docente`, `titulo`, `tipo`, `descripcion`, `archivo`, `fecha_publicacion`, `fecha_cierre`) VALUES
+(1, 16, 16, 'Proyecto prueba 1', 'Proyecto Final', 'Proyecto', 'uploads/evaluaciones/eval_69167c16066ae_actividad 1  AALF.pdf', '2025-11-13 18:47:18', '2025-11-20 23:59:59');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `examenes`
+--
+
+CREATE TABLE `examenes` (
+  `id_examen` int(11) NOT NULL,
+  `id_docente` int(11) NOT NULL,
+  `id_asignacion_docente` int(11) NOT NULL,
+  `titulo` varchar(200) NOT NULL,
+  `descripcion` text DEFAULT NULL,
+  `fecha_publicacion` datetime NOT NULL DEFAULT current_timestamp(),
+  `fecha_cierre` date NOT NULL,
+  `estado` enum('Activo','Cerrado') DEFAULT 'Activo'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `examenes`
+--
+
+INSERT INTO `examenes` (`id_examen`, `id_docente`, `id_asignacion_docente`, `titulo`, `descripcion`, `fecha_publicacion`, `fecha_cierre`, `estado`) VALUES
+(1, 16, 18, 'Parcial 1', 'Responde las preguntas', '2025-11-19 18:02:49', '2025-11-20', 'Activo');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `examen_preguntas`
+--
+
+CREATE TABLE `examen_preguntas` (
+  `id_pregunta` int(11) NOT NULL,
+  `id_examen` int(11) NOT NULL,
+  `tipo` enum('abierta','opcion') NOT NULL,
+  `pregunta` text NOT NULL,
+  `puntos` decimal(5,2) NOT NULL DEFAULT 1.00,
+  `orden` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `examen_preguntas`
+--
+
+INSERT INTO `examen_preguntas` (`id_pregunta`, `id_examen`, `tipo`, `pregunta`, `puntos`, `orden`) VALUES
+(1, 1, 'opcion', 'Que es php', 1.00, 1),
+(2, 1, 'abierta', 'di algo', 1.00, 2);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `examen_pregunta_opciones`
+--
+
+CREATE TABLE `examen_pregunta_opciones` (
+  `id_opcion` int(11) NOT NULL,
+  `id_pregunta` int(11) NOT NULL,
+  `texto_opcion` varchar(255) NOT NULL,
+  `es_correcta` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `examen_pregunta_opciones`
+--
+
+INSERT INTO `examen_pregunta_opciones` (`id_opcion`, `id_pregunta`, `texto_opcion`, `es_correcta`) VALUES
+(1, 1, 'Un lenguaje de programacion', 1),
+(2, 1, 'Una plataforma de estudio', 0),
+(3, 1, 'si', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `examen_respuestas`
+--
+
+CREATE TABLE `examen_respuestas` (
+  `id_respuesta` int(11) NOT NULL,
+  `id_examen` int(11) NOT NULL,
+  `id_alumno` int(11) NOT NULL,
+  `id_pregunta` int(11) NOT NULL,
+  `respuesta_texto` text DEFAULT NULL,
+  `id_opcion` int(11) DEFAULT NULL,
+  `fecha_envio` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `grupos`
 --
 
@@ -881,6 +1008,24 @@ INSERT INTO `notificaciones` (`id`, `tipo`, `titulo`, `detalle`, `para_rol`, `ac
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `pagos`
+--
+
+CREATE TABLE `pagos` (
+  `id` int(11) NOT NULL,
+  `matricula` varchar(20) NOT NULL,
+  `periodo` varchar(100) NOT NULL,
+  `concepto` varchar(200) NOT NULL,
+  `monto` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `adeudo` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `pago` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `condonacion` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `fecha_registro` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `recursos_materias`
 --
 
@@ -994,7 +1139,8 @@ INSERT INTO `tareas_materias` (`id_tarea`, `id_asignacion_docente`, `titulo`, `d
 (18, 15, 'ejemplo a tiempo', '', NULL, '2025-11-20', '2025-11-11 15:18:22'),
 (19, 15, 'ejemplo fuera de tiempo ', '', NULL, '2025-11-10', '2025-11-11 15:19:11'),
 (20, 15, 'ejemplo de entrega cerrada', '', NULL, '2025-10-01', '2025-11-11 15:20:29'),
-(21, 16, 'Ejemplo de devolución', '', NULL, '2025-11-25', '2025-11-12 01:08:26');
+(21, 16, 'Ejemplo de devolución', '', NULL, '2025-11-25', '2025-11-12 01:08:26'),
+(22, 16, 'Prueba chacon', 'sss', NULL, '2025-11-20', '2025-11-14 02:19:17');
 
 --
 -- Índices para tablas volcadas
@@ -1131,6 +1277,55 @@ ALTER TABLE `entregas_alumnos`
   ADD KEY `id_alumno` (`id_alumno`);
 
 --
+-- Indices de la tabla `entregas_evaluaciones_alumnos`
+--
+ALTER TABLE `entregas_evaluaciones_alumnos`
+  ADD PRIMARY KEY (`id_entrega`),
+  ADD UNIQUE KEY `uniq_eval_alumno` (`id_evaluacion`,`id_alumno`),
+  ADD KEY `idx_eval` (`id_evaluacion`),
+  ADD KEY `idx_alumno` (`id_alumno`);
+
+--
+-- Indices de la tabla `evaluaciones_docente`
+--
+ALTER TABLE `evaluaciones_docente`
+  ADD PRIMARY KEY (`id_evaluacion`),
+  ADD KEY `idx_docente` (`id_docente`),
+  ADD KEY `idx_asig` (`id_asignacion_docente`);
+
+--
+-- Indices de la tabla `examenes`
+--
+ALTER TABLE `examenes`
+  ADD PRIMARY KEY (`id_examen`),
+  ADD KEY `id_docente` (`id_docente`),
+  ADD KEY `id_asignacion_docente` (`id_asignacion_docente`);
+
+--
+-- Indices de la tabla `examen_preguntas`
+--
+ALTER TABLE `examen_preguntas`
+  ADD PRIMARY KEY (`id_pregunta`),
+  ADD KEY `id_examen` (`id_examen`);
+
+--
+-- Indices de la tabla `examen_pregunta_opciones`
+--
+ALTER TABLE `examen_pregunta_opciones`
+  ADD PRIMARY KEY (`id_opcion`),
+  ADD KEY `id_pregunta` (`id_pregunta`);
+
+--
+-- Indices de la tabla `examen_respuestas`
+--
+ALTER TABLE `examen_respuestas`
+  ADD PRIMARY KEY (`id_respuesta`),
+  ADD KEY `id_examen` (`id_examen`),
+  ADD KEY `id_alumno` (`id_alumno`),
+  ADD KEY `id_pregunta` (`id_pregunta`),
+  ADD KEY `id_opcion` (`id_opcion`);
+
+--
 -- Indices de la tabla `grupos`
 --
 ALTER TABLE `grupos`
@@ -1171,6 +1366,13 @@ ALTER TABLE `mensajes_secretarias`
 --
 ALTER TABLE `notificaciones`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `pagos`
+--
+ALTER TABLE `pagos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_matricula` (`matricula`);
 
 --
 -- Indices de la tabla `recursos_materias`
@@ -1306,6 +1508,42 @@ ALTER TABLE `entregas_alumnos`
   MODIFY `id_entrega` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
+-- AUTO_INCREMENT de la tabla `entregas_evaluaciones_alumnos`
+--
+ALTER TABLE `entregas_evaluaciones_alumnos`
+  MODIFY `id_entrega` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `evaluaciones_docente`
+--
+ALTER TABLE `evaluaciones_docente`
+  MODIFY `id_evaluacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `examenes`
+--
+ALTER TABLE `examenes`
+  MODIFY `id_examen` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `examen_preguntas`
+--
+ALTER TABLE `examen_preguntas`
+  MODIFY `id_pregunta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT de la tabla `examen_pregunta_opciones`
+--
+ALTER TABLE `examen_pregunta_opciones`
+  MODIFY `id_opcion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de la tabla `examen_respuestas`
+--
+ALTER TABLE `examen_respuestas`
+  MODIFY `id_respuesta` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `grupos`
 --
 ALTER TABLE `grupos`
@@ -1342,6 +1580,12 @@ ALTER TABLE `notificaciones`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
+-- AUTO_INCREMENT de la tabla `pagos`
+--
+ALTER TABLE `pagos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT de la tabla `recursos_materias`
 --
 ALTER TABLE `recursos_materias`
@@ -1363,7 +1607,7 @@ ALTER TABLE `semestres`
 -- AUTO_INCREMENT de la tabla `tareas_materias`
 --
 ALTER TABLE `tareas_materias`
-  MODIFY `id_tarea` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id_tarea` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- Restricciones para tablas volcadas
@@ -1420,6 +1664,47 @@ ALTER TABLE `entregas_alumnos`
   ADD CONSTRAINT `entregas_alumnos_ibfk_2` FOREIGN KEY (`id_alumno`) REFERENCES `alumnos` (`id_alumno`) ON DELETE CASCADE;
 
 --
+-- Filtros para la tabla `entregas_evaluaciones_alumnos`
+--
+ALTER TABLE `entregas_evaluaciones_alumnos`
+  ADD CONSTRAINT `fk_eval_alumno_eval` FOREIGN KEY (`id_evaluacion`) REFERENCES `evaluaciones_docente` (`id_evaluacion`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `evaluaciones_docente`
+--
+ALTER TABLE `evaluaciones_docente`
+  ADD CONSTRAINT `fk_eval_asig` FOREIGN KEY (`id_asignacion_docente`) REFERENCES `asignaciones_docentes` (`id_asignacion_docente`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_eval_docente` FOREIGN KEY (`id_docente`) REFERENCES `docentes` (`id_docente`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `examenes`
+--
+ALTER TABLE `examenes`
+  ADD CONSTRAINT `examenes_ibfk_1` FOREIGN KEY (`id_docente`) REFERENCES `docentes` (`id_docente`),
+  ADD CONSTRAINT `examenes_ibfk_2` FOREIGN KEY (`id_asignacion_docente`) REFERENCES `asignaciones_docentes` (`id_asignacion_docente`);
+
+--
+-- Filtros para la tabla `examen_preguntas`
+--
+ALTER TABLE `examen_preguntas`
+  ADD CONSTRAINT `examen_preguntas_ibfk_1` FOREIGN KEY (`id_examen`) REFERENCES `examenes` (`id_examen`);
+
+--
+-- Filtros para la tabla `examen_pregunta_opciones`
+--
+ALTER TABLE `examen_pregunta_opciones`
+  ADD CONSTRAINT `examen_pregunta_opciones_ibfk_1` FOREIGN KEY (`id_pregunta`) REFERENCES `examen_preguntas` (`id_pregunta`);
+
+--
+-- Filtros para la tabla `examen_respuestas`
+--
+ALTER TABLE `examen_respuestas`
+  ADD CONSTRAINT `examen_respuestas_ibfk_1` FOREIGN KEY (`id_examen`) REFERENCES `examenes` (`id_examen`),
+  ADD CONSTRAINT `examen_respuestas_ibfk_2` FOREIGN KEY (`id_alumno`) REFERENCES `alumnos` (`id_alumno`),
+  ADD CONSTRAINT `examen_respuestas_ibfk_3` FOREIGN KEY (`id_pregunta`) REFERENCES `examen_preguntas` (`id_pregunta`),
+  ADD CONSTRAINT `examen_respuestas_ibfk_4` FOREIGN KEY (`id_opcion`) REFERENCES `examen_pregunta_opciones` (`id_opcion`);
+
+--
 -- Filtros para la tabla `grupos`
 --
 ALTER TABLE `grupos`
@@ -1444,6 +1729,12 @@ ALTER TABLE `mensajesdocente`
 ALTER TABLE `mensajes_secretarias`
   ADD CONSTRAINT `fk_ms_mensaje` FOREIGN KEY (`id_mensaje`) REFERENCES `mensajes` (`id_mensaje`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_ms_secretaria` FOREIGN KEY (`id_secretaria`) REFERENCES `secretarias` (`id_secretaria`) ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `pagos`
+--
+ALTER TABLE `pagos`
+  ADD CONSTRAINT `fk_matricula` FOREIGN KEY (`matricula`) REFERENCES `alumnos` (`matricula`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `recursos_materias`

@@ -22,6 +22,12 @@ document.addEventListener("DOMContentLoaded", function () {
         path: "/Plataforma_UT/vistas/Alumnos/dashboardTareas.php",
       },
       {
+  icon: "fas fa-file-circle-question",
+  text: "Exámenes",
+  path: "/Plataforma_UT/vistas/Alumnos/ExamenesAlumno.php",
+},
+
+      {
         icon: "fas fa-calendar-alt",
         text: "Calendario Académico",
         path: "/Plataforma_UT/vistas/Alumnos/dashboard_calendario.php",
@@ -46,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
       },
       {
         icon: "fas fa-box",
-        text: "Proyectos y Examenes",
+        text: "Proyectos",
         path: "/Plataforma_UT/vistas/docentes/evaluaciones.php",
       },
       {
@@ -54,6 +60,12 @@ document.addEventListener("DOMContentLoaded", function () {
         text: "Calificar Tareas",
         path: "/Plataforma_UT/vistas/docentes/calificar_tareas.php",
       },
+      {
+  icon: "fas fa-file-pen",
+  text: "Exámenes",
+  path: "/Plataforma_UT/vistas/Docentes/examenes.php",
+},
+
       {
         icon: "fa-solid fa-comments",
         text: "Chats",
