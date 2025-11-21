@@ -1,0 +1,165 @@
+/* Docentes - Calificaciones */
+
+.calif-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.calif-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.calif-header-text h2 {
+  margin: 0;
+}
+
+.calif-header-text p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.filtros-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.filtros-row label {
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.filtros-row select {
+  margin-left: 6px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  font-size: 0.9rem;
+}
+
+/* Tabla grande */
+
+.tabla-wrapper {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: var(--card-bg, #ffffff);
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+}
+
+table.calif {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 780px;
+  font-size: 0.85rem;
+}
+
+table.calif th,
+table.calif td {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 7px 9px;
+  vertical-align: middle;
+}
+
+table.calif thead th {
+  background: #f1f5f9;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+}
+
+table.calif thead tr:nth-child(2) th {
+  font-size: 0.75rem;
+  background: #e5e7eb;
+}
+
+table.calif tbody tr:nth-child(even) {
+  background: #f9fafb;
+}
+
+table.calif tbody tr:hover {
+  background: #eff6ff;
+}
+
+/* Columna fija del alumno */
+
+table.calif td.sticky,
+table.calif th.sticky {
+  position: sticky;
+  left: 0;
+  background: var(--card-bg, #ffffff);
+  z-index: 3;
+}
+
+table.calif th.sticky {
+  z-index: 4;
+}
+
+.alumno-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.alumno-cell strong {
+  font-size: 0.9rem;
+}
+
+.alumno-cell small {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* Inputs de nota */
+
+.input-nota {
+  width: 62px;
+  padding: 3px 4px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  text-align: center;
+  font-size: 0.8rem;
+  background: #ffffff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.input-nota:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.35);
+}
+
+/* Botón guardar */
+
+.calif-actions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.calif-actions .btn-subir {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Responsive */
+
+@media (max-width: 900px) {
+  table.calif td.sticky,
+  table.calif th.sticky {
+    position: static;
+  }
+
+  .tabla-wrapper {
+    box-shadow: none;
+    border-radius: 8px;
+  }
+}

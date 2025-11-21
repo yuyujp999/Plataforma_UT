@@ -65,12 +65,20 @@ document.addEventListener("DOMContentLoaded", function () {
   text: "Exámenes",
   path: "/Plataforma_UT/vistas/Docentes/examenes.php",
 },
+    { icon: "fa-solid fa-square-poll-horizontal",
+      text: "Resultados exámenes",
+      path: "/Plataforma_UT/vistas/Docentes/examenes_envios.php" },
+
 
       {
         icon: "fa-solid fa-comments",
         text: "Chats",
         path: "/Plataforma_UT/vistas/Docentes/dashboardChat.php",
       },
+          { icon: "fa-solid fa-table", 
+      text: "Calificaciones", 
+      path: "/Plataforma_UT/vistas/Docentes/calificaciones.php" },
+
       {
         icon: "fas fa-cog",
         text: "Ajustes",

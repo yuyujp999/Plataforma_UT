@@ -422,6 +422,207 @@ class ExamenesController
             : ['success'=>false, 'mensaje'=>'⚠️ No se pudo eliminar la pregunta.'];
     }
 
+        /**
+     * Lista de exámenes enviados por alumnos para este docente.
+     * Un registro por (examen, alumno).
+     */
+    public static function listarEnviosDocente(int $idDocente): array
+    {
+        include __DIR__ . '/../../conexion/conexion.php';
+
+        $sql = "
+            SELECT
+              e.id_examen,
+              e.titulo,
+              e.fecha_cierre,
+              m.nombre_materia AS materia,
+              a.id_alumno,
+              a.matricula,
+              a.nombre,
+              a.apellido_paterno,
+              MIN(r.fecha_envio) AS primera_respuesta,
+              MAX(r.fecha_envio) AS ultima_respuesta,
+              COUNT(DISTINCT r.id_pregunta) AS preguntas_respondidas
+            FROM examen_respuestas r
+            INNER JOIN examenes e
+              ON r.id_examen = e.id_examen
+            INNER JOIN asignaciones_docentes ad
+              ON e.id_asignacion_docente = ad.id_asignacion_docente
+            INNER JOIN asignar_materias am
+              ON ad.id_nombre_materia = am.id_nombre_materia
+            INNER JOIN materias m
+              ON am.id_materia = m.id_materia
+            INNER JOIN alumnos a
+              ON r.id_alumno = a.id_alumno
+            WHERE e.id_docente = ?
+            GROUP BY e.id_examen, a.id_alumno
+            ORDER BY e.fecha_cierre DESC, e.id_examen, a.apellido_paterno, a.nombre
+        ";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $idDocente);
+        $stmt->execute();
+        $res = $stmt->get_result();
+
+        $out = [];
+        while ($row = $res->fetch_assoc()) {
+            $out[] = $row;
+        }
+        return $out;
+    }
+
+    /**
+     * Detalle de un examen respondido por un alumno:
+     * - Preguntas
+     * - Opciones
+     * - Qué marcó el alumno
+     * - Cuáles son correctas / incorrectas
+     */
+    public static function obtenerResultadoExamenAlumno(int $idDocente, int $idExamen, int $idAlumno): ?array
+    {
+        include __DIR__ . '/../../conexion/conexion.php';
+
+        // 1) Verificar que el examen exista y pertenezca al docente
+        $stmtEx = $conn->prepare("
+            SELECT 
+              e.*,
+              m.nombre_materia AS materia
+            FROM examenes e
+            INNER JOIN asignaciones_docentes ad
+              ON e.id_asignacion_docente = ad.id_asignacion_docente
+            INNER JOIN asignar_materias am
+              ON ad.id_nombre_materia = am.id_nombre_materia
+            INNER JOIN materias m
+              ON am.id_materia = m.id_materia
+            WHERE e.id_examen = ? AND e.id_docente = ?
+            LIMIT 1
+        ");
+        $stmtEx->bind_param("ii", $idExamen, $idDocente);
+        $stmtEx->execute();
+        $ex = $stmtEx->get_result()->fetch_assoc();
+        if (!$ex) return null;
+
+        // Alumno
+        $stmtAl = $conn->prepare("
+            SELECT nombre, apellido_paterno, apellido_materno, matricula
+            FROM alumnos
+            WHERE id_alumno = ?
+            LIMIT 1
+        ");
+        $stmtAl->bind_param("i", $idAlumno);
+        $stmtAl->execute();
+        $al = $stmtAl->get_result()->fetch_assoc();
+        if (!$al) return null;
+
+        // 2) Preguntas + respuestas + opciones
+        $sqlPreg = "
+            SELECT 
+              p.id_pregunta,
+              p.tipo,
+              p.pregunta,
+              p.puntos,
+              p.orden,
+              r.id_respuesta,
+              r.respuesta_texto,
+              r.id_opcion AS opcion_marcada,
+              o.id_opcion,
+              o.texto_opcion,
+              o.es_correcta
+            FROM examen_preguntas p
+            LEFT JOIN examen_respuestas r
+              ON r.id_pregunta = p.id_pregunta
+             AND r.id_examen  = p.id_examen
+             AND r.id_alumno  = ?
+            LEFT JOIN examen_pregunta_opciones o
+              ON o.id_pregunta = p.id_pregunta
+            WHERE p.id_examen = ?
+            ORDER BY p.orden ASC, p.id_pregunta ASC, o.id_opcion ASC
+        ";
+
+        $stmtP = $conn->prepare($sqlPreg);
+        $stmtP->bind_param("ii", $idAlumno, $idExamen);
+        $stmtP->execute();
+        $resP = $stmtP->get_result();
+
+        $preguntas = [];
+        while ($row = $resP->fetch_assoc()) {
+            $pid = (int)$row['id_pregunta'];
+
+            if (!isset($preguntas[$pid])) {
+                $preguntas[$pid] = [
+                    'id_pregunta'     => $pid,
+                    'tipo'            => $row['tipo'],
+                    'pregunta'        => $row['pregunta'],
+                    'puntos'          => (float)$row['puntos'],
+                    'orden'           => (int)$row['orden'],
+                    'respuesta_texto' => $row['respuesta_texto'],
+                    'opcion_marcada'  => $row['opcion_marcada'] ? (int)$row['opcion_marcada'] : null,
+                    'opciones'        => [],
+                    'es_correcta'     => null, // lo calculamos abajo
+                ];
+            }
+
+            if (!empty($row['id_opcion'])) {
+                $preguntas[$pid]['opciones'][] = [
+                    'id_opcion'    => (int)$row['id_opcion'],
+                    'texto_opcion' => $row['texto_opcion'],
+                    'es_correcta'  => (int)$row['es_correcta'],
+                ];
+            }
+        }
+
+        // 3) Calcular correctas / incorrectas (solo opción múltiple)
+        $totalOpcion   = 0;
+        $correctasO    = 0;
+
+        foreach ($preguntas as $pid => &$p) {
+            if ($p['tipo'] !== 'opcion') {
+                $p['es_correcta'] = null; // abierta, no se califica automática
+                continue;
+            }
+
+            $totalOpcion++;
+            $marcada = $p['opcion_marcada'];
+            $esCorrecta = false;
+
+            foreach ($p['opciones'] as &$opt) {
+                if ($opt['id_opcion'] === $marcada && $opt['es_correcta'] == 1) {
+                    $esCorrecta = true;
+                }
+            }
+
+            $p['es_correcta'] = $esCorrecta;
+            if ($esCorrecta) {
+                $correctasO++;
+            }
+        }
+        unset($p);
+
+        $stats = [
+            'total_preguntas_opcion' => $totalOpcion,
+            'correctas'              => $correctasO,
+            'incorrectas'            => max(0, $totalOpcion - $correctasO),
+            'porcentaje'             => $totalOpcion > 0 ? round($correctasO * 100.0 / $totalOpcion, 1) : null,
+        ];
+
+        return [
+            'examen' => [
+                'id_examen'    => (int)$ex['id_examen'],
+                'titulo'       => $ex['titulo'],
+                'materia'      => $ex['materia'],
+                'fecha_cierre' => $ex['fecha_cierre'],
+            ],
+            'alumno' => [
+                'id_alumno'  => $idAlumno,
+                'matricula'  => $al['matricula'] ?? '',
+                'nombre'     => $al['nombre'] ?? '',
+                'apellidos'  => trim(($al['apellido_paterno'] ?? '') . ' ' . ($al['apellido_materno'] ?? '')),
+            ],
+            'stats'     => $stats,
+            'preguntas' => array_values($preguntas),
+        ];
+    }
+
     /* =============== HANDLER DIRECTO (POST) =============== */
 
     public static function handlePostDirect()

@@ -20,12 +20,14 @@ if ($idExamen <= 0) {
   exit;
 }
 
-$mensaje = '';
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['enviar_examen'])) {
   $resultado = ExamenesAlumnoController::guardarRespuestas($idExamen, $idAlumno, $_POST);
-  $mensaje   = $resultado['mensaje'] ?? '';
+  $_SESSION['flash_examen'] = $resultado['mensaje'] ?? '✅ Examen enviado.';
+  header('Location: /Plataforma_UT/vistas/Alumnos/examenesAlumno.php');
+  exit;
 }
+
+$mensaje = ''; // ya no usamos mensaje local
 
 $examen = ExamenesAlumnoController::obtenerExamenConPreguntas($idExamen);
 if (!$examen) {
@@ -34,6 +36,7 @@ if (!$examen) {
   exit;
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
