@@ -37,6 +37,11 @@ $matriz = [
     'cal_tareas'   => [],
     'cal_evals'    => [],
     'cal_exams'    => [],
+    'config'       => [
+        'pct_tareas'    => 34.0,
+        'pct_proyectos' => 33.0,
+        'pct_examenes'  => 33.0,
+    ],
 ];
 
 if ($selectedAsign > 0) {
@@ -50,6 +55,11 @@ $examenes     = $matriz['examenes'];
 $calT         = $matriz['cal_tareas'];
 $calEv        = $matriz['cal_evals'];
 $calEx        = $matriz['cal_exams'];
+$config       = $matriz['config'];
+
+$pctT = (float)$config['pct_tareas'];
+$pctP = (float)$config['pct_proyectos'];
+$pctE = (float)$config['pct_examenes'];
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -79,11 +89,15 @@ $calEx        = $matriz['cal_exams'];
     <header class="evaluaciones-header">
       <div class="calif-header-text">
         <h2><i class="fa-solid fa-table"></i> Calificaciones</h2>
-        <p>Resumen de calificaciones por alumno y por actividad (tareas, proyectos, exámenes).</p>
+        <p>
+          Define el porcentaje de <strong>tareas, proyectos y exámenes</strong>
+          y captura las calificaciones por alumno. El promedio final se calcula automáticamente en escala 0–10.
+        </p>
       </div>
     </header>
 
     <section class="evaluaciones-section">
+      <!-- Filtro de materia/grupo -->
       <form method="GET" class="filtros-row">
         <label>
           Materia / grupo:
@@ -100,7 +114,39 @@ $calEx        = $matriz['cal_exams'];
       </form>
 
       <?php if ($selectedAsign > 0 && !empty($alumnos)): ?>
+        <!-- FORM PRINCIPAL: porcentajes + calificaciones -->
         <form method="POST">
+          <!-- Porcentajes -->
+          <div class="filtros-row" style="justify-content: flex-start; align-items:flex-end;">
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+              <div>
+                <label style="font-size:0.85rem;">Tareas (%)<br>
+                  <input type="number" step="0.1" min="0" max="100"
+                         name="pct_tareas" value="<?= htmlspecialchars($pctT) ?>"
+                         class="input-nota" style="width:80px;">
+                </label>
+              </div>
+              <div>
+                <label style="font-size:0.85rem;">Proyectos / Evaluaciones (%)<br>
+                  <input type="number" step="0.1" min="0" max="100"
+                         name="pct_proyectos" value="<?= htmlspecialchars($pctP) ?>"
+                         class="input-nota" style="width:80px;">
+                </label>
+              </div>
+              <div>
+                <label style="font-size:0.85rem;">Exámenes (%)<br>
+                  <input type="number" step="0.1" min="0" max="100"
+                         name="pct_examenes" value="<?= htmlspecialchars($pctE) ?>"
+                         class="input-nota" style="width:80px;">
+                </label>
+              </div>
+              <div style="align-self:center; font-size:0.8rem; color:#6b7280;">
+                Sugerido: que la suma sea 100%.
+              </div>
+            </div>
+          </div>
+
+          <!-- TABLA -->
           <div class="tabla-wrapper">
             <table class="calif">
               <thead>
@@ -112,12 +158,15 @@ $calEx        = $matriz['cal_exams'];
                 <?php endif; ?>
 
                 <?php if ($evaluaciones): ?>
-                  <th colspan="<?= count($evaluaciones) ?>" class="section-title">Evaluaciones / Proyectos</th>
+                  <th colspan="<?= count($evaluaciones) ?>" class="section-title">Proyectos / Evaluaciones</th>
                 <?php endif; ?>
 
                 <?php if ($examenes): ?>
                   <th colspan="<?= count($examenes) ?>" class="section-title">Exámenes</th>
                 <?php endif; ?>
+
+                <!-- columnas de promedio -->
+                <th colspan="4" class="section-title">Promedios</th>
               </tr>
               <tr>
                 <?php if ($tareas): ?>
@@ -137,6 +186,11 @@ $calEx        = $matriz['cal_exams'];
                     <th class="subheader"><?= htmlspecialchars($ex['titulo']) ?></th>
                   <?php endforeach; ?>
                 <?php endif; ?>
+
+                <th class="subheader">Prom. tareas</th>
+                <th class="subheader">Prom. proyectos</th>
+                <th class="subheader">Prom. exámenes</th>
+                <th class="subheader">Final</th>
               </tr>
               </thead>
               <tbody>
@@ -144,6 +198,11 @@ $calEx        = $matriz['cal_exams'];
                 <?php
                   $idAl = (int)$al['id_alumno'];
                   $nombreAl = trim(($al['apellido_paterno'] ?? '').' '.($al['apellido_materno'] ?? '').' '.$al['nombre']);
+
+                  // acumuladores para promedios
+                  $sumT = 0; $countT = 0;
+                  $sumP = 0; $countP = 0;
+                  $sumE = 0; $countE = 0;
                 ?>
                 <tr>
                   <td class="sticky">
@@ -158,9 +217,13 @@ $calEx        = $matriz['cal_exams'];
                       <?php
                         $idT = (int)$t['id_tarea'];
                         $val = $calT[$idAl][$idT] ?? '';
+                        if ($val !== '' && $val !== null) {
+                            $sumT += (float)$val;
+                            $countT++;
+                        }
                       ?>
                       <td>
-                        <input type="number" step="0.01" min="0" max="100"
+                        <input type="number" step="0.01" min="0" max="10"
                                class="input-nota"
                                name="nota_tarea[<?= $idAl ?>][<?= $idT ?>]"
                                value="<?= htmlspecialchars($val) ?>">
@@ -173,9 +236,13 @@ $calEx        = $matriz['cal_exams'];
                       <?php
                         $idEv = (int)$e['id_evaluacion'];
                         $val = $calEv[$idAl][$idEv] ?? '';
+                        if ($val !== '' && $val !== null) {
+                            $sumP += (float)$val;
+                            $countP++;
+                        }
                       ?>
                       <td>
-                        <input type="number" step="0.01" min="0" max="100"
+                        <input type="number" step="0.01" min="0" max="10"
                                class="input-nota"
                                name="nota_eval[<?= $idAl ?>][<?= $idEv ?>]"
                                value="<?= htmlspecialchars($val) ?>">
@@ -188,15 +255,60 @@ $calEx        = $matriz['cal_exams'];
                       <?php
                         $idEx = (int)$ex['id_examen'];
                         $val  = $calEx[$idAl][$idEx] ?? '';
+                        if ($val !== '' && $val !== null) {
+                            $sumE += (float)$val;
+                            $countE++;
+                        }
                       ?>
                       <td>
-                        <input type="number" step="0.01" min="0" max="100"
+                        <input type="number" step="0.01" min="0" max="10"
                                class="input-nota"
                                name="nota_examen[<?= $idAl ?>][<?= $idEx ?>]"
                                value="<?= htmlspecialchars($val) ?>">
                       </td>
                     <?php endforeach; ?>
                   <?php endif; ?>
+
+                  <?php
+                    // Promedios simples por tipo (0–10)
+                    $promT = $countT > 0 ? $sumT / $countT : null;
+                    $promP = $countP > 0 ? $sumP / $countP : null;
+                    $promE = $countE > 0 ? $sumE / $countE : null;
+
+                    // Promedio final ponderado en escala 0–10
+                    $totalPeso     = 0;
+                    $sumaPonderada = 0;
+
+                    if ($promT !== null) {
+                        $sumaPonderada += $promT * $pctT;
+                        $totalPeso     += $pctT;
+                    }
+                    if ($promP !== null) {
+                        $sumaPonderada += $promP * $pctP;
+                        $totalPeso     += $pctP;
+                    }
+                    if ($promE !== null) {
+                        $sumaPonderada += $promE * $pctE;
+                        $totalPeso     += $pctE;
+                    }
+
+                    $final = ($totalPeso > 0)
+                        ? $sumaPonderada / $totalPeso
+                        : null;
+                  ?>
+
+                  <td style="text-align:center;">
+                    <?= $promT !== null ? number_format($promT, 1) : '—' ?>
+                  </td>
+                  <td style="text-align:center;">
+                    <?= $promP !== null ? number_format($promP, 1) : '—' ?>
+                  </td>
+                  <td style="text-align:center;">
+                    <?= $promE !== null ? number_format($promE, 1) : '—' ?>
+                  </td>
+                  <td style="text-align:center; font-weight:600;">
+                    <?= $final !== null ? number_format($final, 1) : '—' ?>
+                  </td>
                 </tr>
               <?php endforeach; ?>
               </tbody>
@@ -205,7 +317,7 @@ $calEx        = $matriz['cal_exams'];
 
           <div class="calif-actions">
             <button type="submit" class="btn-subir">
-              <i class="fa-solid fa-save"></i> Guardar calificaciones
+              <i class="fa-solid fa-save"></i> Guardar porcentajes y calificaciones
             </button>
           </div>
         </form>

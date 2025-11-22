@@ -1,11 +1,15 @@
-/* Docentes - Calificaciones */
+/* =====================================
+   DOCENTES – CALIFICACIONES (UT STYLE)
+   ===================================== */
 
+/* Contenedor principal de la página */
 .calif-page {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
+/* Encabezado */
 .calif-header-text {
   display: flex;
   flex-direction: column;
@@ -14,6 +18,8 @@
 
 .calif-header-text h2 {
   margin: 0;
+  font-size: 1.35rem;
+  color: #111827;
 }
 
 .calif-header-text p {
@@ -22,43 +28,75 @@
   color: #6b7280;
 }
 
+/* Filtros / barra superior */
 .filtros-row {
   display: flex;
-  gap: 10px;
+  gap: 14px;
   align-items: center;
   flex-wrap: wrap;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .filtros-row label {
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: #374151;
 }
 
 .filtros-row select {
   margin-left: 6px;
-  padding: 5px 10px;
-  border-radius: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
   border: 1px solid #d1d5db;
   background: #ffffff;
-  font-size: 0.9rem;
+  color: #111827;
+  font-size: 0.88rem;
+  outline: none;
+  min-width: 220px;
 }
 
-/* Tabla grande */
+.filtros-row select:focus {
+  border-color: var(--ut-green-500, #22c55e);
+  box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.35);
+}
 
+/* Botones “Agregar …” dentro del dash de calificaciones */
+.calif-page .filtros-row .btn-subir {
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  border: none;
+  background: var(--ut-green-500, #22c55e);
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.35);
+  transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
+}
+
+.calif-page .filtros-row .btn-subir:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+  box-shadow: 0 7px 18px rgba(34, 197, 94, 0.4);
+}
+
+/* Contenedor de la tabla */
 .tabla-wrapper {
   overflow-x: auto;
-  border-radius: 12px;
+  border-radius: 16px;
   border: 1px solid #e5e7eb;
-  background: var(--card-bg, #ffffff);
+  background: #ffffff;
   box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
 }
 
+/* Tabla */
 table.calif {
   border-collapse: collapse;
   width: 100%;
-  min-width: 780px;
-  font-size: 0.85rem;
+  min-width: 880px;
+  font-size: 0.82rem;
+  color: #111827;
 }
 
 table.calif th,
@@ -68,40 +106,48 @@ table.calif td {
   vertical-align: middle;
 }
 
-table.calif thead th {
-  background: #f1f5f9;
+/* Encabezados */
+table.calif thead tr:first-child th {
+  background: var(--ut-green-600, #16a34a);
+  color: #f9fafb;
   font-weight: 600;
+  font-size: 0.8rem;
   text-align: center;
-  white-space: nowrap;
 }
 
 table.calif thead tr:nth-child(2) th {
-  font-size: 0.75rem;
-  background: #e5e7eb;
+  background: #ecfdf3;
+  color: #166534;
+  font-weight: 500;
+  font-size: 0.78rem;
 }
 
+/* Secciones (Tareas / Proyectos / Exámenes / Promedios) */
+.section-title {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Filas */
 table.calif tbody tr:nth-child(even) {
   background: #f9fafb;
 }
 
 table.calif tbody tr:hover {
-  background: #eff6ff;
+  background: #eef2ff;
 }
 
 /* Columna fija del alumno */
-
 table.calif td.sticky,
 table.calif th.sticky {
   position: sticky;
   left: 0;
-  background: var(--card-bg, #ffffff);
+  background: #ffffff;
   z-index: 3;
+  box-shadow: 2px 0 0 0 #e5e7eb;
 }
 
-table.calif th.sticky {
-  z-index: 4;
-}
-
+/* Celda de alumno */
 .alumno-cell {
   display: flex;
   flex-direction: column;
@@ -110,34 +156,53 @@ table.calif th.sticky {
 
 .alumno-cell strong {
   font-size: 0.9rem;
+  color: #111827;
 }
 
 .alumno-cell small {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: #6b7280;
 }
 
-/* Inputs de nota */
-
+/* Inputs de calificación y porcentajes */
 .input-nota {
-  width: 62px;
-  padding: 3px 4px;
-  border-radius: 6px;
-  border: 1px solid #cbd5e1;
+  width: 70px;
+  padding: 4px 6px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
   text-align: center;
   font-size: 0.8rem;
   background: #ffffff;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  color: #111827;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 
 .input-nota:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.35);
+  border-color: var(--ut-green-500, #22c55e);
+  box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.35);
+  background: #f9fffb;
 }
 
-/* Botón guardar */
+/* Columnas de promedios (últimas 4 columnas) */
+table.calif td:last-child,
+table.calif td:nth-last-child(-n+4),
+table.calif th:nth-last-child(-n+4) {
+  text-align: center;
+}
 
+table.calif td:nth-last-child(2) { /* Final */
+  font-weight: 700;
+  color: var(--ut-green-700, #15803d);
+}
+
+table.calif td:nth-last-child(3),
+table.calif td:nth-last-child(4),
+table.calif td:nth-last-child(5) {
+  color: #374151;
+}
+
+/* Botón guardar en el footer del formulario */
 .calif-actions {
   margin-top: 12px;
   display: flex;
@@ -148,18 +213,52 @@ table.calif th.sticky {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  border-radius: 999px;
+  padding: 7px 18px;
+  font-size: 0.86rem;
+  border: none;
+  background: var(--ut-green-600, #16a34a);
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(22, 163, 74, 0.35);
+  transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
+}
+
+.calif-actions .btn-subir:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+  box-shadow: 0 10px 26px rgba(22, 163, 74, 0.45);
+}
+
+/* Mensaje vacío */
+.empty {
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px dashed #d1d5db;
+  background: #f9fafb;
+  color: #6b7280;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.empty i {
+  color: #f97316;
 }
 
 /* Responsive */
-
 @media (max-width: 900px) {
   table.calif td.sticky,
   table.calif th.sticky {
     position: static;
+    box-shadow: none;
   }
 
   .tabla-wrapper {
-    box-shadow: none;
-    border-radius: 8px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
   }
 }
