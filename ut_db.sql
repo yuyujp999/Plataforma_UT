@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 20-11-2025 a las 01:47:52
+-- Tiempo de generación: 22-11-2025 a las 20:29:58
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -306,7 +306,9 @@ INSERT INTO `asignaciones_docentes` (`id_asignacion_docente`, `id_docente`, `id_
 (15, 16, 17, 16),
 (16, 16, 15, 17),
 (17, 16, 7, 18),
-(18, 16, 16, 19);
+(18, 16, 16, 19),
+(19, 16, 19, 20),
+(20, 16, 20, 21);
 
 -- --------------------------------------------------------
 
@@ -412,7 +414,45 @@ INSERT INTO `asignar_materias` (`id_asignacion`, `id_materia`, `id_nombre_grupo_
 (13, 10, 13, 15),
 (14, 4, 13, 16),
 (15, 6, 13, 17),
-(16, 1, 13, 18);
+(16, 1, 13, 18),
+(17, 3, 7, 19),
+(18, 9, 13, 20),
+(19, 8, 13, 21);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `aulas`
+--
+
+CREATE TABLE `aulas` (
+  `id_aula` int(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `capacidad` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `calif_config`
+--
+
+CREATE TABLE `calif_config` (
+  `id_asignacion_docente` int(11) NOT NULL,
+  `pct_tareas` decimal(5,2) NOT NULL DEFAULT 34.00,
+  `pct_proyectos` decimal(5,2) NOT NULL DEFAULT 33.00,
+  `pct_examenes` decimal(5,2) NOT NULL DEFAULT 33.00,
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `calif_config`
+--
+
+INSERT INTO `calif_config` (`id_asignacion_docente`, `pct_tareas`, `pct_proyectos`, `pct_examenes`, `updated_at`) VALUES
+(16, 34.00, 33.00, 33.00, '2025-11-21 18:00:51'),
+(17, 34.00, 33.00, 33.00, '2025-11-21 20:07:34'),
+(19, 34.00, 33.00, 33.00, '2025-11-21 20:34:43');
 
 -- --------------------------------------------------------
 
@@ -491,15 +531,18 @@ INSERT INTO `cat_nombres_materias` (`id_nombre_materia`, `nombre`) VALUES
 (15, 'COMU-TIID1G1'),
 (3, 'CONT-II1G1'),
 (4, 'CONT-II1G2'),
+(21, 'CONT-TIID1G1'),
 (5, 'DISE-II1G1'),
 (6, 'DISE-II1G2'),
+(20, 'DISE-TIID1G1'),
 (7, 'FISI-LLI1G2'),
 (17, 'INGL-TIID1G1'),
 (13, 'MATE-IM1G1'),
 (12, 'MATE-IS1G1'),
 (18, 'MATE-TIID1G1'),
 (11, 'PROG-IS1G1'),
-(16, 'PROG-TIID1G1');
+(16, 'PROG-TIID1G1'),
+(19, 'QUIM-LLI1G1');
 
 -- --------------------------------------------------------
 
@@ -553,7 +596,9 @@ INSERT INTO `cat_nombre_profesor_materia_grupo` (`id_nombre_profesor_materia_gru
 (16, 'Profesor Angel Loza Flores - INGL-TIID1G1'),
 (17, 'Profesor Angel Loza Flores - COMU-TIID1G1'),
 (18, 'Profesor Angel Loza Flores - FISI-LLI1G2'),
-(19, 'Profesor Angel Loza Flores - PROG-TIID1G1');
+(19, 'Profesor Angel Loza Flores - PROG-TIID1G1'),
+(20, 'Profesor Angel Loza Flores - QUIM-LLI1G1'),
+(21, 'Profesor Angel Loza Flores - DISE-TIID1G1');
 
 -- --------------------------------------------------------
 
@@ -683,7 +728,13 @@ INSERT INTO `entregas_alumnos` (`id_entrega`, `id_tarea`, `id_alumno`, `archivo`
 (3, 8, 132, 'uploads/entregas/entrega_690b795be3619_Seguridad informática - Glosario - Angel Loza 22624.pdf', '2025-11-05 16:20:43', NULL, NULL, 'Devuelta', 'regreso'),
 (4, 10, 132, 'uploads/entregas/entrega_690b8fc3211f5_Evi2-ADT-AALF (2).docx', '2025-11-05 17:56:19', NULL, 5.00, 'Calificada', '5'),
 (5, 9, 132, 'uploads/entregas/entrega_690bfb5d3516d_entrega_69091cfc64793_Evi2-ADT-AALF (3).docx', '2025-11-06 01:35:25', NULL, NULL, 'Entregada', NULL),
-(6, 21, 132, 'uploads/entregas/entrega_6913e31d65f00_Act1-ADT-AALF.pdf', '2025-11-12 01:30:05', NULL, NULL, 'Devuelta', 'aun le falta');
+(6, 21, 132, 'uploads/entregas/entrega_6913e31d65f00_Act1-ADT-AALF.pdf', '2025-11-12 01:30:05', NULL, NULL, 'Devuelta', 'aun le falta'),
+(7, 23, 89, NULL, '2025-11-22 04:02:09', '2025-11-21 22:02:31', 5.00, 'Calificada', NULL),
+(8, 24, 89, NULL, '2025-11-22 04:02:09', '2025-11-21 22:02:31', 5.00, 'Calificada', NULL),
+(9, 23, 88, NULL, '2025-11-22 04:02:31', '2025-11-21 22:02:31', 10.00, 'Calificada', NULL),
+(10, 24, 88, NULL, '2025-11-22 04:02:31', '2025-11-21 22:02:31', 10.00, 'Calificada', NULL),
+(11, 25, 132, NULL, '2025-11-22 04:11:32', '2025-11-21 22:11:32', 10.00, 'Calificada', NULL),
+(12, 26, 132, NULL, '2025-11-22 04:11:32', '2025-11-21 22:11:32', 8.00, 'Calificada', NULL);
 
 -- --------------------------------------------------------
 
@@ -701,6 +752,15 @@ CREATE TABLE `entregas_evaluaciones_alumnos` (
   `calificacion` decimal(5,2) DEFAULT NULL,
   `retroalimentacion` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `entregas_evaluaciones_alumnos`
+--
+
+INSERT INTO `entregas_evaluaciones_alumnos` (`id_entrega`, `id_evaluacion`, `id_alumno`, `archivo`, `fecha_entrega`, `estado`, `calificacion`, `retroalimentacion`) VALUES
+(1, 2, 89, '', '2025-11-21 22:02:09', 'Calificada', 5.00, NULL),
+(2, 2, 88, '', '2025-11-21 22:02:31', 'Calificada', 10.00, NULL),
+(3, 3, 132, '', '2025-11-21 22:11:32', 'Calificada', 9.00, NULL);
 
 -- --------------------------------------------------------
 
@@ -725,7 +785,9 @@ CREATE TABLE `evaluaciones_docente` (
 --
 
 INSERT INTO `evaluaciones_docente` (`id_evaluacion`, `id_docente`, `id_asignacion_docente`, `titulo`, `tipo`, `descripcion`, `archivo`, `fecha_publicacion`, `fecha_cierre`) VALUES
-(1, 16, 16, 'Proyecto prueba 1', 'Proyecto Final', 'Proyecto', 'uploads/evaluaciones/eval_69167c16066ae_actividad 1  AALF.pdf', '2025-11-13 18:47:18', '2025-11-20 23:59:59');
+(1, 16, 16, 'Proyecto prueba 1', 'Proyecto Final', 'Proyecto', 'uploads/evaluaciones/eval_69167c16066ae_actividad 1  AALF.pdf', '2025-11-13 18:47:18', '2025-11-20 23:59:59'),
+(2, 16, 19, 'Proyecto 1', 'Proyecto Final', 'aja', NULL, '2025-11-21 20:35:51', '2025-11-30 23:59:59'),
+(3, 16, 20, 'Proyecto 1', 'Proyecto Final', 'asdadsa', NULL, '2025-11-21 22:10:44', '2025-11-30 23:59:59');
 
 -- --------------------------------------------------------
 
@@ -749,7 +811,34 @@ CREATE TABLE `examenes` (
 --
 
 INSERT INTO `examenes` (`id_examen`, `id_docente`, `id_asignacion_docente`, `titulo`, `descripcion`, `fecha_publicacion`, `fecha_cierre`, `estado`) VALUES
-(1, 16, 18, 'Parcial 1', 'Responde las preguntas', '2025-11-19 18:02:49', '2025-11-20', 'Activo');
+(1, 16, 18, 'Parcial 1', 'Responde las preguntas', '2025-11-19 18:02:49', '2025-11-20', 'Activo'),
+(2, 16, 13, 'prueba', 'jhggffjh,hkjl', '2025-11-19 20:05:50', '2025-11-20', 'Activo'),
+(3, 16, 19, 'Parcial 1', 'adadsa', '2025-11-21 20:36:36', '2025-11-30', 'Activo'),
+(4, 16, 20, 'Parcial 1', '-', '2025-11-21 22:11:11', '2025-11-30', 'Activo');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `examen_calificaciones`
+--
+
+CREATE TABLE `examen_calificaciones` (
+  `id_examen_calificacion` int(11) NOT NULL,
+  `id_examen` int(11) NOT NULL,
+  `id_alumno` int(11) NOT NULL,
+  `calificacion` decimal(5,2) NOT NULL,
+  `fecha_calificacion` datetime DEFAULT current_timestamp(),
+  `observaciones` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `examen_calificaciones`
+--
+
+INSERT INTO `examen_calificaciones` (`id_examen_calificacion`, `id_examen`, `id_alumno`, `calificacion`, `fecha_calificacion`, `observaciones`) VALUES
+(1, 3, 89, 10.00, '2025-11-21 20:37:50', NULL),
+(11, 3, 88, 9.00, '2025-11-21 22:02:31', NULL),
+(12, 4, 132, 10.00, '2025-11-21 22:11:32', NULL);
 
 -- --------------------------------------------------------
 
@@ -772,7 +861,10 @@ CREATE TABLE `examen_preguntas` (
 
 INSERT INTO `examen_preguntas` (`id_pregunta`, `id_examen`, `tipo`, `pregunta`, `puntos`, `orden`) VALUES
 (1, 1, 'opcion', 'Que es php', 1.00, 1),
-(2, 1, 'abierta', 'di algo', 1.00, 2);
+(2, 1, 'abierta', 'di algo', 1.00, 2),
+(3, 2, 'opcion', 'pregunta', 1.00, 1),
+(4, 3, 'abierta', 'sadadsada', 1.00, 1),
+(5, 4, 'abierta', 'adsadadad', 1.00, 1);
 
 -- --------------------------------------------------------
 
@@ -794,7 +886,10 @@ CREATE TABLE `examen_pregunta_opciones` (
 INSERT INTO `examen_pregunta_opciones` (`id_opcion`, `id_pregunta`, `texto_opcion`, `es_correcta`) VALUES
 (1, 1, 'Un lenguaje de programacion', 1),
 (2, 1, 'Una plataforma de estudio', 0),
-(3, 1, 'si', 0);
+(3, 1, 'si', 0),
+(4, 3, 'jcjgdhgdjy', 0),
+(5, 3, 'klhkio', 0),
+(6, 3, 'efaesff', 1);
 
 -- --------------------------------------------------------
 
@@ -811,6 +906,15 @@ CREATE TABLE `examen_respuestas` (
   `id_opcion` int(11) DEFAULT NULL,
   `fecha_envio` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `examen_respuestas`
+--
+
+INSERT INTO `examen_respuestas` (`id_respuesta`, `id_examen`, `id_alumno`, `id_pregunta`, `respuesta_texto`, `id_opcion`, `fecha_envio`) VALUES
+(1, 1, 132, 2, 'ssisiss', NULL, '2025-11-19 18:56:13'),
+(2, 1, 132, 1, NULL, 1, '2025-11-19 18:56:13'),
+(3, 2, 132, 3, NULL, 4, '2025-11-19 20:06:11');
 
 -- --------------------------------------------------------
 
@@ -838,6 +942,22 @@ INSERT INTO `grupos` (`id_grupo`, `id_nombre_semestre`, `id_nombre_grupo`) VALUE
 (13, 4, 11),
 (14, 4, 12),
 (15, 8, 13);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `horarios`
+--
+
+CREATE TABLE `horarios` (
+  `id_horario` int(11) NOT NULL,
+  `id_nombre_profesor_materia_grupo` int(11) NOT NULL,
+  `id_aula` int(11) NOT NULL,
+  `dia` enum('Lunes','Martes','Miércoles','Jueves','Viernes','Sábado') NOT NULL,
+  `bloque` tinyint(2) NOT NULL,
+  `hora_inicio` time NOT NULL,
+  `hora_fin` time NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -1140,7 +1260,11 @@ INSERT INTO `tareas_materias` (`id_tarea`, `id_asignacion_docente`, `titulo`, `d
 (19, 15, 'ejemplo fuera de tiempo ', '', NULL, '2025-11-10', '2025-11-11 15:19:11'),
 (20, 15, 'ejemplo de entrega cerrada', '', NULL, '2025-10-01', '2025-11-11 15:20:29'),
 (21, 16, 'Ejemplo de devolución', '', NULL, '2025-11-25', '2025-11-12 01:08:26'),
-(22, 16, 'Prueba chacon', 'sss', NULL, '2025-11-20', '2025-11-14 02:19:17');
+(22, 16, 'Prueba chacon', 'sss', NULL, '2025-11-20', '2025-11-14 02:19:17'),
+(23, 19, 'Act 1', 'act 1', NULL, '2025-11-30', '2025-11-22 02:35:14'),
+(24, 19, 'act 2', 'act 2', NULL, '2025-11-30', '2025-11-22 02:35:23'),
+(25, 20, 'Act 1', 'act 1', NULL, '2025-11-30', '2025-11-22 04:09:51'),
+(26, 20, 'act 2', 'act2', NULL, '2025-11-30', '2025-11-22 04:10:04');
 
 --
 -- Índices para tablas volcadas
@@ -1207,6 +1331,19 @@ ALTER TABLE `asignar_materias`
   ADD KEY `idx_asignar_id_materia` (`id_materia`),
   ADD KEY `id_nombre_grupo_int` (`id_nombre_grupo_int`,`id_nombre_materia`),
   ADD KEY `id_nombre_materia` (`id_nombre_materia`);
+
+--
+-- Indices de la tabla `aulas`
+--
+ALTER TABLE `aulas`
+  ADD PRIMARY KEY (`id_aula`),
+  ADD UNIQUE KEY `ux_aulas_nombre` (`nombre`);
+
+--
+-- Indices de la tabla `calif_config`
+--
+ALTER TABLE `calif_config`
+  ADD PRIMARY KEY (`id_asignacion_docente`);
 
 --
 -- Indices de la tabla `carreras`
@@ -1302,6 +1439,15 @@ ALTER TABLE `examenes`
   ADD KEY `id_asignacion_docente` (`id_asignacion_docente`);
 
 --
+-- Indices de la tabla `examen_calificaciones`
+--
+ALTER TABLE `examen_calificaciones`
+  ADD PRIMARY KEY (`id_examen_calificacion`),
+  ADD UNIQUE KEY `ux_examen_alumno` (`id_examen`,`id_alumno`),
+  ADD KEY `idx_examen` (`id_examen`),
+  ADD KEY `idx_alumno` (`id_alumno`);
+
+--
 -- Indices de la tabla `examen_preguntas`
 --
 ALTER TABLE `examen_preguntas`
@@ -1332,6 +1478,14 @@ ALTER TABLE `grupos`
   ADD PRIMARY KEY (`id_grupo`),
   ADD UNIQUE KEY `uq_grupos_id_nombre_grupo` (`id_nombre_grupo`),
   ADD KEY `idx_grupos_id_nombre_semestre` (`id_nombre_semestre`);
+
+--
+-- Indices de la tabla `horarios`
+--
+ALTER TABLE `horarios`
+  ADD PRIMARY KEY (`id_horario`),
+  ADD KEY `idx_horarios_prof_mat_grupo` (`id_nombre_profesor_materia_grupo`),
+  ADD KEY `idx_horarios_aula` (`id_aula`);
 
 --
 -- Indices de la tabla `materias`
@@ -1439,7 +1593,7 @@ ALTER TABLE `asignaciones_alumnos`
 -- AUTO_INCREMENT de la tabla `asignaciones_docentes`
 --
 ALTER TABLE `asignaciones_docentes`
-  MODIFY `id_asignacion_docente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id_asignacion_docente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT de la tabla `asignaciones_grupo_alumno`
@@ -1451,7 +1605,13 @@ ALTER TABLE `asignaciones_grupo_alumno`
 -- AUTO_INCREMENT de la tabla `asignar_materias`
 --
 ALTER TABLE `asignar_materias`
-  MODIFY `id_asignacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id_asignacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+
+--
+-- AUTO_INCREMENT de la tabla `aulas`
+--
+ALTER TABLE `aulas`
+  MODIFY `id_aula` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `carreras`
@@ -1469,7 +1629,7 @@ ALTER TABLE `cat_nombres_grupo`
 -- AUTO_INCREMENT de la tabla `cat_nombres_materias`
 --
 ALTER TABLE `cat_nombres_materias`
-  MODIFY `id_nombre_materia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id_nombre_materia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT de la tabla `cat_nombres_semestre`
@@ -1481,7 +1641,7 @@ ALTER TABLE `cat_nombres_semestre`
 -- AUTO_INCREMENT de la tabla `cat_nombre_profesor_materia_grupo`
 --
 ALTER TABLE `cat_nombre_profesor_materia_grupo`
-  MODIFY `id_nombre_profesor_materia_grupo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id_nombre_profesor_materia_grupo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT de la tabla `chats`
@@ -1505,49 +1665,61 @@ ALTER TABLE `docentes`
 -- AUTO_INCREMENT de la tabla `entregas_alumnos`
 --
 ALTER TABLE `entregas_alumnos`
-  MODIFY `id_entrega` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_entrega` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `entregas_evaluaciones_alumnos`
 --
 ALTER TABLE `entregas_evaluaciones_alumnos`
-  MODIFY `id_entrega` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_entrega` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluaciones_docente`
 --
 ALTER TABLE `evaluaciones_docente`
-  MODIFY `id_evaluacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_evaluacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `examenes`
 --
 ALTER TABLE `examenes`
-  MODIFY `id_examen` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_examen` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT de la tabla `examen_calificaciones`
+--
+ALTER TABLE `examen_calificaciones`
+  MODIFY `id_examen_calificacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `examen_preguntas`
 --
 ALTER TABLE `examen_preguntas`
-  MODIFY `id_pregunta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_pregunta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `examen_pregunta_opciones`
 --
 ALTER TABLE `examen_pregunta_opciones`
-  MODIFY `id_opcion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_opcion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `examen_respuestas`
 --
 ALTER TABLE `examen_respuestas`
-  MODIFY `id_respuesta` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_respuesta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `grupos`
 --
 ALTER TABLE `grupos`
   MODIFY `id_grupo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT de la tabla `horarios`
+--
+ALTER TABLE `horarios`
+  MODIFY `id_horario` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `materias`
@@ -1607,7 +1779,7 @@ ALTER TABLE `semestres`
 -- AUTO_INCREMENT de la tabla `tareas_materias`
 --
 ALTER TABLE `tareas_materias`
-  MODIFY `id_tarea` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id_tarea` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- Restricciones para tablas volcadas
@@ -1682,6 +1854,13 @@ ALTER TABLE `evaluaciones_docente`
 ALTER TABLE `examenes`
   ADD CONSTRAINT `examenes_ibfk_1` FOREIGN KEY (`id_docente`) REFERENCES `docentes` (`id_docente`),
   ADD CONSTRAINT `examenes_ibfk_2` FOREIGN KEY (`id_asignacion_docente`) REFERENCES `asignaciones_docentes` (`id_asignacion_docente`);
+
+--
+-- Filtros para la tabla `examen_calificaciones`
+--
+ALTER TABLE `examen_calificaciones`
+  ADD CONSTRAINT `fk_ec_alumno` FOREIGN KEY (`id_alumno`) REFERENCES `alumnos` (`id_alumno`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_ec_examen` FOREIGN KEY (`id_examen`) REFERENCES `examenes` (`id_examen`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `examen_preguntas`
