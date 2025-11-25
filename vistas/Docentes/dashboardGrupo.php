@@ -7,19 +7,42 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'docente') {
 
 include_once __DIR__ . "/../../conexion/conexion.php";
 include_once __DIR__ . "/../../controladores/docentes/GrupoController.php";
+include_once __DIR__ . "/../../controladores/docentes/AsistenciasController.php";
 
-// 🔹 Obtener ID del grupo
+// 🔹 ID del grupo
 $idGrupo = intval($_GET['id'] ?? 0);
 
-// 🔹 Asegurar que obtenemos correctamente el ID del docente
+// 🔹 ID del docente (desde sesión)
 $idDocente = intval($_SESSION['id_docente'] ?? ($_SESSION['usuario']['id_docente'] ?? 0));
 
-// 🔹 Obtener info del grupo
+// 🔹 Info del grupo
 $grupoInfo = GrupoController::obtenerInfoGrupo($idGrupo);
 
-// 🔹 Obtener alumnos y materias asignadas
+// 🔹 Alumnos del grupo
 $alumnos = GrupoController::obtenerAlumnosPorGrupo($idGrupo);
+
+// 🔹 Materias asignadas a este docente en este grupo
 $materias = GrupoController::obtenerMateriasPorDocenteYGrupo($idDocente, $idGrupo);
+
+// 🔹 Filtros asistencia (materia + fecha)
+$selectedAsign = intval($_GET['id_asignacion_docente'] ?? 0);
+$fecha = $_GET['fecha'] ?? date('Y-m-d');
+
+// 🔹 Mapa de asistencias del día
+$mapaAsistencias = [];
+$fechasGuardadas = [];
+if ($idGrupo > 0 && $selectedAsign > 0) {
+    // fechas que ya tienen asistencia
+    $fechasGuardadas = AsistenciasController::obtenerFechasRegistradas($idGrupo, $selectedAsign);
+
+    if ($fecha) {
+        $mapaAsistencias = AsistenciasController::obtenerMapaDia($idGrupo, $selectedAsign, $fecha);
+    }
+}
+
+// 🔹 Flash asistencia
+$flashAsistencia = $_SESSION['flash_asistencia'] ?? '';
+unset($_SESSION['flash_asistencia']);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -47,6 +70,7 @@ $materias = GrupoController::obtenerMateriasPorDocenteYGrupo($idDocente, $idGrup
 
     <!-- CONTENIDO -->
     <div class="main-content">
+      <!-- Barra superior del grupo -->
       <div class="materia-navbar">
         <div class="materia-info">
           <h2><i class="fa-solid fa-users"></i> <?= htmlspecialchars($grupoInfo['nombre_grupo'] ?? 'Grupo sin nombre') ?></h2>
@@ -58,16 +82,24 @@ $materias = GrupoController::obtenerMateriasPorDocenteYGrupo($idDocente, $idGrup
         </div>
       </div>
 
-      <!-- 🔹 SECCIÓN DE MATERIAS -->
-      <section class="materias-section">
-        <h2><i class="fa-solid fa-book"></i> Materias Asignadas</h2>
+      <?php if (!empty($flashAsistencia)): ?>
+        <div class="alert-message">
+          <?= htmlspecialchars($flashAsistencia) ?>
+        </div>
+      <?php endif; ?>
+
+      <!-- 📘 MATERIAS DE ESTE DOCENTE EN EL GRUPO -->
+      <section class="materias-grupo-section">
+        <h2><i class="fa-solid fa-book"></i> Materias asignadas en este grupo</h2>
         <?php if (!empty($materias)): ?>
-          <div class="materias-grid">
+          <div class="materias-grupo-grid">
             <?php foreach ($materias as $m): ?>
-              <div class="materia-card">
+              <div class="materia-btn">
                 <i class="fa-solid fa-book-open"></i>
-                <h4><?= htmlspecialchars($m['nombre_materia']) ?></h4>
-                <p><?= htmlspecialchars($m['codigo_materia']) ?></p>
+                <div>
+                  <div><?= htmlspecialchars($m['nombre_materia']) ?></div>
+                  <small><?= htmlspecialchars($m['codigo_materia'] ?? '') ?></small>
+                </div>
               </div>
             <?php endforeach; ?>
           </div>
@@ -76,29 +108,115 @@ $materias = GrupoController::obtenerMateriasPorDocenteYGrupo($idDocente, $idGrup
         <?php endif; ?>
       </section>
 
-      <!-- 🔹 SECCIÓN DE ALUMNOS -->
+      <!-- 🎓 ALUMNOS + ASISTENCIA -->
       <section class="alumnos-section">
-        <h2><i class="fa-solid fa-user-graduate"></i> Alumnos del Grupo</h2>
-        <?php if (!empty($alumnos)): ?>
-          <table class="tabla-alumnos">
-            <thead>
-              <tr>
-                <th>Matrícula</th>
-                <th>Nombre completo</th>
-              </tr>
-            </thead>
-            <tbody>
-              <?php foreach ($alumnos as $a): ?>
-                <tr>
-                  <td><?= htmlspecialchars($a['matricula']) ?></td>
-                  <td>
-                    <?= htmlspecialchars(($a['nombre'] ?? '') . ' ' . ($a['apellido_paterno'] ?? '') . ' ' . ($a['apellido_materno'] ?? '')) ?>
-                  <</td>
+        <h2><i class="fa-solid fa-user-graduate"></i> Lista de alumnos y asistencias</h2>
 
-                </tr>
-              <?php endforeach; ?>
-            </tbody>
-          </table>
+        <?php if (!empty($alumnos)): ?>
+
+          <!-- Filtros para asistencia (materia + fecha) -->
+          <form method="GET" class="asistencia-filtros" id="formFiltrosAsistencia">
+            <input type="hidden" name="id" value="<?= (int)$idGrupo ?>">
+
+            <label>
+              Materia:
+              <select name="id_asignacion_docente" id="selectMateria" required>
+                <option value="">Selecciona…</option>
+                <?php foreach ($materias as $m): ?>
+                  <option value="<?= (int)$m['id_asignacion_docente'] ?>"
+                    <?= $selectedAsign === (int)$m['id_asignacion_docente'] ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($m['nombre_materia']) ?>
+                  </option>
+                <?php endforeach; ?>
+              </select>
+            </label>
+
+            <label>
+              Fecha:
+              <input type="date" name="fecha" id="inputFecha" value="<?= htmlspecialchars($fecha) ?>" required>
+            </label>
+
+            <?php if (!empty($fechasGuardadas)): ?>
+              <label>
+                Fechas con asistencia:
+                <select id="selectFechaGuardada">
+                  <option value="">Selecciona fecha…</option>
+                  <?php foreach ($fechasGuardadas as $f): ?>
+                    <?php
+                      $selected = ($f === $fecha) ? 'selected' : '';
+                      $label = date('d/m/Y', strtotime($f));
+                    ?>
+                    <option value="<?= htmlspecialchars($f) ?>" <?= $selected ?>>
+                      <?= htmlspecialchars($label) ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+              </label>
+            <?php endif; ?>
+
+            <button type="submit" class="btn-subir">
+              <i class="fa-solid fa-calendar-check"></i> Actualizar
+            </button>
+          </form>
+
+          <?php if ($selectedAsign > 0): ?>
+            <!-- Tabla + selects de asistencia -->
+            <form method="POST" action="/Plataforma_UT/controladores/docentes/AsistenciasController.php">
+              <input type="hidden" name="id_grupo" value="<?= (int)$idGrupo ?>">
+              <input type="hidden" name="id_asignacion_docente" value="<?= (int)$selectedAsign ?>">
+              <input type="hidden" name="fecha" value="<?= htmlspecialchars($fecha) ?>">
+
+              <table class="tabla-alumnos">
+                <thead>
+                  <tr>
+                    <th>Matrícula</th>
+                    <th>Nombre completo</th>
+                    <th style="width:160px;">Asistencia (<?= htmlspecialchars($fecha) ?>)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <?php foreach ($alumnos as $a): ?>
+                    <?php
+                      $idAl = (int)$a['id_alumno'];
+                      $estadoActual = $mapaAsistencias[$idAl] ?? 'P'; // default Presente
+                      $nombreCompleto = trim(
+                        ($a['nombre'] ?? '') . ' ' .
+                        ($a['apellido_paterno'] ?? '') . ' ' .
+                        ($a['apellido_materno'] ?? '')
+                      );
+                    ?>
+                    <tr>
+                      <td><?= htmlspecialchars($a['matricula']) ?></td>
+                      <td><?= htmlspecialchars($nombreCompleto) ?></td>
+                      <td>
+                        <select name="estado[<?= $idAl ?>]" class="select-asistencia">
+                          <option value="P" <?= $estadoActual === 'P' ? 'selected' : '' ?>>Presente</option>
+                          <option value="A" <?= $estadoActual === 'A' ? 'selected' : '' ?>>Ausente</option>
+                          <option value="J" <?= $estadoActual === 'J' ? 'selected' : '' ?>>Justificado</option>
+                          <option value="R" <?= $estadoActual === 'R' ? 'selected' : '' ?>>Retardo</option>
+                        </select>
+                      </td>
+                    </tr>
+                  <?php endforeach; ?>
+                </tbody>
+              </table>
+
+              <div class="asistencia-actions">
+                <button type="submit" class="btn-subir">
+                  <i class="fa-solid fa-save"></i> Guardar asistencia
+                </button>
+              </div>
+
+              <p style="margin-top:8px; font-size:0.8rem; color:#6b7280;">
+                <strong>Nota:</strong> P = Presente, A = Ausente, J = Justificado, R = Retardo.
+              </p>
+            </form>
+          <?php else: ?>
+            <p class="no-alumnos">
+              Selecciona una materia para mostrar la lista de alumnos con asistencia del día.
+            </p>
+          <?php endif; ?>
+
         <?php else: ?>
           <p class="no-alumnos">No hay alumnos registrados en este grupo.</p>
         <?php endif; ?>
@@ -112,5 +230,41 @@ $materias = GrupoController::obtenerMateriasPorDocenteYGrupo($idDocente, $idGrup
   </script>
   <script src="/Plataforma_UT/js/Dashboard_Inicio.js"></script>
   <script src="/Plataforma_UT/js/modeToggle.js"></script>
+
+  <script>
+    const formFiltros    = document.getElementById('formFiltrosAsistencia');
+    const selMateria     = document.getElementById('selectMateria');
+    const inputFecha     = document.getElementById('inputFecha');
+    const selFechaGuard  = document.getElementById('selectFechaGuardada');
+
+    // Auto-enviar al cambiar materia
+    if (selMateria) {
+      selMateria.addEventListener('change', () => {
+        if (selMateria.value) {
+          formFiltros.submit();
+        }
+      });
+    }
+
+    // Auto-enviar al cambiar fecha manual
+    if (inputFecha) {
+      inputFecha.addEventListener('change', () => {
+        if (selMateria.value) {
+          formFiltros.submit();
+        }
+      });
+    }
+
+    // Al elegir una fecha guardada se copia al input date y se envía
+    if (selFechaGuard) {
+      selFechaGuard.addEventListener('change', () => {
+        const val = selFechaGuard.value;
+        if (val) {
+          inputFecha.value = val;
+          formFiltros.submit();
+        }
+      });
+    }
+  </script>
 </body>
 </html>

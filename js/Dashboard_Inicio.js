@@ -21,6 +21,13 @@ document.addEventListener("DOMContentLoaded", function () {
         text: "Mis Tareas",
         path: "/Plataforma_UT/vistas/Alumnos/dashboardTareas.php",
       },
+      { icon: "fa-solid fa-calendar-week", text: "Mi horario", path: "/Plataforma_UT/vistas/Alumnos/horario_alumno.php" },
+{
+  icon: "fas fa-wallet",
+  text: "Adeudos",
+  path: "/Plataforma_UT/vistas/Alumnos/dashboard_adeudos.php",
+},
+
       {
   icon: "fas fa-file-circle-question",
   text: "Exámenes",
@@ -78,6 +85,7 @@ document.addEventListener("DOMContentLoaded", function () {
           { icon: "fa-solid fa-table", 
       text: "Calificaciones", 
       path: "/Plataforma_UT/vistas/Docentes/calificaciones.php" },
+{ icon: "fa-solid fa-calendar-week", text: "Mi horario", path: "/Plataforma_UT/vistas/Docentes/horario_docente.php" },
 
       {
         icon: "fas fa-cog",

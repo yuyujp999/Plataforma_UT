@@ -72,6 +72,17 @@ $base = "/Plataforma_UT";
   </div>
 </div>
 </section>
+<!-- Ver mi horario -->
+<div class="ajuste-item">
+  <div class="ajuste-info">
+    <i class="fa-solid fa-calendar-week"></i>
+    <span>Ver mi horario</span>
+  </div>
+  <a href="/Plataforma_UT/vistas/Docentes/horario_docente.php" class="btn btn-outline">
+    <i class="fa-solid fa-eye"></i> Abrir
+  </a>
+</div>
+
 
     </main>
   </div>

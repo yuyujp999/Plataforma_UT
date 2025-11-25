@@ -153,6 +153,7 @@ class CalificacionesController
         $calT  = [];
         $calEv = [];
         $calEx = [];
+        $calAsis = [];
 
         // Tareas (entregas_alumnos)
         if (!empty($idsT)) {
@@ -196,7 +197,7 @@ class CalificacionesController
             }
         }
 
-        // Exámenes (examen_calificaciones si existe)
+        // Exámenes (examen_calificaciones)
         $tableCheckExCal = $conn->query("SHOW TABLES LIKE 'examen_calificaciones'");
         if (!empty($idsEx) && $tableCheckExCal && $tableCheckExCal->num_rows > 0) {
             $inEx  = implode(',', array_fill(0, count($idsEx), '?'));
@@ -218,22 +219,37 @@ class CalificacionesController
             }
         }
 
+        // Puntos de asistencia (tabla calificaciones_asistencia)
+        $tableCheckAsis = $conn->query("SHOW TABLES LIKE 'calificaciones_asistencia'");
+        if ($tableCheckAsis && $tableCheckAsis->num_rows > 0) {
+            $stmtAs = $conn->prepare("
+                SELECT id_alumno, puntos_asistencia
+                FROM calificaciones_asistencia
+                WHERE id_asignacion_docente = ?
+            ");
+            $stmtAs->bind_param("i", $idAsignacionDocente);
+            $stmtAs->execute();
+            $resAs = $stmtAs->get_result();
+            while ($row = $resAs->fetch_assoc()) {
+                $calAsis[(int)$row['id_alumno']] = (float)$row['puntos_asistencia'];
+            }
+        }
+
         return [
-            'alumnos'      => $alumnos,
-            'tareas'       => $tareas,
-            'evaluaciones' => $evaluaciones,
-            'examenes'     => $examenes,
-            'cal_tareas'   => $calT,
-            'cal_evals'    => $calEv,
-            'cal_exams'    => $calEx,
-            'config'       => $config,
+            'alumnos'        => $alumnos,
+            'tareas'         => $tareas,
+            'evaluaciones'   => $evaluaciones,
+            'examenes'       => $examenes,
+            'cal_tareas'     => $calT,
+            'cal_evals'      => $calEv,
+            'cal_exams'      => $calEx,
+            'cal_asistencia' => $calAsis,
+            'config'         => $config,
         ];
     }
 
     /**
      * Guardar porcentajes y calificaciones.
-     * - NO borra calificaciones existentes si dejas el input vacío.
-     * - Si no existía registro de tarea/proyecto, lo INSERTA.
      */
     public static function guardar(int $idDocente, int $idAsignacionDocente, array $post): array
     {
@@ -288,14 +304,13 @@ class CalificacionesController
                     $idTarea = (int)$idTarea;
                     $nota    = trim((string)$nota);
 
-                    // si está vacío: no tocamos lo que ya había
                     if ($nota === '' || !is_numeric($nota)) {
                         continue;
                     }
 
                     $notaNum = max(0, min(10, (float)$nota));
 
-                    // ¿Existe ya entrega para esa tarea/alumno?
+                    // ¿Existe ya entrega?
                     $stmtSel = $conn->prepare("
                         SELECT id_entrega
                         FROM entregas_alumnos
@@ -307,7 +322,6 @@ class CalificacionesController
                     $rowEnt = $stmtSel->get_result()->fetch_assoc();
 
                     if ($rowEnt) {
-                        // UPDATE de la entrega existente
                         $stmtUpd = $conn->prepare("
                             UPDATE entregas_alumnos
                             SET calificacion = ?, estado = 'Calificada', fecha_calificacion = NOW()
@@ -316,7 +330,6 @@ class CalificacionesController
                         $stmtUpd->bind_param("di", $notaNum, $rowEnt['id_entrega']);
                         $stmtUpd->execute();
                     } else {
-                        // INSERT de una nueva "entrega" solo para calificación
                         $stmtIns = $conn->prepare("
                             INSERT INTO entregas_alumnos
                                 (id_tarea, id_alumno, archivo, fecha_entrega, fecha_calificacion, calificacion, estado, retroalimentacion)
@@ -344,7 +357,6 @@ class CalificacionesController
 
                     $notaNum = max(0, min(10, (float)$nota));
 
-                    // ¿ya hay entrega de ese proyecto/evaluación?
                     $stmtSel = $conn->prepare("
                         SELECT id_entrega
                         FROM entregas_evaluaciones_alumnos
@@ -364,7 +376,6 @@ class CalificacionesController
                         $stmtUpd->bind_param("di", $notaNum, $rowEnt['id_entrega']);
                         $stmtUpd->execute();
                     } else {
-                        // nueva fila, sin archivo, solo calificación
                         $stmtIns = $conn->prepare("
                             INSERT INTO entregas_evaluaciones_alumnos
                                 (id_evaluacion, id_alumno, archivo, fecha_entrega, estado, calificacion, retroalimentacion)
@@ -402,6 +413,32 @@ class CalificacionesController
                         $stmt->bind_param("iid", $idExamen, $idAlumno, $notaNum);
                         $stmt->execute();
                     }
+                }
+            }
+        }
+
+        // -------- PUNTOS DE ASISTENCIA ----------
+        $tableCheckAsis = $conn->query("SHOW TABLES LIKE 'calificaciones_asistencia'");
+        if ($tableCheckAsis && $tableCheckAsis->num_rows > 0) {
+            if (!empty($post['nota_asistencia']) && is_array($post['nota_asistencia'])) {
+                foreach ($post['nota_asistencia'] as $idAlumno => $nota) {
+                    $idAlumno = (int)$idAlumno;
+                    $nota     = trim((string)$nota);
+
+                    if ($nota === '' || !is_numeric($nota)) {
+                        continue;
+                    }
+
+                    $notaNum = max(0, min(10, (float)$nota));
+
+                    $stmt = $conn->prepare("
+                        INSERT INTO calificaciones_asistencia
+                            (id_asignacion_docente, id_alumno, puntos_asistencia)
+                        VALUES (?, ?, ?)
+                        ON DUPLICATE KEY UPDATE puntos_asistencia = VALUES(puntos_asistencia)
+                    ");
+                    $stmt->bind_param("iid", $idAsignacionDocente, $idAlumno, $notaNum);
+                    $stmt->execute();
                 }
             }
         }

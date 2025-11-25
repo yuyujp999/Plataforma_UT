@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 22-11-2025 a las 20:29:58
+-- Tiempo de generación: 25-11-2025 a las 01:02:02
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -422,6 +422,54 @@ INSERT INTO `asignar_materias` (`id_asignacion`, `id_materia`, `id_nombre_grupo_
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `asistencias_alumnos`
+--
+
+CREATE TABLE `asistencias_alumnos` (
+  `id_asistencia` int(11) NOT NULL,
+  `id_alumno` int(11) NOT NULL,
+  `id_asignacion_docente` int(11) NOT NULL,
+  `id_grupo` int(11) NOT NULL,
+  `fecha` date NOT NULL,
+  `estado` enum('P','A','J','R') NOT NULL DEFAULT 'P',
+  `observaciones` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `asistencias_alumnos`
+--
+
+INSERT INTO `asistencias_alumnos` (`id_asistencia`, `id_alumno`, `id_asignacion_docente`, `id_grupo`, `fecha`, `estado`, `observaciones`, `created_at`, `updated_at`) VALUES
+(1, 89, 19, 7, '2025-11-23', 'A', NULL, '2025-11-23 19:53:06', NULL),
+(2, 88, 19, 7, '2025-11-23', 'P', NULL, '2025-11-23 19:53:06', NULL),
+(3, 8, 19, 7, '2025-11-23', 'A', NULL, '2025-11-23 19:53:06', NULL),
+(4, 4, 19, 7, '2025-11-23', 'P', NULL, '2025-11-23 19:53:06', NULL),
+(5, 84, 19, 7, '2025-11-23', 'P', NULL, '2025-11-23 19:53:06', NULL),
+(6, 81, 19, 7, '2025-11-23', 'P', NULL, '2025-11-23 19:53:06', NULL),
+(7, 85, 19, 7, '2025-11-23', 'P', NULL, '2025-11-23 19:53:06', NULL),
+(8, 82, 19, 7, '2025-11-23', 'P', NULL, '2025-11-23 19:53:06', NULL),
+(9, 86, 19, 7, '2025-11-23', 'P', NULL, '2025-11-23 19:53:06', NULL),
+(10, 83, 19, 7, '2025-11-23', 'P', NULL, '2025-11-23 19:53:06', NULL),
+(11, 90, 19, 7, '2025-11-23', 'P', NULL, '2025-11-23 19:53:06', NULL),
+(12, 87, 19, 7, '2025-11-23', 'P', NULL, '2025-11-23 19:53:06', NULL),
+(13, 89, 19, 7, '2025-11-24', 'P', NULL, '2025-11-24 02:23:02', NULL),
+(14, 88, 19, 7, '2025-11-24', 'P', NULL, '2025-11-24 02:23:02', NULL),
+(15, 8, 19, 7, '2025-11-24', 'P', NULL, '2025-11-24 02:23:02', NULL),
+(16, 4, 19, 7, '2025-11-24', 'P', NULL, '2025-11-24 02:23:02', NULL),
+(17, 84, 19, 7, '2025-11-24', 'P', NULL, '2025-11-24 02:23:02', NULL),
+(18, 81, 19, 7, '2025-11-24', 'P', NULL, '2025-11-24 02:23:02', NULL),
+(19, 85, 19, 7, '2025-11-24', 'P', NULL, '2025-11-24 02:23:02', NULL),
+(20, 82, 19, 7, '2025-11-24', 'P', NULL, '2025-11-24 02:23:02', NULL),
+(21, 86, 19, 7, '2025-11-24', 'P', NULL, '2025-11-24 02:23:02', NULL),
+(22, 83, 19, 7, '2025-11-24', 'P', NULL, '2025-11-24 02:23:02', NULL),
+(23, 90, 19, 7, '2025-11-24', 'P', NULL, '2025-11-24 02:23:02', NULL),
+(24, 87, 19, 7, '2025-11-24', 'P', NULL, '2025-11-24 02:23:02', NULL);
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `aulas`
 --
 
@@ -430,6 +478,49 @@ CREATE TABLE `aulas` (
   `nombre` varchar(100) NOT NULL,
   `capacidad` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `aulas`
+--
+
+INSERT INTO `aulas` (`id_aula`, `nombre`, `capacidad`) VALUES
+(1, 'aula 1', 40);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `calificaciones_alumnos`
+--
+
+CREATE TABLE `calificaciones_alumnos` (
+  `id` int(11) NOT NULL,
+  `id_asignacion_docente` int(11) NOT NULL,
+  `id_alumno` int(11) NOT NULL,
+  `tipo` enum('tarea','proyecto','examen','asistencia') NOT NULL,
+  `id_actividad` int(11) NOT NULL,
+  `calificacion` decimal(5,2) DEFAULT NULL,
+  `fecha_registro` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `calificaciones_asistencia`
+--
+
+CREATE TABLE `calificaciones_asistencia` (
+  `id_cal_asistencia` int(11) NOT NULL,
+  `id_asignacion_docente` int(11) NOT NULL,
+  `id_alumno` int(11) NOT NULL,
+  `puntos_asistencia` decimal(5,2) NOT NULL DEFAULT 0.00
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `calificaciones_asistencia`
+--
+
+INSERT INTO `calificaciones_asistencia` (`id_cal_asistencia`, `id_asignacion_docente`, `id_alumno`, `puntos_asistencia`) VALUES
+(1, 16, 132, 10.00);
 
 -- --------------------------------------------------------
 
@@ -728,13 +819,16 @@ INSERT INTO `entregas_alumnos` (`id_entrega`, `id_tarea`, `id_alumno`, `archivo`
 (3, 8, 132, 'uploads/entregas/entrega_690b795be3619_Seguridad informática - Glosario - Angel Loza 22624.pdf', '2025-11-05 16:20:43', NULL, NULL, 'Devuelta', 'regreso'),
 (4, 10, 132, 'uploads/entregas/entrega_690b8fc3211f5_Evi2-ADT-AALF (2).docx', '2025-11-05 17:56:19', NULL, 5.00, 'Calificada', '5'),
 (5, 9, 132, 'uploads/entregas/entrega_690bfb5d3516d_entrega_69091cfc64793_Evi2-ADT-AALF (3).docx', '2025-11-06 01:35:25', NULL, NULL, 'Entregada', NULL),
-(6, 21, 132, 'uploads/entregas/entrega_6913e31d65f00_Act1-ADT-AALF.pdf', '2025-11-12 01:30:05', NULL, NULL, 'Devuelta', 'aun le falta'),
+(6, 21, 132, 'uploads/entregas/entrega_6913e31d65f00_Act1-ADT-AALF.pdf', '2025-11-12 01:30:05', '2025-11-24 00:55:16', 10.00, 'Calificada', 'aun le falta'),
 (7, 23, 89, NULL, '2025-11-22 04:02:09', '2025-11-21 22:02:31', 5.00, 'Calificada', NULL),
 (8, 24, 89, NULL, '2025-11-22 04:02:09', '2025-11-21 22:02:31', 5.00, 'Calificada', NULL),
 (9, 23, 88, NULL, '2025-11-22 04:02:31', '2025-11-21 22:02:31', 10.00, 'Calificada', NULL),
 (10, 24, 88, NULL, '2025-11-22 04:02:31', '2025-11-21 22:02:31', 10.00, 'Calificada', NULL),
 (11, 25, 132, NULL, '2025-11-22 04:11:32', '2025-11-21 22:11:32', 10.00, 'Calificada', NULL),
-(12, 26, 132, NULL, '2025-11-22 04:11:32', '2025-11-21 22:11:32', 8.00, 'Calificada', NULL);
+(12, 26, 132, NULL, '2025-11-22 04:11:32', '2025-11-21 22:11:32', 8.00, 'Calificada', NULL),
+(13, 16, 132, NULL, '2025-11-24 05:57:38', '2025-11-24 00:55:16', 8.00, 'Calificada', NULL),
+(14, 17, 132, NULL, '2025-11-24 05:57:38', '2025-11-24 00:55:16', 9.00, 'Calificada', NULL),
+(15, 22, 132, NULL, '2025-11-24 05:57:38', '2025-11-24 00:55:16', 10.00, 'Calificada', NULL);
 
 -- --------------------------------------------------------
 
@@ -760,7 +854,8 @@ CREATE TABLE `entregas_evaluaciones_alumnos` (
 INSERT INTO `entregas_evaluaciones_alumnos` (`id_entrega`, `id_evaluacion`, `id_alumno`, `archivo`, `fecha_entrega`, `estado`, `calificacion`, `retroalimentacion`) VALUES
 (1, 2, 89, '', '2025-11-21 22:02:09', 'Calificada', 5.00, NULL),
 (2, 2, 88, '', '2025-11-21 22:02:31', 'Calificada', 10.00, NULL),
-(3, 3, 132, '', '2025-11-21 22:11:32', 'Calificada', 9.00, NULL);
+(3, 3, 132, '', '2025-11-21 22:11:32', 'Calificada', 9.00, NULL),
+(4, 1, 132, '', '2025-11-23 23:57:38', 'Calificada', 7.00, NULL);
 
 -- --------------------------------------------------------
 
@@ -959,6 +1054,13 @@ CREATE TABLE `horarios` (
   `hora_fin` time NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `horarios`
+--
+
+INSERT INTO `horarios` (`id_horario`, `id_nombre_profesor_materia_grupo`, `id_aula`, `dia`, `bloque`, `hora_inicio`, `hora_fin`) VALUES
+(1, 17, 1, 'Lunes', 3, '08:40:00', '09:30:00');
+
 -- --------------------------------------------------------
 
 --
@@ -1123,7 +1225,9 @@ INSERT INTO `notificaciones` (`id`, `tipo`, `titulo`, `detalle`, `para_rol`, `ac
 (41, 'movimiento', 'Suspensión retirada', 'Matrícula D003 - ID 3', 'admin', 8, 'docente', 'quitar_suspension', '{\"id_docente\":3,\"matricula\":\"D003\"}', 1, '2025-11-02 18:30:03'),
 (42, 'movimiento', 'Suspensión retirada', 'Matrícula D004 - ID 4', 'admin', 8, 'docente', 'quitar_suspension', '{\"id_docente\":4,\"matricula\":\"D004\"}', 1, '2025-11-02 18:30:08'),
 (43, 'movimiento', 'Docente reactivado', 'Matrícula D002 - ID 2', 'admin', 8, 'docente', 'reactivar', '{\"id_docente\":2,\"matricula\":\"D002\"}', 1, '2025-11-02 18:30:14'),
-(44, 'movimiento', 'Docente suspendido', 'Matrícula D003 - ID 3', 'admin', 8, 'docente', 'suspender', '{\"id_docente\":3,\"matricula\":\"D003\"}', 1, '2025-11-02 18:30:44');
+(44, 'movimiento', 'Docente suspendido', 'Matrícula D003 - ID 3', 'admin', 8, 'docente', 'suspender', '{\"id_docente\":3,\"matricula\":\"D003\"}', 1, '2025-11-02 18:30:44'),
+(45, 'movimiento', 'Alta de aula', 'Se agregó el aula aula 1.', 'admin', 8, 'aula', 'alta', '{\"id_aula\":1,\"nombre\":\"aula 1\",\"capacidad\":40}', 0, '2025-11-24 06:59:08'),
+(46, 'movimiento', 'Alta de pago/cargo', 'Se registró un movimiento para el alumno Angel Antonio Loza Flores (A062).', 'admin', 8, 'pago', 'alta', '{\"id_pago\":2,\"matricula\":\"A062\",\"alumno\":\"Angel Antonio Loza Flores\",\"periodo\":\"Si\",\"concepto\":\"si\",\"monto\":500,\"adeudo\":3000,\"pago\":500,\"condonacion\":1}', 0, '2025-11-24 07:08:55');
 
 -- --------------------------------------------------------
 
@@ -1142,6 +1246,13 @@ CREATE TABLE `pagos` (
   `condonacion` decimal(10,2) NOT NULL DEFAULT 0.00,
   `fecha_registro` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `pagos`
+--
+
+INSERT INTO `pagos` (`id`, `matricula`, `periodo`, `concepto`, `monto`, `adeudo`, `pago`, `condonacion`, `fecha_registro`) VALUES
+(2, 'A062', 'Si', 'si', 500.00, 3000.00, 500.00, 1.00, '2025-11-24 01:08:55');
 
 -- --------------------------------------------------------
 
@@ -1333,11 +1444,36 @@ ALTER TABLE `asignar_materias`
   ADD KEY `id_nombre_materia` (`id_nombre_materia`);
 
 --
+-- Indices de la tabla `asistencias_alumnos`
+--
+ALTER TABLE `asistencias_alumnos`
+  ADD PRIMARY KEY (`id_asistencia`),
+  ADD UNIQUE KEY `ux_asistencia` (`id_alumno`,`id_asignacion_docente`,`fecha`),
+  ADD KEY `fk_asist_asig` (`id_asignacion_docente`),
+  ADD KEY `fk_asist_grupo` (`id_grupo`);
+
+--
 -- Indices de la tabla `aulas`
 --
 ALTER TABLE `aulas`
   ADD PRIMARY KEY (`id_aula`),
   ADD UNIQUE KEY `ux_aulas_nombre` (`nombre`);
+
+--
+-- Indices de la tabla `calificaciones_alumnos`
+--
+ALTER TABLE `calificaciones_alumnos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_asignacion_docente` (`id_asignacion_docente`),
+  ADD KEY `id_alumno` (`id_alumno`);
+
+--
+-- Indices de la tabla `calificaciones_asistencia`
+--
+ALTER TABLE `calificaciones_asistencia`
+  ADD PRIMARY KEY (`id_cal_asistencia`),
+  ADD UNIQUE KEY `ux_asig_alumno` (`id_asignacion_docente`,`id_alumno`),
+  ADD KEY `fk_calasis_alum` (`id_alumno`);
 
 --
 -- Indices de la tabla `calif_config`
@@ -1608,10 +1744,28 @@ ALTER TABLE `asignar_materias`
   MODIFY `id_asignacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
+-- AUTO_INCREMENT de la tabla `asistencias_alumnos`
+--
+ALTER TABLE `asistencias_alumnos`
+  MODIFY `id_asistencia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+
+--
 -- AUTO_INCREMENT de la tabla `aulas`
 --
 ALTER TABLE `aulas`
-  MODIFY `id_aula` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_aula` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `calificaciones_alumnos`
+--
+ALTER TABLE `calificaciones_alumnos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `calificaciones_asistencia`
+--
+ALTER TABLE `calificaciones_asistencia`
+  MODIFY `id_cal_asistencia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `carreras`
@@ -1665,13 +1819,13 @@ ALTER TABLE `docentes`
 -- AUTO_INCREMENT de la tabla `entregas_alumnos`
 --
 ALTER TABLE `entregas_alumnos`
-  MODIFY `id_entrega` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id_entrega` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de la tabla `entregas_evaluaciones_alumnos`
 --
 ALTER TABLE `entregas_evaluaciones_alumnos`
-  MODIFY `id_entrega` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_entrega` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluaciones_docente`
@@ -1719,7 +1873,7 @@ ALTER TABLE `grupos`
 -- AUTO_INCREMENT de la tabla `horarios`
 --
 ALTER TABLE `horarios`
-  MODIFY `id_horario` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_horario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `materias`
@@ -1749,13 +1903,13 @@ ALTER TABLE `mensajes_secretarias`
 -- AUTO_INCREMENT de la tabla `notificaciones`
 --
 ALTER TABLE `notificaciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT de la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `recursos_materias`
@@ -1827,6 +1981,28 @@ ALTER TABLE `asignar_materias`
   ADD CONSTRAINT `asignar_materias_ibfk_1` FOREIGN KEY (`id_nombre_materia`) REFERENCES `cat_nombres_materias` (`id_nombre_materia`) ON DELETE CASCADE,
   ADD CONSTRAINT `asignar_materias_ibfk_2` FOREIGN KEY (`id_nombre_grupo_int`) REFERENCES `cat_nombres_grupo` (`id_nombre_grupo`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_asignar_materias_materias` FOREIGN KEY (`id_materia`) REFERENCES `materias` (`id_materia`) ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `asistencias_alumnos`
+--
+ALTER TABLE `asistencias_alumnos`
+  ADD CONSTRAINT `fk_asist_alumno` FOREIGN KEY (`id_alumno`) REFERENCES `alumnos` (`id_alumno`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_asist_asig` FOREIGN KEY (`id_asignacion_docente`) REFERENCES `asignaciones_docentes` (`id_asignacion_docente`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_asist_grupo` FOREIGN KEY (`id_grupo`) REFERENCES `grupos` (`id_grupo`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `calificaciones_alumnos`
+--
+ALTER TABLE `calificaciones_alumnos`
+  ADD CONSTRAINT `calificaciones_alumnos_ibfk_1` FOREIGN KEY (`id_asignacion_docente`) REFERENCES `asignaciones_docentes` (`id_asignacion_docente`) ON DELETE CASCADE,
+  ADD CONSTRAINT `calificaciones_alumnos_ibfk_2` FOREIGN KEY (`id_alumno`) REFERENCES `alumnos` (`id_alumno`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `calificaciones_asistencia`
+--
+ALTER TABLE `calificaciones_asistencia`
+  ADD CONSTRAINT `fk_calasis_alum` FOREIGN KEY (`id_alumno`) REFERENCES `alumnos` (`id_alumno`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_calasis_asig` FOREIGN KEY (`id_asignacion_docente`) REFERENCES `asignaciones_docentes` (`id_asignacion_docente`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `entregas_alumnos`

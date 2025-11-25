@@ -30,17 +30,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $selectedAsign > 0) {
 
 /* Matriz vacía por defecto */
 $matriz = [
-    'alumnos'      => [],
-    'tareas'       => [],
-    'evaluaciones' => [],
-    'examenes'     => [],
-    'cal_tareas'   => [],
-    'cal_evals'    => [],
-    'cal_exams'    => [],
-    'config'       => [
-        'pct_tareas'    => 34.0,
-        'pct_proyectos' => 33.0,
-        'pct_examenes'  => 33.0,
+    'alumnos'        => [],
+    'tareas'         => [],
+    'evaluaciones'   => [],
+    'examenes'       => [],
+    'cal_tareas'     => [],
+    'cal_evals'      => [],
+    'cal_exams'      => [],
+    'cal_asistencia' => [],
+    'config'         => [
+        'pct_tareas'      => 30.0,
+        'pct_proyectos'   => 30.0,
+        'pct_examenes'    => 30.0,
+        'pct_asistencia'  => 10.0,
     ],
 ];
 
@@ -55,11 +57,13 @@ $examenes     = $matriz['examenes'];
 $calT         = $matriz['cal_tareas'];
 $calEv        = $matriz['cal_evals'];
 $calEx        = $matriz['cal_exams'];
+$calAsis      = $matriz['cal_asistencia'] ?? [];
 $config       = $matriz['config'];
 
-$pctT = (float)$config['pct_tareas'];
-$pctP = (float)$config['pct_proyectos'];
-$pctE = (float)$config['pct_examenes'];
+$pctT = (float)($config['pct_tareas']     ?? 30);
+$pctP = (float)($config['pct_proyectos']  ?? 30);
+$pctE = (float)($config['pct_examenes']   ?? 30);
+$pctA = (float)($config['pct_asistencia'] ?? 10);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -90,7 +94,7 @@ $pctE = (float)$config['pct_examenes'];
       <div class="calif-header-text">
         <h2><i class="fa-solid fa-table"></i> Calificaciones</h2>
         <p>
-          Define el porcentaje de <strong>tareas, proyectos y exámenes</strong>
+          Define el porcentaje de <strong>tareas, proyectos, exámenes y asistencia</strong>
           y captura las calificaciones por alumno. El promedio final se calcula automáticamente en escala 0–10.
         </p>
       </div>
@@ -140,13 +144,20 @@ $pctE = (float)$config['pct_examenes'];
                          class="input-nota" style="width:80px;">
                 </label>
               </div>
+              <div>
+                <label style="font-size:0.85rem;">Asistencia (%)<br>
+                  <input type="number" step="0.1" min="0" max="100"
+                         name="pct_asistencia" value="<?= htmlspecialchars($pctA) ?>"
+                         class="input-nota" style="width:80px;">
+                </label>
+              </div>
               <div style="align-self:center; font-size:0.8rem; color:#6b7280;">
                 Sugerido: que la suma sea 100%.
               </div>
             </div>
           </div>
 
-          <!-- TABLA -->
+          <!-- TABLA PRINCIPAL -->
           <div class="tabla-wrapper">
             <table class="calif">
               <thead>
@@ -165,7 +176,7 @@ $pctE = (float)$config['pct_examenes'];
                   <th colspan="<?= count($examenes) ?>" class="section-title">Exámenes</th>
                 <?php endif; ?>
 
-                <!-- columnas de promedio -->
+                <th rowspan="1" class="section-title">Asistencia</th>
                 <th colspan="4" class="section-title">Promedios</th>
               </tr>
               <tr>
@@ -187,6 +198,7 @@ $pctE = (float)$config['pct_examenes'];
                   <?php endforeach; ?>
                 <?php endif; ?>
 
+                <th class="subheader">Asist.</th>
                 <th class="subheader">Prom. tareas</th>
                 <th class="subheader">Prom. proyectos</th>
                 <th class="subheader">Prom. exámenes</th>
@@ -203,6 +215,8 @@ $pctE = (float)$config['pct_examenes'];
                   $sumT = 0; $countT = 0;
                   $sumP = 0; $countP = 0;
                   $sumE = 0; $countE = 0;
+
+                  $asisVal = isset($calAsis[$idAl]) ? (float)$calAsis[$idAl] : null;
                 ?>
                 <tr>
                   <td class="sticky">
@@ -269,11 +283,22 @@ $pctE = (float)$config['pct_examenes'];
                     <?php endforeach; ?>
                   <?php endif; ?>
 
+                  <!-- ASISTENCIA -->
+                  <td style="text-align:center;">
+                    <input type="number"
+                           name="nota_asistencia[<?= $idAl ?>]"
+                           step="0.1" min="0" max="10"
+                           class="input-nota"
+                           style="width:80px; text-align:center;"
+                           value="<?= $asisVal !== null ? htmlspecialchars($asisVal) : '' ?>">
+                  </td>
+
                   <?php
                     // Promedios simples por tipo (0–10)
                     $promT = $countT > 0 ? $sumT / $countT : null;
                     $promP = $countP > 0 ? $sumP / $countP : null;
                     $promE = $countE > 0 ? $sumE / $countE : null;
+                    $promA = $asisVal !== null ? $asisVal : null;
 
                     // Promedio final ponderado en escala 0–10
                     $totalPeso     = 0;
@@ -291,12 +316,19 @@ $pctE = (float)$config['pct_examenes'];
                         $sumaPonderada += $promE * $pctE;
                         $totalPeso     += $pctE;
                     }
+                    if ($promA !== null) {
+                        $sumaPonderada += $promA * $pctA;
+                        $totalPeso     += $pctA;
+                    }
 
                     $final = ($totalPeso > 0)
                         ? $sumaPonderada / $totalPeso
                         : null;
                   ?>
 
+                  <td style="text-align:center;">
+                    <?= $promA !== null ? number_format($promA, 1) : '—' ?>
+                  </td>
                   <td style="text-align:center;">
                     <?= $promT !== null ? number_format($promT, 1) : '—' ?>
                   </td>
