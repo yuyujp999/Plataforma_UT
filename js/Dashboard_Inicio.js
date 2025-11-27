@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
       {
         icon: "fa-solid fa-comments",
         text: "Chats",
-        path: "/Plataforma_UT/vistas/Docentes/dashboardChat.php",
+        path: "/Plataforma_UT/vistas/Docentes/dashboardChat_test.php",
       },
           { icon: "fa-solid fa-table", 
       text: "Calificaciones", 

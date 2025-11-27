@@ -202,6 +202,21 @@ switch ($rol) {
         $destino = '/Plataforma_UT/inicio.php';
         break;
 }
+if ($rol === 'docente' && isset($_SESSION['id_docente'])) {
+ $id_docente = $_SESSION['id_docente'];
+ $stmt = $conn->prepare("UPDATE docentes SET en_linea = TRUE, ultima_actividad = NOW()
+WHERE id_docente = ?");
+ $stmt->bind_param('i', $id_docente);
+ $stmt->execute();
+ $stmt->close();
+} elseif ($rol === 'alumno' && isset($_SESSION['id_alumno'])) {
+ $id_alumno = $_SESSION['id_alumno'];
+ $stmt = $conn->prepare("UPDATE alumnos SET en_linea = TRUE, ultima_actividad = NOW()
+WHERE id_alumno = ?");
+ $stmt->bind_param('i', $id_alumno);
+ $stmt->execute();
+ $stmt->close();
+}
 
 header("Location: $destino");
 exit;

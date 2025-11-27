@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 25-11-2025 a las 01:02:02
+-- Tiempo de generación: 27-11-2025 a las 18:35:35
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -76,84 +76,86 @@ CREATE TABLE `alumnos` (
   `contacto_emergencia` varchar(200) NOT NULL,
   `parentesco_emergencia` varchar(50) DEFAULT NULL,
   `telefono_emergencia` bigint(20) UNSIGNED DEFAULT NULL,
-  `fecha_registro` timestamp NOT NULL DEFAULT current_timestamp()
+  `fecha_registro` timestamp NOT NULL DEFAULT current_timestamp(),
+  `en_linea` tinyint(1) DEFAULT 0,
+  `ultima_actividad` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `alumnos`
 --
 
-INSERT INTO `alumnos` (`id_alumno`, `nombre`, `apellido_paterno`, `apellido_materno`, `curp`, `fecha_nacimiento`, `sexo`, `telefono`, `direccion`, `correo_personal`, `matricula`, `password`, `estatus`, `fecha_baja`, `deleted_at`, `id_nombre_semestre`, `contacto_emergencia`, `parentesco_emergencia`, `telefono_emergencia`, `fecha_registro`) VALUES
-(1, 'María Fernanda  EH', 'López', 'García', 'LOGM010101MDFRRA09', '2001-01-01', 'Femenino', 5512345678, 'Av. Central #45, CDMX', 'maria.lopez@example.com', 'A001', '12345hash1', 'activo', '2025-10-29', NULL, 1, 'Rosa García', 'Madre', 5519876543, '2025-10-18 22:35:35'),
-(2, 'José Antonio BG', 'Martínez', 'Pérez', 'MAPJ000202HDFRRS03', '2000-02-02', 'Masculino', 5523456789, 'Calle Hidalgo #12, Puebla', 'jose.martinez@example.com', 'A002', '12345hash2', 'activo', NULL, NULL, 2, 'Luis Martínez', 'Padre', 5523456780, '2025-10-18 22:35:35'),
-(3, 'Ana Sofía j', 'Ramírez', 'Torres', 'RATA000303MDFRRL06', '2000-03-03', 'Femenino', 5534567890, 'Av. Juárez #99, Querétaro', 'ana.ramirez@example.com', 'A003', '12345hash3', 'baja', '2025-11-01', NULL, 3, 'María Torres', 'Madre', 5545678901, '2025-10-18 22:35:35'),
-(4, 'Carlos Alberto', 'Gómez', 'Luna', 'GOLC000404HDFRLL05', '2000-04-04', 'Masculino', 5545678902, 'Col. Centro #23, Monterrey', 'carlos.gomez@example.com', 'A004', '12345hash4', 'suspendido', NULL, NULL, 4, 'Laura Luna', 'Hermana', 5556789012, '2025-10-18 22:35:35'),
-(7, 'Andrea j', 'Santos', 'Vega', 'SAVA000707MDFRGA09', '2000-07-07', 'Femenino', 5578901235, 'Calle Sur #78, Veracruz', 'andrea.santos@example.com', 'A007', '12345hash7', 'suspendido', NULL, NULL, 3, 'Héctor Vega', 'Padre', 5589012345, '2025-10-18 22:35:35'),
-(8, 'Miguel', 'Flores', 'Morales', 'FLOM000808HDFRRL01', '2000-08-08', 'Masculino', 5589012346, 'Av. Independencia #34, Oaxaca', 'miguel.flores@example.com', 'A008', '12345hash8', 'activo', NULL, NULL, 4, 'Rosa Morales', 'Madre', 5590123456, '2025-10-18 22:35:35'),
-(9, 'Valeria', 'Cruz', 'Núñez', 'CRNV000909MDFRRV02', '2000-09-09', 'Femenino', 5590123457, 'Calle Norte #22, Toluca', 'valeria.cruz@example.com', 'A009', '12345hash9', 'activo', NULL, NULL, 1, 'Elena Núñez', 'Madre', 5501234567, '2025-10-18 22:35:35'),
-(10, 'Jorge Luis', 'Reyes', 'Ortiz', 'REOJ001010HDFRRJ03', '2000-10-10', 'Masculino', 5501234568, 'Av. Morelos #77, Mérida', 'jorge.reyes@example.com', 'A010', '12345hash10', 'activo', NULL, NULL, 2, 'Fernando Ortiz', 'Padre', 5512345670, '2025-10-18 22:35:35'),
-(71, 'Isabella', 'Gómez', 'Ramírez', 'GROI011121MDFRRL21', '2001-11-21', 'Femenino', 5512340021, 'Av. Central #21, León', 'isabella21@example.com', 'A021', '12345hash21', 'activo', NULL, NULL, 3, 'Rosa Ramírez', 'Madre', 5511110021, '2025-10-19 00:46:00'),
-(72, 'Santiago', 'Martínez', 'Pérez', 'MAPS011222HDFRRL22', '2001-12-22', 'Masculino', 5512340022, 'Calle Hidalgo #22, Puebla', 'santiago22@example.com', 'A022', '12345hash22', 'activo', NULL, NULL, 3, 'Luis Martínez', 'Padre', 5511110022, '2025-10-19 00:46:00'),
-(73, 'Lucía', 'Ramírez', 'Torres', 'RATL020123MDFRRL23', '2002-01-23', 'Femenino', 5512340023, 'Av. Juárez #23, Querétaro', 'lucia23@example.com', 'A023', '12345hash23', 'activo', NULL, NULL, 3, 'María Torres', 'Madre', 5511110023, '2025-10-19 00:46:00'),
-(74, 'Emilio', 'Gómez', 'Luna', 'GOLE020224HDFRRL24', '2002-02-24', 'Masculino', 5512340024, 'Col. Centro #24, Monterrey', 'emilio24@example.com', 'A024', '12345hash24', 'activo', NULL, NULL, 3, 'Laura Luna', 'Hermana', 5511110024, '2025-10-19 00:46:00'),
-(75, 'Renata', 'Hernández', 'Ruiz', 'HERR020325MDFRRL25', '2002-03-25', 'Femenino', 5512340025, 'Av. Reforma #25, Guadalajara', 'renata25@example.com', 'A025', '12345hash25', 'activo', NULL, NULL, 3, 'Pedro Ruiz', 'Padre', 5511110025, '2025-10-19 00:46:00'),
-(76, 'Mateo', 'Mendoza', 'Castro', 'MEMM020426HDFRRL26', '2002-04-26', 'Masculino', 5512340026, 'Col. Roma #26, CDMX', 'mateo26@example.com', 'A026', '12345hash26', 'activo', NULL, NULL, 3, 'Carmen Castro', 'Madre', 5511110026, '2025-10-19 00:46:00'),
-(77, 'Valentina', 'Santos', 'Vega', 'SAVV020527MDFRRL27', '2002-05-27', 'Femenino', 5512340027, 'Calle Sur #27, Veracruz', 'valentina27@example.com', 'A027', '12345hash27', 'activo', NULL, NULL, 3, 'Héctor Vega', 'Padre', 5511110027, '2025-10-19 00:46:00'),
-(78, 'Sebastián', 'Flores', 'Morales', 'FLOS020628HDFRRL28', '2002-06-28', 'Masculino', 5512340028, 'Av. Independencia #28, Oaxaca', 'sebastian28@example.com', 'A028', '12345hash28', 'activo', NULL, NULL, 3, 'Rosa Morales', 'Madre', 5511110028, '2025-10-19 00:46:00'),
-(79, 'Natalia', 'Cruz', 'Núñez', 'CRNN020729MDFRRL29', '2002-07-29', 'Femenino', 5512340029, 'Calle Norte #29, Toluca', 'natalia29@example.com', 'A029', '12345hash29', 'activo', NULL, NULL, 3, 'Elena Núñez', 'Madre', 5511110029, '2025-10-19 00:46:00'),
-(80, 'David', 'Reyes', 'Ortiz', 'REOD020830HDFRRL30', '2002-08-30', 'Masculino', 5512340030, 'Av. Morelos #30, Mérida', 'david30@example.com', 'A030', '12345hash30', 'activo', NULL, NULL, 3, 'Fernando Ortiz', 'Padre', 5511110030, '2025-10-19 00:46:00'),
-(81, 'Ximena', 'Gómez', 'Ramírez', 'GROX020931MDFRRL31', '2002-09-30', 'Femenino', 5512340031, 'Av. Central #31, León', 'ximena31@example.com', 'A031', '12345hash31', 'activo', NULL, NULL, 4, 'Rosa Ramírez', 'Madre', 5511110031, '2025-10-19 00:46:00'),
-(82, 'Rodrigo', 'Martínez', 'Pérez', 'MAPR021032HDFRRL32', '2002-10-01', 'Masculino', 5512340032, 'Calle Hidalgo #32, Puebla', 'rodrigo32@example.com', 'A032', '12345hash32', 'activo', NULL, NULL, 4, 'Luis Martínez', 'Padre', 5511110032, '2025-10-19 00:46:00'),
-(83, 'Elena', 'Ramírez', 'Torres', 'RATE021133MDFRRL33', '2002-11-02', 'Femenino', 5512340033, 'Av. Juárez #33, Querétaro', 'elena33@example.com', 'A033', '12345hash33', 'activo', NULL, NULL, 4, 'María Torres', 'Madre', 5511110033, '2025-10-19 00:46:00'),
-(84, 'Tomás', 'Gómez', 'Luna', 'GOLT021234HDFRRL34', '2002-12-03', 'Masculino', 5512340034, 'Col. Centro #34, Monterrey', 'tomas34@example.com', 'A034', '12345hash34', 'activo', NULL, NULL, 4, 'Laura Luna', 'Hermana', 5511110034, '2025-10-19 00:46:00'),
-(85, 'Samantha', 'Hernández', 'Ruiz', 'HERS030135MDFRRL35', '2003-01-04', 'Femenino', 5512340035, 'Av. Reforma #35, Guadalajara', 'samantha35@example.com', 'A035', '12345hash35', 'activo', NULL, NULL, 4, 'Pedro Ruiz', 'Padre', 5511110035, '2025-10-19 00:46:00'),
-(86, 'Andrés', 'Mendoza', 'Castro', 'MECA030236HDFRRL36', '2003-02-05', 'Masculino', 5512340036, 'Col. Roma #36, CDMX', 'andres36@example.com', 'A036', '12345hash36', 'activo', NULL, NULL, 4, 'Carmen Castro', 'Madre', 5511110036, '2025-10-19 00:46:00'),
-(87, 'Jimena', 'Santos', 'Vega', 'SAVJ030337MDFRRL37', '2003-03-06', 'Femenino', 5512340037, 'Calle Sur #37, Veracruz', 'jimena37@example.com', 'A037', '12345hash37', 'activo', NULL, NULL, 4, 'Héctor Vega', 'Padre', 5511110037, '2025-10-19 00:46:00'),
-(88, 'Leonardo', 'Flores', 'Morales', 'FLOL030438HDFRRL38', '2003-04-07', 'Masculino', 5512340038, 'Av. Independencia #38, Oaxaca', 'leonardo38@example.com', 'A038', '12345hash38', 'activo', NULL, NULL, 4, 'Rosa Morales', 'Madre', 5511110038, '2025-10-19 00:46:00'),
-(89, 'Paula', 'Cruz', 'Núñez', 'CRNP030539MDFRRL39', '2003-05-08', 'Femenino', 5512340039, 'Calle Norte #39, Toluca', 'paula39@example.com', 'A039', '12345hash39', 'activo', NULL, NULL, 4, 'Elena Núñez', 'Madre', 5511110039, '2025-10-19 00:46:00'),
-(90, 'Felipe', 'Reyes', 'Ortiz', 'REOF030640HDFRRL40', '2003-06-09', 'Masculino', 5512340040, 'Av. Morelos #40, Mérida', 'felipe40@example.com', 'A040', '12345hash40', 'activo', NULL, NULL, 4, 'Fernando Ortiz', 'Padre', 5511110040, '2025-10-19 00:46:00'),
-(91, 'Victoria', 'Gómez', 'Ramírez', 'GROV030741MDFRRL41', '2003-07-10', 'Femenino', 5512340041, 'Av. Central #41, León', 'victoria41@example.com', 'A041', '12345hash41', 'activo', NULL, NULL, 5, 'Rosa Ramírez', 'Madre', 5511110041, '2025-10-19 00:46:00'),
-(92, 'Martín', 'Martínez', 'Pérez', 'MAPM030842HDFRRL42', '2003-08-11', 'Masculino', 5512340042, 'Calle Hidalgo #42, Puebla', 'martin42@example.com', 'A042', '12345hash42', 'activo', NULL, NULL, 5, 'Luis Martínez', 'Padre', 5511110042, '2025-10-19 00:46:00'),
-(93, 'Abigail', 'Ramírez', 'Torres', 'RATA030943MDFRRL43', '2003-09-12', 'Femenino', 5512340043, 'Av. Juárez #43, Querétaro', 'abigail43@example.com', 'A043', '12345hash43', 'activo', NULL, NULL, 5, 'María Torres', 'Madre', 5511110043, '2025-10-19 00:46:00'),
-(94, 'Emiliano', 'Gómez', 'Luna', 'GOLE031044HDFRRL44', '2003-10-13', 'Masculino', 5512340044, 'Col. Centro #44, Monterrey', 'emiliano44@example.com', 'A044', '12345hash44', 'activo', NULL, NULL, 5, 'Laura Luna', 'Hermana', 5511110044, '2025-10-19 00:46:00'),
-(95, 'Julieta', 'Hernández', 'Ruiz', 'HERJ031145MDFRRL45', '2003-11-14', 'Femenino', 5512340045, 'Av. Reforma #45, Guadalajara', 'julieta45@example.com', 'A045', '12345hash45', 'activo', NULL, NULL, 5, 'Pedro Ruiz', 'Padre', 5511110045, '2025-10-19 00:46:00'),
-(96, 'Gabriel', 'Mendoza', 'Castro', 'MECA031246HDFRRL46', '2003-12-15', 'Masculino', 5512340046, 'Col. Roma #46, CDMX', 'gabriel46@example.com', 'A046', '12345hash46', 'activo', NULL, NULL, 5, 'Carmen Castro', 'Madre', 5511110046, '2025-10-19 00:46:00'),
-(97, 'Regina', 'Santos', 'Vega', 'SAVR040147MDFRRL47', '2004-01-16', 'Femenino', 5512340047, 'Calle Sur #47, Veracruz', 'regina47@example.com', 'A047', '12345hash47', 'activo', NULL, NULL, 5, 'Héctor Vega', 'Padre', 5511110047, '2025-10-19 00:46:00'),
-(98, 'Iván', 'Flores', 'Morales', 'FLOI040248HDFRRL48', '2004-02-17', 'Masculino', 5512340048, 'Av. Independencia #48, Oaxaca', 'ivan48@example.com', 'A048', '12345hash48', 'activo', NULL, NULL, 5, 'Rosa Morales', 'Madre', 5511110048, '2025-10-19 00:46:00'),
-(99, 'Carolina', 'Cruz', 'Núñez', 'CRNC040349MDFRRL49', '2004-03-18', 'Femenino', 5512340049, 'Calle Norte #49, Toluca', 'carolina49@example.com', 'A049', '12345hash49', 'activo', NULL, NULL, 5, 'Elena Núñez', 'Madre', 5511110049, '2025-10-19 00:46:00'),
-(100, 'Tomás', 'Reyes', 'Ortiz', 'REOT040450HDFRRL50', '2004-04-19', 'Masculino', 5512340050, 'Av. Morelos #50, Mérida', 'tomas50@example.com', 'A050', '12345hash50', 'activo', NULL, NULL, 5, 'Fernando Ortiz', 'Padre', 5511110050, '2025-10-19 00:46:00'),
-(101, 'Luciano', 'Vargas', 'Serrano', 'VASL040551HDFRRL51', '2004-05-20', 'Masculino', 5512340051, 'Av. Hidalgo #51, Tijuana', 'luciano51@example.com', 'A051', '12345hash51', 'activo', NULL, NULL, 5, 'Ana Serrano', 'Madre', 5511110051, '2025-10-19 00:46:00'),
-(102, 'Camila', 'Ortega', 'Romero', 'ORRC040652MDFRRL52', '2004-06-21', 'Femenino', 5512340052, 'Calle Morelos #52, Mérida', 'camila52@example.com', 'A052', '12345hash52', 'activo', NULL, NULL, 5, 'Mario Ortega', 'Padre', 5511110052, '2025-10-19 00:46:00'),
-(103, 'Marco', 'Jiménez', 'Suárez', 'JISM040753HDFRRL53', '2004-07-22', 'Masculino', 5512340053, 'Col. Centro #53, León', 'marco53@example.com', 'A053', '12345hash53', 'activo', NULL, NULL, 5, 'Beatriz Suárez', 'Madre', 5511110053, '2025-10-19 00:46:00'),
-(104, 'Natalia', 'Navarro', 'Cortés', 'NACN040854MDFRRL54', '2004-08-23', 'Femenino', 5512340054, 'Av. Juárez #54, Puebla', 'natalia54@example.com', 'A054', '12345hash54', 'activo', NULL, NULL, 5, 'Carmen Cortés', 'Madre', 5511110054, '2025-10-19 00:46:00'),
-(105, 'Ángel', 'Salazar', 'Díaz', 'SADA040955HDFRRL55', '2004-09-24', 'Masculino', 5512340055, 'Av. Hidalgo #55, CDMX', 'angel55@example.com', 'A055', '12345hash55', 'activo', NULL, NULL, 5, 'Lucía Díaz', 'Madre', 5511110055, '2025-10-19 00:46:00'),
-(106, 'Brenda', 'Moreno', 'Flores', 'MOFB041056MDFRRL56', '2004-10-25', 'Femenino', 5512340056, 'Av. Central #56, Guadalajara', 'brenda56@example.com', 'A056', '12345hash56', 'activo', NULL, NULL, 5, 'Jorge Moreno', 'Padre', 5511110056, '2025-10-19 00:46:00'),
-(107, 'Erick', 'Vega', 'Santos', 'VESR041157HDFRRL57', '2004-11-26', 'Masculino', 5512340057, 'Calle Sur #57, Veracruz', 'erick57@example.com', 'A057', '12345hash57', 'activo', NULL, NULL, 5, 'Diana Santos', 'Madre', 5511110057, '2025-10-19 00:46:00'),
-(108, 'Melissa', 'Cortés', 'Ríos', 'CORR041258MDFRRL58', '2004-12-27', 'Femenino', 5512340058, 'Av. Reforma #58, Monterrey', 'melissa58@example.com', 'A058', '12345hash58', 'activo', NULL, NULL, 5, 'Alberto Ríos', 'Padre', 5511110058, '2025-10-19 00:46:00'),
-(109, 'Samuel', 'Domínguez', 'Lara', 'DOLS050159HDFRRL59', '2005-01-28', 'Masculino', 5512340059, 'Calle Norte #59, Toluca', 'samuel59@example.com', 'A059', '12345hash59', 'activo', NULL, NULL, 5, 'Carmen Lara', 'Madre', 5511110059, '2025-10-19 00:46:00'),
-(110, 'María', 'Lara', 'Torres', 'LATM050260MDFRRL60', '2005-02-01', 'Femenino', 5512340060, 'Av. Morelos #60, Mérida', 'maria60@example.com', 'A060', '12345hash60', 'activo', NULL, NULL, 5, 'José Torres', 'Padre', 5511110060, '2025-10-19 00:46:00'),
-(111, 'María Fernanda', 'López', 'García', 'LOGM010101MDFRRA01', '2001-01-01', 'Femenino', 5512340001, 'Av. Central #1, CDMX', 'maria1@example.com', 'B001', '12345hash1', 'activo', NULL, NULL, 1, 'Rosa García', 'Madre', 5511110001, '2025-10-19 00:51:07'),
-(112, 'José Antonio', 'Martínez', 'Pérez', 'MAPJ000202HDFRRS02', '2000-02-02', 'Masculino', 5512340002, 'Calle Hidalgo #2, Puebla', 'jose2@example.com', 'B002', '12345hash2', 'activo', NULL, NULL, 1, 'Luis Martínez', 'Padre', 5511110002, '2025-10-19 00:51:07'),
-(113, 'Ana Sofía', 'Ramírez', 'Torres', 'RATA000303MDFRRL03', '2000-03-03', 'Femenino', 5512340003, 'Av. Juárez #3, Querétaro', 'ana3@example.com', 'B003', '12345hash3', 'activo', NULL, NULL, 1, 'María Torres', 'Madre', 5511110003, '2025-10-19 00:51:07'),
-(114, 'Carlos Alberto', 'Gómez', 'Luna', 'GOLC000404HDFRLL04', '2000-04-04', 'Masculino', 5512340004, 'Col. Centro #4, Monterrey', 'carlos4@example.com', 'B004', '12345hash4', 'activo', NULL, NULL, 1, 'Laura Luna', 'Hermana', 5511110004, '2025-10-19 00:51:07'),
-(115, 'Daniela', 'Hernández', 'Ruiz', 'HERD000505MDFRRN05', '2000-05-05', 'Femenino', 5512340005, 'Av. Reforma #5, Guadalajara', 'daniela5@example.com', 'B005', '12345hash5', 'activo', NULL, NULL, 1, 'Pedro Ruiz', 'Padre', 5511110005, '2025-10-19 00:51:07'),
-(116, 'Luis Ángel', 'Mendoza', 'Castro', 'MECL000606HDFRRS06', '2000-06-06', 'Masculino', 5512340006, 'Col. Roma #6, CDMX', 'luis6@example.com', 'B006', '12345hash6', 'activo', NULL, NULL, 1, 'Carmen Castro', 'Madre', 5511110006, '2025-10-19 00:51:07'),
-(117, 'Andrea', 'Santos', 'Vega', 'SAVA000707MDFRGA07', '2000-07-07', 'Femenino', 5512340007, 'Calle Sur #7, Veracruz', 'andrea7@example.com', 'B007', '12345hash7', 'activo', NULL, NULL, 1, 'Héctor Vega', 'Padre', 5511110007, '2025-10-19 00:51:07'),
-(118, 'Miguel', 'Flores', 'Morales', 'FLOM000808HDFRRL08', '2000-08-08', 'Masculino', 5512340008, 'Av. Independencia #8, Oaxaca', 'miguel8@example.com', 'B008', '12345hash8', 'activo', NULL, NULL, 1, 'Rosa Morales', 'Madre', 5511110008, '2025-10-19 00:51:07'),
-(119, 'Valeria', 'Cruz', 'Núñez', 'CRNV000909MDFRRV09', '2000-09-09', 'Femenino', 5512340009, 'Calle Norte #9, Toluca', 'valeria9@example.com', 'B009', '12345hash9', 'activo', NULL, NULL, 1, 'Elena Núñez', 'Madre', 5511110009, '2025-10-19 00:51:07'),
-(120, 'Jorge Luis', 'Reyes', 'Ortiz', 'REOJ001010HDFRRJ10', '2000-10-10', 'Masculino', 5512340010, 'Av. Morelos #10, Mérida', 'jorge10@example.com', 'B010', '12345hash10', 'activo', NULL, NULL, 1, 'Fernando Ortiz', 'Padre', 5511110010, '2025-10-19 00:51:07'),
-(121, 'Camila', 'González', 'Pérez', 'GOPC010111MDFRRL11', '2001-01-11', 'Femenino', 5512340011, 'Av. Central #11, León', 'camila11@example.com', 'C011', '12345hash11', 'activo', NULL, NULL, 2, 'Laura Pérez', 'Madre', 5511110011, '2025-10-19 00:51:07'),
-(122, 'Diego', 'Ramírez', 'Luna', 'RALD010212HDFRRS12', '2001-02-12', 'Masculino', 5512340012, 'Calle Hidalgo #12, Puebla', 'diego12@example.com', 'C012', '12345hash12', 'activo', NULL, NULL, 2, 'Luis Ramírez', 'Padre', 5511110012, '2025-10-19 00:51:07'),
-(123, 'Fernanda', 'Torres', 'Santos', 'TOCF010313MDFRRL13', '2001-03-13', 'Femenino', 5512340013, 'Av. Juárez #13, Querétaro', 'fernanda13@example.com', 'C013', '12345hash13', 'activo', NULL, NULL, 2, 'María Santos', 'Madre', 5511110013, '2025-10-19 00:51:07'),
-(124, 'Pablo', 'Hernández', 'Ríos', 'HEPR010414HDFRRL14', '2001-04-14', 'Masculino', 5512340014, 'Col. Centro #14, Monterrey', 'pablo14@example.com', 'C014', '12345hash14', 'activo', NULL, NULL, 2, 'Carmen Ríos', 'Madre', 5511110014, '2025-10-19 00:51:07'),
-(125, 'Diana', 'Mendoza', 'Lopez', 'MELD010515MDFRRL15', '2001-05-15', 'Femenino', 5512340015, 'Av. Reforma #15, Guadalajara', 'diana15@example.com', 'C015', '12345hash15', 'activo', NULL, NULL, 2, 'Pedro Mendoza', 'Padre', 5511110015, '2025-10-19 00:51:07'),
-(126, 'Ricardo', 'López', 'Ruiz', 'LORR010616HDFRRL16', '2001-06-16', 'Masculino', 5512340016, 'Col. Roma #16, CDMX', 'ricardo16@example.com', 'C016', '12345hash16', 'activo', NULL, NULL, 2, 'Laura Ruiz', 'Madre', 5511110016, '2025-10-19 00:51:07'),
-(127, 'Sofía', 'Santos', 'Vega', 'SASV010717MDFRRL17', '2001-07-17', 'Femenino', 5512340017, 'Calle Sur #17, Veracruz', 'sofia17@example.com', 'C017', '12345hash17', 'activo', NULL, NULL, 2, 'Héctor Vega', 'Padre', 5511110017, '2025-10-19 00:51:07'),
-(128, 'Manuel', 'Flores', 'Morales', 'FLMM010818HDFRRL18', '2001-08-18', 'Masculino', 5512340018, 'Av. Independencia #18, Oaxaca', 'manuel18@example.com', 'C018', '12345hash18', 'activo', NULL, NULL, 2, 'Rosa Morales', 'Madre', 5511110018, '2025-10-19 00:51:07'),
-(129, 'Alejandra', 'Cruz', 'Núñez', 'CRNA010919MDFRRL19', '2001-09-19', 'Femenino', 5512340019, 'Calle Norte #19, Toluca', 'alejandra19@example.com', 'C019', '12345hash19', 'activo', NULL, NULL, 2, 'Elena Núñez', 'Madre', 5511110019, '2025-10-19 00:51:07'),
-(130, 'Eduardo', 'Reyes', 'Ortiz', 'REOE011020HDFRRL20', '2001-10-20', 'Masculino', 5512340020, 'Av. Morelos #20, Mérida', 'eduardo20@example.com', 'C020', '12345hash20', 'activo', NULL, NULL, 2, 'Fernando Ortiz', 'Padre', 5511110020, '2025-10-19 00:51:07'),
-(131, 'María Fernanda sdbh', 'López', 'García', 'HSDBSHDSJDJA2', '2025-11-05', 'Femenino', 5512345678, 'Av. Central #45, CDMX', 'hdbajs@gmail.com', 'A061', '$2y$10$lrc9qPDPBowKDFnieKw8T.tro9axlq8ke/YWpJf8oEmQ/3R6Gw2R.', 'activo', NULL, NULL, 3, 'sbdshad', 'sdjjauswq', 232831913, '2025-11-01 03:44:18'),
-(132, 'Angel Antonio', 'Loza', 'Flores', '12412D32 22D2C', '2005-06-20', 'Masculino', 211412412414, 'edx211de12', 'angelantonio3loza@gmail.com', 'A062', '$2y$10$BaBIQb/kDxr9nbDAgPF8s.KSgmT8mXY08kRlC19LloZmkG/Yd1fYC', 'activo', NULL, NULL, 8, 'descrcsaewdw', 'asdcadawdad', 3242423424, '2025-11-03 01:11:48');
+INSERT INTO `alumnos` (`id_alumno`, `nombre`, `apellido_paterno`, `apellido_materno`, `curp`, `fecha_nacimiento`, `sexo`, `telefono`, `direccion`, `correo_personal`, `matricula`, `password`, `estatus`, `fecha_baja`, `deleted_at`, `id_nombre_semestre`, `contacto_emergencia`, `parentesco_emergencia`, `telefono_emergencia`, `fecha_registro`, `en_linea`, `ultima_actividad`) VALUES
+(1, 'María Fernanda  EH', 'López', 'García', 'LOGM010101MDFRRA09', '2001-01-01', 'Femenino', 5512345678, 'Av. Central #45, CDMX', 'maria.lopez@example.com', 'A001', '12345hash1', 'activo', '2025-10-29', NULL, 1, 'Rosa García', 'Madre', 5519876543, '2025-10-18 22:35:35', 0, NULL),
+(2, 'José Antonio BG', 'Martínez', 'Pérez', 'MAPJ000202HDFRRS03', '2000-02-02', 'Masculino', 5523456789, 'Calle Hidalgo #12, Puebla', 'jose.martinez@example.com', 'A002', '12345hash2', 'activo', NULL, NULL, 2, 'Luis Martínez', 'Padre', 5523456780, '2025-10-18 22:35:35', 0, NULL),
+(3, 'Ana Sofía j', 'Ramírez', 'Torres', 'RATA000303MDFRRL06', '2000-03-03', 'Femenino', 5534567890, 'Av. Juárez #99, Querétaro', 'ana.ramirez@example.com', 'A003', '12345hash3', 'baja', '2025-11-01', NULL, 3, 'María Torres', 'Madre', 5545678901, '2025-10-18 22:35:35', 0, NULL),
+(4, 'Carlos Alberto', 'Gómez', 'Luna', 'GOLC000404HDFRLL05', '2000-04-04', 'Masculino', 5545678902, 'Col. Centro #23, Monterrey', 'carlos.gomez@example.com', 'A004', '12345hash4', 'suspendido', NULL, NULL, 4, 'Laura Luna', 'Hermana', 5556789012, '2025-10-18 22:35:35', 0, NULL),
+(7, 'Andrea j', 'Santos', 'Vega', 'SAVA000707MDFRGA09', '2000-07-07', 'Femenino', 5578901235, 'Calle Sur #78, Veracruz', 'andrea.santos@example.com', 'A007', '12345hash7', 'suspendido', NULL, NULL, 3, 'Héctor Vega', 'Padre', 5589012345, '2025-10-18 22:35:35', 0, NULL),
+(8, 'Miguel', 'Flores', 'Morales', 'FLOM000808HDFRRL01', '2000-08-08', 'Masculino', 5589012346, 'Av. Independencia #34, Oaxaca', 'miguel.flores@example.com', 'A008', '12345hash8', 'activo', NULL, NULL, 4, 'Rosa Morales', 'Madre', 5590123456, '2025-10-18 22:35:35', 0, NULL),
+(9, 'Valeria', 'Cruz', 'Núñez', 'CRNV000909MDFRRV02', '2000-09-09', 'Femenino', 5590123457, 'Calle Norte #22, Toluca', 'valeria.cruz@example.com', 'A009', '12345hash9', 'activo', NULL, NULL, 1, 'Elena Núñez', 'Madre', 5501234567, '2025-10-18 22:35:35', 0, NULL),
+(10, 'Jorge Luis', 'Reyes', 'Ortiz', 'REOJ001010HDFRRJ03', '2000-10-10', 'Masculino', 5501234568, 'Av. Morelos #77, Mérida', 'jorge.reyes@example.com', 'A010', '12345hash10', 'activo', NULL, NULL, 2, 'Fernando Ortiz', 'Padre', 5512345670, '2025-10-18 22:35:35', 0, NULL),
+(71, 'Isabella', 'Gómez', 'Ramírez', 'GROI011121MDFRRL21', '2001-11-21', 'Femenino', 5512340021, 'Av. Central #21, León', 'isabella21@example.com', 'A021', '12345hash21', 'activo', NULL, NULL, 3, 'Rosa Ramírez', 'Madre', 5511110021, '2025-10-19 00:46:00', 0, NULL),
+(72, 'Santiago', 'Martínez', 'Pérez', 'MAPS011222HDFRRL22', '2001-12-22', 'Masculino', 5512340022, 'Calle Hidalgo #22, Puebla', 'santiago22@example.com', 'A022', '12345hash22', 'activo', NULL, NULL, 3, 'Luis Martínez', 'Padre', 5511110022, '2025-10-19 00:46:00', 0, NULL),
+(73, 'Lucía', 'Ramírez', 'Torres', 'RATL020123MDFRRL23', '2002-01-23', 'Femenino', 5512340023, 'Av. Juárez #23, Querétaro', 'lucia23@example.com', 'A023', '12345hash23', 'activo', NULL, NULL, 3, 'María Torres', 'Madre', 5511110023, '2025-10-19 00:46:00', 0, NULL),
+(74, 'Emilio', 'Gómez', 'Luna', 'GOLE020224HDFRRL24', '2002-02-24', 'Masculino', 5512340024, 'Col. Centro #24, Monterrey', 'emilio24@example.com', 'A024', '12345hash24', 'activo', NULL, NULL, 3, 'Laura Luna', 'Hermana', 5511110024, '2025-10-19 00:46:00', 0, NULL),
+(75, 'Renata', 'Hernández', 'Ruiz', 'HERR020325MDFRRL25', '2002-03-25', 'Femenino', 5512340025, 'Av. Reforma #25, Guadalajara', 'renata25@example.com', 'A025', '12345hash25', 'activo', NULL, NULL, 3, 'Pedro Ruiz', 'Padre', 5511110025, '2025-10-19 00:46:00', 0, NULL),
+(76, 'Mateo', 'Mendoza', 'Castro', 'MEMM020426HDFRRL26', '2002-04-26', 'Masculino', 5512340026, 'Col. Roma #26, CDMX', 'mateo26@example.com', 'A026', '12345hash26', 'activo', NULL, NULL, 3, 'Carmen Castro', 'Madre', 5511110026, '2025-10-19 00:46:00', 0, NULL),
+(77, 'Valentina', 'Santos', 'Vega', 'SAVV020527MDFRRL27', '2002-05-27', 'Femenino', 5512340027, 'Calle Sur #27, Veracruz', 'valentina27@example.com', 'A027', '12345hash27', 'activo', NULL, NULL, 3, 'Héctor Vega', 'Padre', 5511110027, '2025-10-19 00:46:00', 0, NULL),
+(78, 'Sebastián', 'Flores', 'Morales', 'FLOS020628HDFRRL28', '2002-06-28', 'Masculino', 5512340028, 'Av. Independencia #28, Oaxaca', 'sebastian28@example.com', 'A028', '12345hash28', 'activo', NULL, NULL, 3, 'Rosa Morales', 'Madre', 5511110028, '2025-10-19 00:46:00', 0, NULL),
+(79, 'Natalia', 'Cruz', 'Núñez', 'CRNN020729MDFRRL29', '2002-07-29', 'Femenino', 5512340029, 'Calle Norte #29, Toluca', 'natalia29@example.com', 'A029', '12345hash29', 'activo', NULL, NULL, 3, 'Elena Núñez', 'Madre', 5511110029, '2025-10-19 00:46:00', 0, NULL),
+(80, 'David', 'Reyes', 'Ortiz', 'REOD020830HDFRRL30', '2002-08-30', 'Masculino', 5512340030, 'Av. Morelos #30, Mérida', 'david30@example.com', 'A030', '12345hash30', 'activo', NULL, NULL, 3, 'Fernando Ortiz', 'Padre', 5511110030, '2025-10-19 00:46:00', 0, NULL),
+(81, 'Ximena', 'Gómez', 'Ramírez', 'GROX020931MDFRRL31', '2002-09-30', 'Femenino', 5512340031, 'Av. Central #31, León', 'ximena31@example.com', 'A031', '12345hash31', 'activo', NULL, NULL, 4, 'Rosa Ramírez', 'Madre', 5511110031, '2025-10-19 00:46:00', 0, NULL),
+(82, 'Rodrigo', 'Martínez', 'Pérez', 'MAPR021032HDFRRL32', '2002-10-01', 'Masculino', 5512340032, 'Calle Hidalgo #32, Puebla', 'rodrigo32@example.com', 'A032', '12345hash32', 'activo', NULL, NULL, 4, 'Luis Martínez', 'Padre', 5511110032, '2025-10-19 00:46:00', 0, NULL),
+(83, 'Elena', 'Ramírez', 'Torres', 'RATE021133MDFRRL33', '2002-11-02', 'Femenino', 5512340033, 'Av. Juárez #33, Querétaro', 'elena33@example.com', 'A033', '12345hash33', 'activo', NULL, NULL, 4, 'María Torres', 'Madre', 5511110033, '2025-10-19 00:46:00', 0, NULL),
+(84, 'Tomás', 'Gómez', 'Luna', 'GOLT021234HDFRRL34', '2002-12-03', 'Masculino', 5512340034, 'Col. Centro #34, Monterrey', 'tomas34@example.com', 'A034', '12345hash34', 'activo', NULL, NULL, 4, 'Laura Luna', 'Hermana', 5511110034, '2025-10-19 00:46:00', 0, NULL),
+(85, 'Samantha', 'Hernández', 'Ruiz', 'HERS030135MDFRRL35', '2003-01-04', 'Femenino', 5512340035, 'Av. Reforma #35, Guadalajara', 'samantha35@example.com', 'A035', '12345hash35', 'activo', NULL, NULL, 4, 'Pedro Ruiz', 'Padre', 5511110035, '2025-10-19 00:46:00', 0, NULL),
+(86, 'Andrés', 'Mendoza', 'Castro', 'MECA030236HDFRRL36', '2003-02-05', 'Masculino', 5512340036, 'Col. Roma #36, CDMX', 'andres36@example.com', 'A036', '12345hash36', 'activo', NULL, NULL, 4, 'Carmen Castro', 'Madre', 5511110036, '2025-10-19 00:46:00', 0, NULL),
+(87, 'Jimena', 'Santos', 'Vega', 'SAVJ030337MDFRRL37', '2003-03-06', 'Femenino', 5512340037, 'Calle Sur #37, Veracruz', 'jimena37@example.com', 'A037', '12345hash37', 'activo', NULL, NULL, 4, 'Héctor Vega', 'Padre', 5511110037, '2025-10-19 00:46:00', 0, NULL),
+(88, 'Leonardo', 'Flores', 'Morales', 'FLOL030438HDFRRL38', '2003-04-07', 'Masculino', 5512340038, 'Av. Independencia #38, Oaxaca', 'leonardo38@example.com', 'A038', '12345hash38', 'activo', NULL, NULL, 4, 'Rosa Morales', 'Madre', 5511110038, '2025-10-19 00:46:00', 0, NULL),
+(89, 'Paula', 'Cruz', 'Núñez', 'CRNP030539MDFRRL39', '2003-05-08', 'Femenino', 5512340039, 'Calle Norte #39, Toluca', 'paula39@example.com', 'A039', '12345hash39', 'activo', NULL, NULL, 4, 'Elena Núñez', 'Madre', 5511110039, '2025-10-19 00:46:00', 0, NULL),
+(90, 'Felipe', 'Reyes', 'Ortiz', 'REOF030640HDFRRL40', '2003-06-09', 'Masculino', 5512340040, 'Av. Morelos #40, Mérida', 'felipe40@example.com', 'A040', '12345hash40', 'activo', NULL, NULL, 4, 'Fernando Ortiz', 'Padre', 5511110040, '2025-10-19 00:46:00', 0, NULL),
+(91, 'Victoria', 'Gómez', 'Ramírez', 'GROV030741MDFRRL41', '2003-07-10', 'Femenino', 5512340041, 'Av. Central #41, León', 'victoria41@example.com', 'A041', '12345hash41', 'activo', NULL, NULL, 5, 'Rosa Ramírez', 'Madre', 5511110041, '2025-10-19 00:46:00', 0, NULL),
+(92, 'Martín', 'Martínez', 'Pérez', 'MAPM030842HDFRRL42', '2003-08-11', 'Masculino', 5512340042, 'Calle Hidalgo #42, Puebla', 'martin42@example.com', 'A042', '12345hash42', 'activo', NULL, NULL, 5, 'Luis Martínez', 'Padre', 5511110042, '2025-10-19 00:46:00', 0, NULL),
+(93, 'Abigail', 'Ramírez', 'Torres', 'RATA030943MDFRRL43', '2003-09-12', 'Femenino', 5512340043, 'Av. Juárez #43, Querétaro', 'abigail43@example.com', 'A043', '12345hash43', 'activo', NULL, NULL, 5, 'María Torres', 'Madre', 5511110043, '2025-10-19 00:46:00', 0, NULL),
+(94, 'Emiliano', 'Gómez', 'Luna', 'GOLE031044HDFRRL44', '2003-10-13', 'Masculino', 5512340044, 'Col. Centro #44, Monterrey', 'emiliano44@example.com', 'A044', '12345hash44', 'activo', NULL, NULL, 5, 'Laura Luna', 'Hermana', 5511110044, '2025-10-19 00:46:00', 0, NULL),
+(95, 'Julieta', 'Hernández', 'Ruiz', 'HERJ031145MDFRRL45', '2003-11-14', 'Femenino', 5512340045, 'Av. Reforma #45, Guadalajara', 'julieta45@example.com', 'A045', '12345hash45', 'activo', NULL, NULL, 5, 'Pedro Ruiz', 'Padre', 5511110045, '2025-10-19 00:46:00', 0, NULL),
+(96, 'Gabriel', 'Mendoza', 'Castro', 'MECA031246HDFRRL46', '2003-12-15', 'Masculino', 5512340046, 'Col. Roma #46, CDMX', 'gabriel46@example.com', 'A046', '12345hash46', 'activo', NULL, NULL, 5, 'Carmen Castro', 'Madre', 5511110046, '2025-10-19 00:46:00', 0, NULL),
+(97, 'Regina', 'Santos', 'Vega', 'SAVR040147MDFRRL47', '2004-01-16', 'Femenino', 5512340047, 'Calle Sur #47, Veracruz', 'regina47@example.com', 'A047', '12345hash47', 'activo', NULL, NULL, 5, 'Héctor Vega', 'Padre', 5511110047, '2025-10-19 00:46:00', 0, NULL),
+(98, 'Iván', 'Flores', 'Morales', 'FLOI040248HDFRRL48', '2004-02-17', 'Masculino', 5512340048, 'Av. Independencia #48, Oaxaca', 'ivan48@example.com', 'A048', '12345hash48', 'activo', NULL, NULL, 5, 'Rosa Morales', 'Madre', 5511110048, '2025-10-19 00:46:00', 0, NULL),
+(99, 'Carolina', 'Cruz', 'Núñez', 'CRNC040349MDFRRL49', '2004-03-18', 'Femenino', 5512340049, 'Calle Norte #49, Toluca', 'carolina49@example.com', 'A049', '12345hash49', 'activo', NULL, NULL, 5, 'Elena Núñez', 'Madre', 5511110049, '2025-10-19 00:46:00', 0, NULL),
+(100, 'Tomás', 'Reyes', 'Ortiz', 'REOT040450HDFRRL50', '2004-04-19', 'Masculino', 5512340050, 'Av. Morelos #50, Mérida', 'tomas50@example.com', 'A050', '12345hash50', 'activo', NULL, NULL, 5, 'Fernando Ortiz', 'Padre', 5511110050, '2025-10-19 00:46:00', 0, NULL),
+(101, 'Luciano', 'Vargas', 'Serrano', 'VASL040551HDFRRL51', '2004-05-20', 'Masculino', 5512340051, 'Av. Hidalgo #51, Tijuana', 'luciano51@example.com', 'A051', '12345hash51', 'activo', NULL, NULL, 5, 'Ana Serrano', 'Madre', 5511110051, '2025-10-19 00:46:00', 0, NULL),
+(102, 'Camila', 'Ortega', 'Romero', 'ORRC040652MDFRRL52', '2004-06-21', 'Femenino', 5512340052, 'Calle Morelos #52, Mérida', 'camila52@example.com', 'A052', '12345hash52', 'activo', NULL, NULL, 5, 'Mario Ortega', 'Padre', 5511110052, '2025-10-19 00:46:00', 0, NULL),
+(103, 'Marco', 'Jiménez', 'Suárez', 'JISM040753HDFRRL53', '2004-07-22', 'Masculino', 5512340053, 'Col. Centro #53, León', 'marco53@example.com', 'A053', '12345hash53', 'activo', NULL, NULL, 5, 'Beatriz Suárez', 'Madre', 5511110053, '2025-10-19 00:46:00', 0, NULL),
+(104, 'Natalia', 'Navarro', 'Cortés', 'NACN040854MDFRRL54', '2004-08-23', 'Femenino', 5512340054, 'Av. Juárez #54, Puebla', 'natalia54@example.com', 'A054', '12345hash54', 'activo', NULL, NULL, 5, 'Carmen Cortés', 'Madre', 5511110054, '2025-10-19 00:46:00', 0, NULL),
+(105, 'Ángel', 'Salazar', 'Díaz', 'SADA040955HDFRRL55', '2004-09-24', 'Masculino', 5512340055, 'Av. Hidalgo #55, CDMX', 'angel55@example.com', 'A055', '12345hash55', 'activo', NULL, NULL, 5, 'Lucía Díaz', 'Madre', 5511110055, '2025-10-19 00:46:00', 0, NULL),
+(106, 'Brenda', 'Moreno', 'Flores', 'MOFB041056MDFRRL56', '2004-10-25', 'Femenino', 5512340056, 'Av. Central #56, Guadalajara', 'brenda56@example.com', 'A056', '12345hash56', 'activo', NULL, NULL, 5, 'Jorge Moreno', 'Padre', 5511110056, '2025-10-19 00:46:00', 0, NULL),
+(107, 'Erick', 'Vega', 'Santos', 'VESR041157HDFRRL57', '2004-11-26', 'Masculino', 5512340057, 'Calle Sur #57, Veracruz', 'erick57@example.com', 'A057', '12345hash57', 'activo', NULL, NULL, 5, 'Diana Santos', 'Madre', 5511110057, '2025-10-19 00:46:00', 0, NULL),
+(108, 'Melissa', 'Cortés', 'Ríos', 'CORR041258MDFRRL58', '2004-12-27', 'Femenino', 5512340058, 'Av. Reforma #58, Monterrey', 'melissa58@example.com', 'A058', '12345hash58', 'activo', NULL, NULL, 5, 'Alberto Ríos', 'Padre', 5511110058, '2025-10-19 00:46:00', 0, NULL),
+(109, 'Samuel', 'Domínguez', 'Lara', 'DOLS050159HDFRRL59', '2005-01-28', 'Masculino', 5512340059, 'Calle Norte #59, Toluca', 'samuel59@example.com', 'A059', '12345hash59', 'activo', NULL, NULL, 5, 'Carmen Lara', 'Madre', 5511110059, '2025-10-19 00:46:00', 0, NULL),
+(110, 'María', 'Lara', 'Torres', 'LATM050260MDFRRL60', '2005-02-01', 'Femenino', 5512340060, 'Av. Morelos #60, Mérida', 'maria60@example.com', 'A060', '12345hash60', 'activo', NULL, NULL, 5, 'José Torres', 'Padre', 5511110060, '2025-10-19 00:46:00', 0, NULL),
+(111, 'María Fernanda', 'López', 'García', 'LOGM010101MDFRRA01', '2001-01-01', 'Femenino', 5512340001, 'Av. Central #1, CDMX', 'maria1@example.com', 'B001', '12345hash1', 'activo', NULL, NULL, 1, 'Rosa García', 'Madre', 5511110001, '2025-10-19 00:51:07', 0, NULL),
+(112, 'José Antonio', 'Martínez', 'Pérez', 'MAPJ000202HDFRRS02', '2000-02-02', 'Masculino', 5512340002, 'Calle Hidalgo #2, Puebla', 'jose2@example.com', 'B002', '12345hash2', 'activo', NULL, NULL, 1, 'Luis Martínez', 'Padre', 5511110002, '2025-10-19 00:51:07', 0, NULL),
+(113, 'Ana Sofía', 'Ramírez', 'Torres', 'RATA000303MDFRRL03', '2000-03-03', 'Femenino', 5512340003, 'Av. Juárez #3, Querétaro', 'ana3@example.com', 'B003', '12345hash3', 'activo', NULL, NULL, 1, 'María Torres', 'Madre', 5511110003, '2025-10-19 00:51:07', 0, NULL),
+(114, 'Carlos Alberto', 'Gómez', 'Luna', 'GOLC000404HDFRLL04', '2000-04-04', 'Masculino', 5512340004, 'Col. Centro #4, Monterrey', 'carlos4@example.com', 'B004', '12345hash4', 'activo', NULL, NULL, 1, 'Laura Luna', 'Hermana', 5511110004, '2025-10-19 00:51:07', 0, NULL),
+(115, 'Daniela', 'Hernández', 'Ruiz', 'HERD000505MDFRRN05', '2000-05-05', 'Femenino', 5512340005, 'Av. Reforma #5, Guadalajara', 'daniela5@example.com', 'B005', '12345hash5', 'activo', NULL, NULL, 1, 'Pedro Ruiz', 'Padre', 5511110005, '2025-10-19 00:51:07', 0, NULL),
+(116, 'Luis Ángel', 'Mendoza', 'Castro', 'MECL000606HDFRRS06', '2000-06-06', 'Masculino', 5512340006, 'Col. Roma #6, CDMX', 'luis6@example.com', 'B006', '12345hash6', 'activo', NULL, NULL, 1, 'Carmen Castro', 'Madre', 5511110006, '2025-10-19 00:51:07', 0, NULL),
+(117, 'Andrea', 'Santos', 'Vega', 'SAVA000707MDFRGA07', '2000-07-07', 'Femenino', 5512340007, 'Calle Sur #7, Veracruz', 'andrea7@example.com', 'B007', '12345hash7', 'activo', NULL, NULL, 1, 'Héctor Vega', 'Padre', 5511110007, '2025-10-19 00:51:07', 0, NULL),
+(118, 'Miguel', 'Flores', 'Morales', 'FLOM000808HDFRRL08', '2000-08-08', 'Masculino', 5512340008, 'Av. Independencia #8, Oaxaca', 'miguel8@example.com', 'B008', '12345hash8', 'activo', NULL, NULL, 1, 'Rosa Morales', 'Madre', 5511110008, '2025-10-19 00:51:07', 0, NULL),
+(119, 'Valeria', 'Cruz', 'Núñez', 'CRNV000909MDFRRV09', '2000-09-09', 'Femenino', 5512340009, 'Calle Norte #9, Toluca', 'valeria9@example.com', 'B009', '12345hash9', 'activo', NULL, NULL, 1, 'Elena Núñez', 'Madre', 5511110009, '2025-10-19 00:51:07', 0, NULL),
+(120, 'Jorge Luis', 'Reyes', 'Ortiz', 'REOJ001010HDFRRJ10', '2000-10-10', 'Masculino', 5512340010, 'Av. Morelos #10, Mérida', 'jorge10@example.com', 'B010', '12345hash10', 'activo', NULL, NULL, 1, 'Fernando Ortiz', 'Padre', 5511110010, '2025-10-19 00:51:07', 0, NULL),
+(121, 'Camila', 'González', 'Pérez', 'GOPC010111MDFRRL11', '2001-01-11', 'Femenino', 5512340011, 'Av. Central #11, León', 'camila11@example.com', 'C011', '12345hash11', 'activo', NULL, NULL, 2, 'Laura Pérez', 'Madre', 5511110011, '2025-10-19 00:51:07', 0, NULL),
+(122, 'Diego', 'Ramírez', 'Luna', 'RALD010212HDFRRS12', '2001-02-12', 'Masculino', 5512340012, 'Calle Hidalgo #12, Puebla', 'diego12@example.com', 'C012', '12345hash12', 'activo', NULL, NULL, 2, 'Luis Ramírez', 'Padre', 5511110012, '2025-10-19 00:51:07', 0, NULL),
+(123, 'Fernanda', 'Torres', 'Santos', 'TOCF010313MDFRRL13', '2001-03-13', 'Femenino', 5512340013, 'Av. Juárez #13, Querétaro', 'fernanda13@example.com', 'C013', '12345hash13', 'activo', NULL, NULL, 2, 'María Santos', 'Madre', 5511110013, '2025-10-19 00:51:07', 0, NULL),
+(124, 'Pablo', 'Hernández', 'Ríos', 'HEPR010414HDFRRL14', '2001-04-14', 'Masculino', 5512340014, 'Col. Centro #14, Monterrey', 'pablo14@example.com', 'C014', '12345hash14', 'activo', NULL, NULL, 2, 'Carmen Ríos', 'Madre', 5511110014, '2025-10-19 00:51:07', 0, NULL),
+(125, 'Diana', 'Mendoza', 'Lopez', 'MELD010515MDFRRL15', '2001-05-15', 'Femenino', 5512340015, 'Av. Reforma #15, Guadalajara', 'diana15@example.com', 'C015', '12345hash15', 'activo', NULL, NULL, 2, 'Pedro Mendoza', 'Padre', 5511110015, '2025-10-19 00:51:07', 0, NULL),
+(126, 'Ricardo', 'López', 'Ruiz', 'LORR010616HDFRRL16', '2001-06-16', 'Masculino', 5512340016, 'Col. Roma #16, CDMX', 'ricardo16@example.com', 'C016', '12345hash16', 'activo', NULL, NULL, 2, 'Laura Ruiz', 'Madre', 5511110016, '2025-10-19 00:51:07', 0, NULL),
+(127, 'Sofía', 'Santos', 'Vega', 'SASV010717MDFRRL17', '2001-07-17', 'Femenino', 5512340017, 'Calle Sur #17, Veracruz', 'sofia17@example.com', 'C017', '12345hash17', 'activo', NULL, NULL, 2, 'Héctor Vega', 'Padre', 5511110017, '2025-10-19 00:51:07', 0, NULL),
+(128, 'Manuel', 'Flores', 'Morales', 'FLMM010818HDFRRL18', '2001-08-18', 'Masculino', 5512340018, 'Av. Independencia #18, Oaxaca', 'manuel18@example.com', 'C018', '12345hash18', 'activo', NULL, NULL, 2, 'Rosa Morales', 'Madre', 5511110018, '2025-10-19 00:51:07', 0, NULL),
+(129, 'Alejandra', 'Cruz', 'Núñez', 'CRNA010919MDFRRL19', '2001-09-19', 'Femenino', 5512340019, 'Calle Norte #19, Toluca', 'alejandra19@example.com', 'C019', '12345hash19', 'activo', NULL, NULL, 2, 'Elena Núñez', 'Madre', 5511110019, '2025-10-19 00:51:07', 0, NULL),
+(130, 'Eduardo', 'Reyes', 'Ortiz', 'REOE011020HDFRRL20', '2001-10-20', 'Masculino', 5512340020, 'Av. Morelos #20, Mérida', 'eduardo20@example.com', 'C020', '12345hash20', 'activo', NULL, NULL, 2, 'Fernando Ortiz', 'Padre', 5511110020, '2025-10-19 00:51:07', 0, NULL),
+(131, 'María Fernanda sdbh', 'López', 'García', 'HSDBSHDSJDJA2', '2025-11-05', 'Femenino', 5512345678, 'Av. Central #45, CDMX', 'hdbajs@gmail.com', 'A061', '$2y$10$lrc9qPDPBowKDFnieKw8T.tro9axlq8ke/YWpJf8oEmQ/3R6Gw2R.', 'activo', NULL, NULL, 3, 'sbdshad', 'sdjjauswq', 232831913, '2025-11-01 03:44:18', 0, NULL),
+(132, 'Angel Antonio', 'Loza', 'Flores', '12412D32 22D2C', '2005-06-20', 'Masculino', 211412412414, 'edx211de12', 'angelantonio3loza@gmail.com', 'A062', '$2y$10$BaBIQb/kDxr9nbDAgPF8s.KSgmT8mXY08kRlC19LloZmkG/Yd1fYC', 'activo', NULL, NULL, 8, 'descrcsaewdw', 'asdcadawdad', 3242423424, '2025-11-03 01:11:48', 1, '2025-11-26 20:31:20');
 
 -- --------------------------------------------------------
 
@@ -703,7 +705,7 @@ CREATE TABLE `chats` (
   `id_alumno` int(11) NOT NULL,
   `id_grupo` int(11) DEFAULT NULL,
   `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `chats`
@@ -770,26 +772,28 @@ CREATE TABLE `docentes` (
   `contacto_emergencia` varchar(100) DEFAULT NULL,
   `parentesco_emergencia` varchar(50) DEFAULT NULL,
   `telefono_emergencia` varchar(15) DEFAULT NULL,
-  `fecha_registro` timestamp NOT NULL DEFAULT current_timestamp()
+  `fecha_registro` timestamp NOT NULL DEFAULT current_timestamp(),
+  `en_linea` tinyint(1) DEFAULT 0,
+  `ultima_actividad` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `docentes`
 --
 
-INSERT INTO `docentes` (`id_docente`, `nombre`, `apellido_paterno`, `apellido_materno`, `curp`, `rfc`, `fecha_nacimiento`, `sexo`, `telefono`, `direccion`, `correo_personal`, `matricula`, `password`, `estatus`, `fecha_baja`, `deleted_at`, `nivel_estudios`, `area_especialidad`, `universidad_egreso`, `cedula_profesional`, `idiomas`, `puesto`, `tipo_contrato`, `fecha_ingreso`, `contacto_emergencia`, `parentesco_emergencia`, `telefono_emergencia`, `fecha_registro`) VALUES
-(1, 'María Elena SEC', 'Gómez', 'Ramírez', 'GORM800101MDFRRL0', 'GORM800101ABC', '1980-01-01', 'Femenino', '5512345678', 'Av. Insurgentes 123, CDMX', 'maria.gomez@ut.edu.mx', 'D001', 'hash12345a', 'baja', '2025-11-01', NULL, 'Doctorado', 'Educación', 'UNAM', '1234567', 'Español, Inglés', 'Profesora', 'Tiempo Completo', '2010-08-15', 'Rosa Ramírez', 'Madre', '5519876543', '2025-10-18 22:53:44'),
-(2, 'Juan Carlos', 'Martínez', 'Luna', 'MALJ790202HDFRRL02', 'MALJ790202DEF', '1979-02-02', 'Masculino', '5523456789', 'Calle Hidalgo 45, Puebla', 'juan.martinez@ut.edu.mx', 'D002', 'hash12345b', 'activo', NULL, NULL, 'Licenciatura', 'Electrónica', 'IPN', '7654321', 'Español, Inglés', 'Docente de Ingeniería', 'Asignatura', '2015-02-20', 'Laura Luna', 'Esposa', '5523456780', '2025-10-18 22:53:44'),
-(3, 'Ana PatriciaDWJDS', 'Rodríguez', 'Santos', 'ROSA850303MDFRRL03', 'ROSA850303GHI', '1985-03-03', 'Femenino', '5534567890', 'Col. Centro 33, Querétaro', 'ana.rodriguez@ut.edu.mx', 'D003', 'hash12345c', 'suspendido', NULL, NULL, 'Maestría', 'Administración', 'UANL', '8765432', 'Español, Inglés', 'Coordinadora Académica', 'Tiempo Completo', '2012-07-10', 'Pedro Santos', 'Padre', '5545678901', '2025-10-18 22:53:44'),
-(4, 'Ricardo', 'Hernández', 'Torres', 'HETR820404HDFRRL04', 'HETR820404JKL', '1982-04-04', 'Masculino', '5545678902', 'Av. Reforma 220, Monterrey', 'ricardo.hernandez@ut.edu.mx', 'D004', 'hash12345d', 'activo', NULL, NULL, 'Doctorado', 'Robótica', 'ITESM', '2345678', 'Español, Inglés', 'Profesor Investigador', 'Tiempo Completo', '2009-09-05', 'Laura Torres', 'Esposa', '5556789012', '2025-10-18 22:53:44'),
-(6, 'Luis Ángel', 'Pérez', 'Castillo', 'PECL870606HDFRRL06', 'PECL870606PQR', '1987-06-06', 'Masculino', '5567890124', 'Col. Roma Norte 56, CDMX', 'luis.perez@ut.edu.mx', 'D006', 'hash12345f', 'baja', '2025-11-01', NULL, 'Maestría', 'Informática', 'UNAM', '4567890', 'Español, Inglés', 'Docente de Sistemas', 'Tiempo Completo', '2014-05-30', 'Carla Castillo', 'Esposa', '5578901234', '2025-10-18 22:53:44'),
-(7, 'Alejandra', 'Vega', 'Flores', 'VEFA910707MDFRRL07', 'VEFA910707STU', '1991-07-07', 'Femenino', '5578901235', 'Calle Sur 78, Veracruz', 'alejandra.vega@ut.edu.mx', 'D007', 'hash12345g', 'activo', NULL, NULL, 'Licenciatura', 'Mercadotecnia', 'UV', '5678901', 'Español, Inglés', 'Docente de Negocios', 'Medio Tiempo', '2020-09-01', 'Héctor Flores', 'Padre', '5589012345', '2025-10-18 22:53:44'),
-(8, 'Miguel', 'Flores', 'Morales', 'FLOM880808HDFRRL08', 'FLOM880808VWX', '1988-08-08', 'Masculino', '5589012346', 'Av. Independencia 34, Oaxaca', 'miguel.flores@ut.edu.mx', 'D008', 'hash12345h', 'activo', NULL, NULL, 'Maestría', 'Mecatrónica', 'UABJO', '6789012', 'Español, Inglés', 'Docente de Mecatrónica', 'Tiempo Completo', '2011-03-25', 'Rosa Morales', 'Madre', '5590123456', '2025-10-18 22:53:44'),
-(9, 'Valeria', 'Cruz', 'Núñez', 'CRNV890909MDFRRL09', 'CRNV890909YZA', '1989-09-09', 'Femenino', '5590123457', 'Calle Norte 22, Toluca', 'valeria.cruz@ut.edu.mx', 'D009', 'hash12345i', 'activo', NULL, NULL, 'Doctorado', 'Educación', 'UAEMEX', '7890123', 'Español, Inglés', 'Directora de Carrera', 'Tiempo Completo', '2008-06-15', 'Elena Núñez', 'Madre', '5501234567', '2025-10-18 22:53:44'),
-(10, 'Jorge Luis', 'Reyes', 'Ortiz', 'REOJ900101HDFRRL10', 'REOJ900101BCD', '1990-01-01', 'Masculino', '5501234568', 'Av. Morelos 77, Mérida', 'jorge.reyes@ut.edu.mx', 'D010', 'hash12345j', 'activo', NULL, NULL, 'Maestría', 'Energías Renovables', 'UADY', '8901234', 'Español, Inglés', 'Profesor de Energías', 'Asignatura', '2019-04-10', 'Fernando Ortiz', 'Padre', '5512345670', '2025-10-18 22:53:44'),
-(14, 'Brayan David', 'Casas', 'Morales', '2312dw3adaaw', '2DWQDQDWD', '2004-04-20', 'Masculino', '86136213718', 'KJABABDOJABCKUN UOFBIU', 'angelantonio33loza@gmail.com', 'DOC0002', '$2y$10$x.JLrbRz30E9jj2DWnlcduwBMo7q9O4dlAl5cV54e4hb/kHFov3la', 'activo', NULL, NULL, 'Licenciatura', '', 'ewewewewe', '', 'adsadsada', 'matematicas', 'Tiempo Completo', '2025-10-21', 'hjfuyj', '32323', '21313132', '2025-10-21 20:17:25'),
-(15, 'EJEMPLO SEC', 'JDJ', 'JSDJSD', 'SSKDWDKS', 'WJJEWEJWJE', '2025-10-15', 'Femenino', '23273712838', 'SDNMankjqjwe', 'ejempSNNSDlo2@ut.edu', 'DOC0003', '$2y$10$Ly7ooW/0smfB5v5YLqogAebCrd/c5mGiLx4NgUz0yL3ZqdmAp5c4O', 'activo', NULL, NULL, 'Licenciatura', 'WDBS', 'NWSN NAS', 'Entregada', 'Español, Inglés', 'UWEHDJS', 'Asignatura', '2025-10-14', 'SDNSD', '22DSNSD', '2930123021', '2025-10-28 06:50:19'),
-(16, 'Angel', 'Loza', 'Flores', 'LOFA050620HNLZLNA0', 'SCFWEFWCFCAFA', '2005-06-20', 'Masculino', '323242341', 'fwesacae', 'angelantonio3loza@gmail.com', 'DOC0004', '$2y$10$W4evAAII23NcktuvsKkJvOr7wgz7fFAb9/p4eHnNJc0E4F5Telwc.', 'activo', NULL, NULL, 'Doctorado', '', '12414142qwdqwqwd', '', 'adsadsada', 'matematicas', 'Tiempo Completo', '2025-11-02', 'Aleskis', 'Amigo', '342342425252352', '2025-11-03 01:07:32');
+INSERT INTO `docentes` (`id_docente`, `nombre`, `apellido_paterno`, `apellido_materno`, `curp`, `rfc`, `fecha_nacimiento`, `sexo`, `telefono`, `direccion`, `correo_personal`, `matricula`, `password`, `estatus`, `fecha_baja`, `deleted_at`, `nivel_estudios`, `area_especialidad`, `universidad_egreso`, `cedula_profesional`, `idiomas`, `puesto`, `tipo_contrato`, `fecha_ingreso`, `contacto_emergencia`, `parentesco_emergencia`, `telefono_emergencia`, `fecha_registro`, `en_linea`, `ultima_actividad`) VALUES
+(1, 'María Elena SEC', 'Gómez', 'Ramírez', 'GORM800101MDFRRL0', 'GORM800101ABC', '1980-01-01', 'Femenino', '5512345678', 'Av. Insurgentes 123, CDMX', 'maria.gomez@ut.edu.mx', 'D001', 'hash12345a', 'baja', '2025-11-01', NULL, 'Doctorado', 'Educación', 'UNAM', '1234567', 'Español, Inglés', 'Profesora', 'Tiempo Completo', '2010-08-15', 'Rosa Ramírez', 'Madre', '5519876543', '2025-10-18 22:53:44', 0, NULL),
+(2, 'Juan Carlos', 'Martínez', 'Luna', 'MALJ790202HDFRRL02', 'MALJ790202DEF', '1979-02-02', 'Masculino', '5523456789', 'Calle Hidalgo 45, Puebla', 'juan.martinez@ut.edu.mx', 'D002', 'hash12345b', 'activo', NULL, NULL, 'Licenciatura', 'Electrónica', 'IPN', '7654321', 'Español, Inglés', 'Docente de Ingeniería', 'Asignatura', '2015-02-20', 'Laura Luna', 'Esposa', '5523456780', '2025-10-18 22:53:44', 0, NULL),
+(3, 'Ana PatriciaDWJDS', 'Rodríguez', 'Santos', 'ROSA850303MDFRRL03', 'ROSA850303GHI', '1985-03-03', 'Femenino', '5534567890', 'Col. Centro 33, Querétaro', 'ana.rodriguez@ut.edu.mx', 'D003', 'hash12345c', 'suspendido', NULL, NULL, 'Maestría', 'Administración', 'UANL', '8765432', 'Español, Inglés', 'Coordinadora Académica', 'Tiempo Completo', '2012-07-10', 'Pedro Santos', 'Padre', '5545678901', '2025-10-18 22:53:44', 0, NULL),
+(4, 'Ricardo', 'Hernández', 'Torres', 'HETR820404HDFRRL04', 'HETR820404JKL', '1982-04-04', 'Masculino', '5545678902', 'Av. Reforma 220, Monterrey', 'ricardo.hernandez@ut.edu.mx', 'D004', 'hash12345d', 'activo', NULL, NULL, 'Doctorado', 'Robótica', 'ITESM', '2345678', 'Español, Inglés', 'Profesor Investigador', 'Tiempo Completo', '2009-09-05', 'Laura Torres', 'Esposa', '5556789012', '2025-10-18 22:53:44', 0, NULL),
+(6, 'Luis Ángel', 'Pérez', 'Castillo', 'PECL870606HDFRRL06', 'PECL870606PQR', '1987-06-06', 'Masculino', '5567890124', 'Col. Roma Norte 56, CDMX', 'luis.perez@ut.edu.mx', 'D006', 'hash12345f', 'baja', '2025-11-01', NULL, 'Maestría', 'Informática', 'UNAM', '4567890', 'Español, Inglés', 'Docente de Sistemas', 'Tiempo Completo', '2014-05-30', 'Carla Castillo', 'Esposa', '5578901234', '2025-10-18 22:53:44', 0, NULL),
+(7, 'Alejandra', 'Vega', 'Flores', 'VEFA910707MDFRRL07', 'VEFA910707STU', '1991-07-07', 'Femenino', '5578901235', 'Calle Sur 78, Veracruz', 'alejandra.vega@ut.edu.mx', 'D007', 'hash12345g', 'activo', NULL, NULL, 'Licenciatura', 'Mercadotecnia', 'UV', '5678901', 'Español, Inglés', 'Docente de Negocios', 'Medio Tiempo', '2020-09-01', 'Héctor Flores', 'Padre', '5589012345', '2025-10-18 22:53:44', 0, NULL),
+(8, 'Miguel', 'Flores', 'Morales', 'FLOM880808HDFRRL08', 'FLOM880808VWX', '1988-08-08', 'Masculino', '5589012346', 'Av. Independencia 34, Oaxaca', 'miguel.flores@ut.edu.mx', 'D008', 'hash12345h', 'activo', NULL, NULL, 'Maestría', 'Mecatrónica', 'UABJO', '6789012', 'Español, Inglés', 'Docente de Mecatrónica', 'Tiempo Completo', '2011-03-25', 'Rosa Morales', 'Madre', '5590123456', '2025-10-18 22:53:44', 0, NULL),
+(9, 'Valeria', 'Cruz', 'Núñez', 'CRNV890909MDFRRL09', 'CRNV890909YZA', '1989-09-09', 'Femenino', '5590123457', 'Calle Norte 22, Toluca', 'valeria.cruz@ut.edu.mx', 'D009', 'hash12345i', 'activo', NULL, NULL, 'Doctorado', 'Educación', 'UAEMEX', '7890123', 'Español, Inglés', 'Directora de Carrera', 'Tiempo Completo', '2008-06-15', 'Elena Núñez', 'Madre', '5501234567', '2025-10-18 22:53:44', 0, NULL),
+(10, 'Jorge Luis', 'Reyes', 'Ortiz', 'REOJ900101HDFRRL10', 'REOJ900101BCD', '1990-01-01', 'Masculino', '5501234568', 'Av. Morelos 77, Mérida', 'jorge.reyes@ut.edu.mx', 'D010', 'hash12345j', 'activo', NULL, NULL, 'Maestría', 'Energías Renovables', 'UADY', '8901234', 'Español, Inglés', 'Profesor de Energías', 'Asignatura', '2019-04-10', 'Fernando Ortiz', 'Padre', '5512345670', '2025-10-18 22:53:44', 0, NULL),
+(14, 'Brayan David', 'Casas', 'Morales', '2312dw3adaaw', '2DWQDQDWD', '2004-04-20', 'Masculino', '86136213718', 'KJABABDOJABCKUN UOFBIU', 'angelantonio33loza@gmail.com', 'DOC0002', '$2y$10$x.JLrbRz30E9jj2DWnlcduwBMo7q9O4dlAl5cV54e4hb/kHFov3la', 'activo', NULL, NULL, 'Licenciatura', '', 'ewewewewe', '', 'adsadsada', 'matematicas', 'Tiempo Completo', '2025-10-21', 'hjfuyj', '32323', '21313132', '2025-10-21 20:17:25', 0, NULL),
+(15, 'EJEMPLO SEC', 'JDJ', 'JSDJSD', 'SSKDWDKS', 'WJJEWEJWJE', '2025-10-15', 'Femenino', '23273712838', 'SDNMankjqjwe', 'ejempSNNSDlo2@ut.edu', 'DOC0003', '$2y$10$Ly7ooW/0smfB5v5YLqogAebCrd/c5mGiLx4NgUz0yL3ZqdmAp5c4O', 'activo', NULL, NULL, 'Licenciatura', 'WDBS', 'NWSN NAS', 'Entregada', 'Español, Inglés', 'UWEHDJS', 'Asignatura', '2025-10-14', 'SDNSD', '22DSNSD', '2930123021', '2025-10-28 06:50:19', 0, NULL),
+(16, 'Angel', 'Loza', 'Flores', 'LOFA050620HNLZLNA0', 'SCFWEFWCFCAFA', '2005-06-20', 'Masculino', '323242341', 'fwesacae', 'angelantonio3loza@gmail.com', 'DOC0004', '$2y$10$W4evAAII23NcktuvsKkJvOr7wgz7fFAb9/p4eHnNJc0E4F5Telwc.', 'activo', NULL, NULL, 'Doctorado', '', '12414142qwdqwqwd', '', 'adsadsada', 'matematicas', 'Tiempo Completo', '2025-11-02', 'Aleskis', 'Amigo', '342342425252352', '2025-11-03 01:07:32', 1, '2025-11-26 20:31:20');
 
 -- --------------------------------------------------------
 
@@ -1102,7 +1106,7 @@ CREATE TABLE `mensajes` (
   `cuerpo` text NOT NULL,
   `prioridad` enum('normal','alta') NOT NULL DEFAULT 'normal',
   `fecha_envio` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `mensajes`
@@ -1124,19 +1128,30 @@ CREATE TABLE `mensajesdocente` (
   `id_mensaje` int(11) NOT NULL,
   `id_chat` int(11) NOT NULL,
   `remitente` enum('docente','alumno') NOT NULL,
-  `contenido` text NOT NULL,
+  `contenido` text DEFAULT NULL,
+  `archivo` varchar(255) DEFAULT NULL,
+  `tipo_archivo` enum('imagen','documento') DEFAULT NULL,
   `leido` tinyint(1) DEFAULT 0,
   `fecha_envio` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `mensajesdocente`
 --
 
-INSERT INTO `mensajesdocente` (`id_mensaje`, `id_chat`, `remitente`, `contenido`, `leido`, `fecha_envio`) VALUES
-(1, 1, 'alumno', 'hola', 0, '2025-11-12 01:31:58'),
-(2, 1, 'alumno', 'hola', 0, '2025-11-12 01:35:45'),
-(3, 1, 'docente', 'hljg-ilhk_LKJh', 0, '2025-11-12 01:36:27');
+INSERT INTO `mensajesdocente` (`id_mensaje`, `id_chat`, `remitente`, `contenido`, `archivo`, `tipo_archivo`, `leido`, `fecha_envio`) VALUES
+(1, 1, 'alumno', 'hola', NULL, NULL, 1, '2025-11-12 01:31:58'),
+(2, 1, 'alumno', 'hola', NULL, NULL, 1, '2025-11-12 01:35:45'),
+(3, 1, 'docente', 'hljg-ilhk_LKJh', NULL, NULL, 1, '2025-11-12 01:36:27'),
+(4, 1, 'alumno', '????', NULL, NULL, 1, '2025-11-27 01:25:51'),
+(5, 1, 'docente', ',cvjhgcfkut', NULL, NULL, 1, '2025-11-27 01:30:51'),
+(6, 1, 'alumno', '????', NULL, NULL, 1, '2025-11-27 01:31:22'),
+(7, 1, 'alumno', '????', NULL, NULL, 1, '2025-11-27 01:33:01'),
+(8, 1, 'alumno', '👍', NULL, NULL, 1, '2025-11-27 01:34:42'),
+(9, 1, 'docente', '😍', NULL, NULL, 1, '2025-11-27 01:38:12'),
+(10, 1, 'alumno', NULL, 'file_6927afb0c7200.jpeg', 'imagen', 1, '2025-11-27 01:56:00'),
+(11, 1, 'docente', '😡😡😍😁', NULL, NULL, 0, '2025-11-27 01:56:59'),
+(12, 1, 'docente', NULL, 'file_6927afef89cb7.jpeg', 'imagen', 0, '2025-11-27 01:57:03');
 
 -- --------------------------------------------------------
 
@@ -1891,7 +1906,7 @@ ALTER TABLE `mensajes`
 -- AUTO_INCREMENT de la tabla `mensajesdocente`
 --
 ALTER TABLE `mensajesdocente`
-  MODIFY `id_mensaje` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_mensaje` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `mensajes_secretarias`

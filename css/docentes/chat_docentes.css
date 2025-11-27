@@ -1,272 +1,545 @@
-/* =====================================================
-   CHAT DOCENTES - VERSIÓN SIMPLE Y LIMPIA
-   ===================================================== */
+ .chat-dashboard {
+    display: flex;
+    height: 80vh; /* Altura definida por el contenedor padre */
+    width: 100%;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Para que nada se salga de los bordes redondeados */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  /* =========================================
+     2. SIDEBAR (IZQUIERDA)
+     ========================================= */
+  .chat-sidebar {
+    width: 320px; /* Ancho fijo o usar 30% */
+    background-color: #ffffff;
+    border-right: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    padding: 0; /* El padding lo manejaremos internamente */
+  }
+
+  /* Títulos de las secciones del sidebar */
+  .chat-sidebar h3 {
+    font-size: 14px;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 20px 15px 10px 15px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* --- Barra de Búsqueda --- */
+  .search-box {
+    display: flex;
+    padding: 10px 15px;
+    background: #fff;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .search-box input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-right: none;
+    border-radius: 20px 0 0 20px;
+    outline: none;
+    font-size: 14px;
+    transition: border-color 0.3s;
+  }
+
+  .search-box input:focus {
+    border-color: #0d6efd;
+  }
+
+  .search-box button {
+    padding: 10px 20px;
+    border: 1px solid #0d6efd;
+    background: #0d6efd;
+    color: #fff;
+    border-radius: 0 20px 20px 0;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .search-box button:hover {
+    background: #0b5ed7;
+  }
+
+  /* --- Listas (Resultados, Online, Chats) --- */
+  #resultadosBusqueda,
+  .online-list,
+  #chatsActivos {
+    overflow-y: auto;
+    padding: 0 10px;
+    /* Scrollbar personalizado */
+    scrollbar-width: thin;
+    scrollbar-color: #ccc #f0f0f0;
+  }
+  
+  /* Alturas específicas para que no colapsen */
+  .online-list {
+    max-height: 150px; /* Limitar altura de usuarios online */
+    flex-shrink: 0; /* No encogerse */
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 10px;
+  }
+
+  #chatsActivos {
+    flex: 1; /* Ocupar el resto del espacio vertical */
+  }
+
+  /* --- Items (Usuario / Chat) --- */
+  .user-item, 
+  .chat-item, 
+  .online-user {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    margin-bottom: 5px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+  }
+
+  /* EFECTO HOVER ELEGANTE */
+  .user-item:hover, 
+  .chat-item:hover, 
+  .online-user:hover {
+    background-color: #adc0d3ff; /* Azul muy clarito */
+    transform: translateX(5px); /* Pequeño desplazamiento a la derecha */
+  }
+
+  /* Iconos dentro de los items */
+  .user-item i, .chat-item i {
+    margin-right: 10px;
+    color: #555;
+    font-size: 1.2rem;
+  }
+
+  /* Estado Online/Offline */
+  .status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 12px;
+    background: #1d8510ff;
+    box-shadow: 0 0 0 2px #fff; /* Borde blanco para separar */
+  }
+
+  .status-dot.online {
+    background: #28a745;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.6); /* Brillo verde */
+  }
+
+  /* =========================================
+     3. AREA PRINCIPAL DEL CHAT (DERECHA)
+     ========================================= */
+  .chat-main {
+    flex: 1; /* Ocupa el resto del ancho */
+    display: flex;
+    flex-direction: column;
+    background-color: #f8f9fa; /* Gris muy tenue de fondo */
+    position: relative;
+  }
+
+  /* --- Header del Chat --- */
+  .chat-header {
+    height: 60px;
+    padding: 0 20px;
+    background: #fff;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  }
+
+  .chat-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #333;
+  }
+
+  /* --- Cuerpo de Mensajes --- */
+  .chat-body {
+    flex: 1; /* Ocupa todo el espacio vertical disponible */
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-image: radial-gradient(#e5e5f7 1px, transparent 1px);
+    background-size: 20px 20px; /* Patrón sutil de puntos */
+  }
+
+  /* Burbujas de Mensaje */
+  .msg {
+    max-width: 70%;
+    padding: 10px 15px;
+    font-size: 14px;
+    line-height: 1.4;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+
+  /* Mensaje del DOCENTE (Usuario actual, derecha) */
+  .msg.docente {
+    align-self: flex-end;
+    background-color: #dcf8c6; /* Verde WhatsApp clásico o cambiar a azul */
+    color: #333;
+    border-radius: 15px 15px 0 15px; /* Esquina inferior derecha cuadrada */
+  }
+
+  /* Mensaje del ALUMNO (Otro usuario, izquierda) */
+  .msg.alumno {
+    align-self: flex-start;
+    background-color: #ffffff;
+    color: #333;
+    border-radius: 15px 15px 15px 0; /* Esquina inferior izquierda cuadrada */
+  }
+
+  /* --- Input Area --- */
+  .chat-input {
+    padding: 15px 20px;
+    background: #fff;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .chat-input input {
+    flex: 1;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    background-color: #f9f9f9;
+    outline: none;
+    transition: all 0.3s;
+  }
+
+  .chat-input input:focus {
+    background-color: #fff;
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+  }
+
+  .chat-input button {
+    width: 45px;
+    height: 45px;
+    border: none;
+    background: #0d6efd;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.3s;
+    box-shadow: 0 2px 5px rgba(13, 110, 253, 0.3);
+  }
+
+  .chat-input button:hover:not(:disabled) {
+    background: #0b5ed7;
+    transform: scale(1.1);
+  }
+
+  .chat-input button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  /* Placeholder styles */
+  .placeholder {
+    text-align: center;
+    color: #999;
+    margin-top: 20px;
+    font-style: italic;
+  }
+
+  /* Badge de notificaciones */
+  .badge {
+    background-color: #ff3b30;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    border-radius: 10px;
+    padding: 2px 6px;
+    margin-left: auto; /* Empuja el badge a la derecha en flexbox */
+    box-shadow: 0 2px 4px rgba(255, 59, 48, 0.3);
+  }
+
+  /* SCROLLBARS ESTILIZADOS (Webkit) */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #c1c1c1; 
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8; 
+  }
+
+
+  /* =========================================
+   ESTILOS PARA LA BARRA SUPERIOR (MAIN CONTENT HEADER)
+   ========================================= */
 .main-content {
-  color: #fff;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  font-family: Arial, sans-serif;
+    padding: 0 20px; /* Asegura un espacio del borde de la pantalla */
 }
 
-/* ===== ENCABEZADO ===== */
 .materia-navbar {
-  background: #1b1b1b;
-  border: 1px solid #333;
-  border-radius: 8px;
-  padding: 12px 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    display: flex;
+    justify-content: space-between; /* Separa los dos bloques al máximo */
+    align-items: center; /* Centra verticalmente */
+    padding: 20px 0;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 20px;
+    background-color: transparent; /* Si el fondo del main-content es blanco, esto está bien */
 }
 
-.materia-navbar h2 {
-  color: #fff;
-  margin: 0;
-  font-size: 1.2rem;
+.materia-info h2 {
+    font-size: 1.8rem;
+    color: #333;
+    margin: 0 0 5px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.materia-navbar p {
-  color: #aaa;
-  font-size: 0.9rem;
+.materia-info p {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin: 0;
 }
 
+/* =========================================
+   ESTILOS PARA EL BLOQUE DE USUARIO
+   ========================================= */
 .user-info {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #ccc;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 15px;
+    border-radius: 25px;
+    background-color: #f8f9fa; /* Fondo suave para destacar el nombre del usuario */
+    border: 1px solid #e9ecef;
+    font-weight: 600;
+    color: #495057;
 }
 
-/* ===== PANEL PRINCIPAL ===== */
-.chat-dashboard {
-  display: grid;
-  grid-template-columns: 260px 1fr;
-  gap: 15px;
+.user-info i {
+    color: #0d6efd; /* Color primario para el ícono de usuario */
+    font-size: 1.2rem;
 }
 
-/* ===== SIDEBAR ===== */
-.chat-sidebar {
-  background: #141414;
-  border: 1px solid #333;
-  border-radius: 8px;
-  padding: 10px;
+/* Estilo para el indicador de chat (badge) */
+.user-info .badgeMenu {
+    background-color: #ffc107; /* Amarillo para la notificación */
+    color: #333;
+    font-size: 0.75rem;
+    padding: 3px 8px;
+    border-radius: 12px;
+}
+/* ===== BOTÓN DE EMOJI ===== */
+.emoji-btn {
+    background: #e8f7ea;
+    border: none;
+    padding: 10px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 22px;
+    transition: 0.2s ease;
+    position: relative;
 }
 
-.chat-sidebar h3 {
-  font-size: 1rem;
-  margin-bottom: 10px;
-  color: #fff;
+.emoji-btn:hover {
+    background: #d3f0d8;
+    transform: scale(1.08);
 }
 
-.chat-list {
-  border-top: 1px solid #333;
-  padding-top: 10px;
-  overflow-y: auto;
-  max-height: 60vh;
+/* EFECTO BEFORE */
+.emoji-btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    box-shadow: 0 0 0 0 rgba(0,255,100,0.4);
+    transition: 0.25s ease;
+}
+.emoji-btn:hover::before {
+    box-shadow: 0 0 10px 3px rgba(0,255,100,0.25);
 }
 
-/* Grupo */
-.grupo {
-  background: #222;
-  color: #eee;
-  padding: 8px;
-  border-radius: 5px;
-  margin-bottom: 6px;
-  cursor: pointer;
-  transition: 0.3s;
+/* ===== PANEL DE EMOJIS ===== */
+.emoji-panel {
+    display: none; /* se controla desde JS */
+    position: absolute;
+    bottom: 55px;
+    left: 10px;
+    width: 300px;
+    background: white;
+    border-radius: 14px;
+    padding: 15px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.18);
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    z-index: 999;
+    animation: abrirEmoji 0.25s ease;
 }
 
-.grupo:hover {
-  background: #2e2e2e;
+/* animación de apertura */
+@keyframes abrirEmoji {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
-/* Alumno */
-.alumno {
-  background: #2a2a2a;
-  color: #ccc;
-  padding: 7px;
-  border-radius: 5px;
-  margin: 4px 0 4px 10px;
-  cursor: pointer;
-  transition: 0.3s;
+/* ===== EMOJIS ===== */
+.emoji-panel span {
+    font-size: 28px;
+    cursor: pointer;
+    transition: 0.2s ease;
+    padding: 6px;
+    border-radius: 8px;
 }
 
-.alumno:hover {
-  background: #3a3a3a;
-  color: #fff;
+.emoji-panel span:hover {
+    background: #e6f8eb;
+    transform: scale(1.25);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+
+}
+.emoji-panel {
+    display: none;
 }
 
-/* ===== ÁREA DE CHAT ===== */
-.chat-main {
-  background: #101010;
-  border: 1px solid #333;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-}
-
-.chat-header {
-  padding: 10px 15px;
-  border-bottom: 1px solid #333;
-  color: #fff;
-  font-size: 1rem;
-}
-
-/* ===== MENSAJES ===== */
-.chat-body {
-  flex: 1;
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  overflow-y: auto;
-}
-
-.mensaje {
-  max-width: 75%;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 0.9rem;
-}
-
-.msg-left {
-  background: #2b2b2b;
-  align-self: flex-start;
-  color: #fff;
-}
-
-.msg-right {
-  background: #619275;
-  align-self: flex-end;
-  color: #111;
- border: solid #c1c5c3 1px;
+.emoji-panel.open {
+    display: flex;
 }
 
 
-/* Hora */
-.hora {
-  display: block;
-  text-align: right;
-  font-size: 0.7rem;
-  color: #ffffff;
-  margin-top: 4px;
+.file-btn {
+    /* Diseño del botón */
+    display: inline-block;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    
+    /* Colores y tipografía */
+    background-color: #28a745; /* Verde principal */
+    color: #ffffff; /* Texto blanco */
+    font-size: 16px;
+    text-align: center;
+    
+    /* Posicionamiento para el pseudoelemento */
+    position: relative; /* Muy importante para posicionar ::before */
+    overflow: hidden; /* Oculta lo que se salga del botón */
+    z-index: 1; /* Asegura que el contenido esté sobre el pseudoelemento */
+
+    /* Transición para propiedades directas del botón */
+    transition: color 0.3s ease; /* Transición para el color del texto */
+    
+    /* Eliminar el borde y sombra por defecto (opcional) */
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* ===== INPUT ===== */
-.chat-input {
-  display: flex;
-  border-top: 1px solid #333;
-  padding: 10px;
-  background: #181818;
-  border-radius: 0 0 8px 8px;
+/* Pseudoelemento para el efecto de color */
+.file-btn::before {
+    content: ''; /* Obligatorio para ::before/::after */
+    position: absolute;
+    top: 0;
+    left: -100%; /* Empieza completamente fuera del botón a la izquierda */
+    width: 100%;
+    height: 100%;
+    
+    background-color: #2b7a3ea8; /* Verde suave/gris claro para el hover */
+    
+    /* Transición para el deslizamiento */
+    transition: left 0.3s ease;
+    z-index: -1; /* Coloca el pseudoelemento debajo del contenido del botón */
+    border-radius: 8px; /* Para que coincida con el borde del botón */
 }
 
-.chat-input input {
-  flex: 1;
-  padding: 8px;
-  background: #222;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  outline: none;
+/* Efecto Hover */
+.file-btn:hover {
+    color: #000000; /* Color de texto verde oscuro para contrastar con el verde suave */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
 }
 
-.chat-input button {
-  background: #fff;
-  color: #111;
-  border: none;
-  padding: 8px 12px;
-  margin-left: 8px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: 0.3s;
+/* Cuando el cursor está encima, desliza el pseudoelemento */
+.file-btn:hover::before {
+    left: 0; /* Desliza el pseudoelemento para cubrir el botón */
 }
 
-.chat-input button:hover {
-  background: #ddd;
+/* Estilo para el ícono (la etiqueta <i> dentro del botón) */
+.file-btn .fa-solid {
+    margin-right: 8px;
 }
 
-/* ===== SCROLLBAR ===== */
-.chat-body::-webkit-scrollbar,
-.chat-list::-webkit-scrollbar {
-  width: 6px;
+/* Estilo para el input de tipo "file" oculto */
+#inputArchivo {
+    display: none;
 }
-.chat-body::-webkit-scrollbar-thumb,
-.chat-list::-webkit-scrollbar-thumb {
-  background: #444;
-  border-radius: 6px;
-}
-
-/* ===== ÁREA DE CHAT ===== */
-.chat-main {
-  background: #101010;
-  border: 1px solid #333;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  height: 70vh; /* fija la altura del área total del chat */
-  overflow: hidden; /* evita que todo el bloque tenga scroll */
+/* === PREVIEW DE ARCHIVOS === */
+.preview-file {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f5f5f5;
+    border: 1px solid #ccc;
+    padding: 10px 14px;
+    border-radius: 10px;
+    max-width: 260px;
+    margin-bottom: 8px;
 }
 
-/* ===== MENSAJES ===== */
-.chat-body {
-  flex: 1;
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  overflow-y: auto;
-  scroll-behavior: smooth; /* desplazamiento suave */
-  max-height: 100%; /* garantiza que el scroll solo actúe aquí */
+/* Miniaturas de imagen */
+.preview-file img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #ddd;
 }
 
-/* ===== SCROLLBAR PERSONALIZADO ===== */
-.chat-body::-webkit-scrollbar {
-  width: 6px;
-}
-.chat-body::-webkit-scrollbar-thumb {
-  background: #444;
-  border-radius: 6px;
-}
-.chat-body::-webkit-scrollbar-track {
-  background: #1a1a1a;
+/* Ícono genérico para archivos */
+.preview-file .file-icon {
+    font-size: 40px;
+    color: #555;
 }
 
-
-.chat-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #2a2a2a;
-  padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 8px;
-  cursor: pointer;
-  transition: background 0.3s;
+/* Nombre del archivo */
+.preview-file .file-name {
+    font-size: 14px;
+    color: #333;
+    max-width: 150px;
+    word-wrap: break-word;
 }
 
-.chat-item:hover {
-  background: #333;
-}
-
-.chat-item.tiene-mensajes {
-  border-left: 4px solid #ff4444;
-}
-
-.badgeChat {
-  background: red;
-  color: white;
-  font-size: 12px;
-  border-radius: 50%;
-  padding: 3px 7px;
-  margin-left: 8px;
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(255,0,0,0.5); }
-  70% { box-shadow: 0 0 0 10px rgba(255,0,0,0); }
-  100% { box-shadow: 0 0 0 0 rgba(255,0,0,0); }
+/* Botón para remover previsualización */
+.preview-file .remove-preview {
+    margin-left: auto;
+    font-size: 18px;
+    cursor: pointer;
+    color: #c00;
 }
