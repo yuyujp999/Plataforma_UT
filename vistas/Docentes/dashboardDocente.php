@@ -130,7 +130,7 @@ $grupos = $idDocente ? DocenteController::obtenerGruposAsignados($idDocente) : [
         <?php endif; ?>
       </section>
 
-    </div>
+    </div> 
   </div>
 
   <!-- JS -->

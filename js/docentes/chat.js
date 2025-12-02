@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
         div.dataset.nombre = c.nombre;
         div.innerHTML = `
             <span class="chat-name">${c.nombre}</span>
-            <span class="small" style="margin-left:8px">${c.rol || ''}</span>
+            
         `;
         div.addEventListener('click', () => abrirChat(c.id_chat, c.nombre));
         return div;
@@ -306,7 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="status-dot ${u.en_linea ? 'online' : 'status-offline'}"></div>
                         <span>
                             ${u.nombre}
-                            <span class="small">(${u.rol})</span>
+
                         </span>
                     </div>
                 `;

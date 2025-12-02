@@ -81,7 +81,7 @@ if ($rol === 'docente' && isset($usuario['id_docente'])) {
       <div class="materia-navbar">
         <div class="materia-info">
           <h2><i class="fa-solid fa-comments"></i> Chat unificado</h2>
-          <p>Comunícate con alumnos o docentes en tiempo real.</p>
+          <p>Buscar...</p>
         </div>
         <div class="user-info">
           <i class="fa-solid fa-user-tie"></i>
